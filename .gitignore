@@ -1,0 +1,10 @@
+# ================================================== #
+
+iniciar_bolt.bat
+instalar_bolt.bat
+/database
+/scripts/__pycache__
+/scripts/profile
+/scripts/.env
+
+# ================================================== #
