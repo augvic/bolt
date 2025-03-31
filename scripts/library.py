@@ -39,7 +39,7 @@ def excel_instanciar(diretorio_planilha: str, abas: list) -> dict:
     """
     Resumo:
     - Cria instancia do Excel.
-    
+
     Parâmetros:
     - diretorio_planilha (str)
     - abas (list): Lista contendo o nome de cada aba.
@@ -789,13 +789,8 @@ def navegador_instanciar() -> webdriver.Chrome:
     - ===
     """
 
-    # ~~ Diretório do profile.
-    diretorio_profile = os.path.dirname(os.path.abspath(__file__))
-    diretorio_profile = os.path.join(diretorio_profile, "profile")
-
     # ~~ Definindo configurações.
     options = opt()
-    options.add_argument(f"user-data-dir={diretorio_profile}")
     options.add_argument("--log-level=3")
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.add_experimental_option("detach", True)
@@ -841,7 +836,7 @@ def navegador_acessar_godeep(driver: webdriver.Chrome) -> None:
         microsoft_login_botao.click()
         time.sleep(5)
         body = driver.find_element(By.TAG_NAME, value="body").text
-        if any(login_string in body for login_string in ["Because you're accessing sensitive info, you need to verify your password.", "Sign in", "Pick an account"]):
+        if any(login_string in body for login_string in ["Because you're accessing sensitive info, you need to verify your password.", "Sign in", "Pick an account", "Entrar"]):
             utilitarios_printar_mensagem(mostrar_data_hora="Only")
             input("Necessário logar conta Microsoft. Aperte ENTER aqui depois para continuar.")
             utilitarios_printar_mensagem(char_type="=", char_qtd=50)
@@ -1542,7 +1537,7 @@ def utilitarios_consultar_receita_federal(cnpj: str, printar_dados: bool = False
         except:
             regime = "Não"
         if regime == "Sim":
-            dados["regime_tributario"] = {"regime_tributario": "SIMPLES"}
+            dados["regime_tributario"] = {"regime_tributario": "SIMPLES", "ano": "-"}
         else:
             dados["regime_tributario"] = [
                 {
@@ -1551,7 +1546,10 @@ def utilitarios_consultar_receita_federal(cnpj: str, printar_dados: bool = False
                 }
                 for regime in resposta_json["estabelecimento"]["regimes_tributarios"]
             ]
-            dados["regime_tributario"] = max(dados["regime_tributario"], key=lambda x: x["ano"])
+            if dados["regime_tributario"]:
+                dados["regime_tributario"] = max(dados["regime_tributario"], key=lambda x: x["ano"])
+            else:
+                dados["regime_tributario"] = {"regime_tributario": "LUCRO", "ano": "-"}
         
         # ~~ CNAE.
         dados["cnae"] = [
@@ -1618,6 +1616,45 @@ def utilitarios_consultar_receita_federal(cnpj: str, printar_dados: bool = False
     else:
         utilitarios_printar_mensagem(mensagem=f"Erro: {resposta.status_code}", char_type="=", char_qtd=50, char_side="bot")
         raise Exception(f"Erro na resposta da requisição: {resposta.status_code} - {resposta.text}.")
+
+# ================================================== #
+
+# ~~ Coleta os diretórios definidos.
+def utilitarios_diretorios(diretorio: str) -> str:
+
+    """
+    Resumo:
+    - Retorna diretorio do arquivo escolhido.
+    
+    Parâmetros:
+    - diretorio (str):
+        - "carteira"
+        - "base_revendas"
+        - "base_cadastros"
+    
+    Retorna:
+    - diretorio_escolhido (str)
+    
+    Exceções:
+    - ===
+    """
+
+    # ~~ Carteira.
+    if diretorio == "carteira":
+        data = utilitarios_coletar_data_atual()
+        matrícula = utilitarios_coletar_matricula()
+        diretorio_escolhido = fr"C:\Users\{matrícula}\OneDrive - Positivo\Documentos - Carteira_Faturamento\Carteira_Status {data["mes_extenso"]} {data["dia_numero"]}{data["mes_numero"]}.xlsm"
+
+    # ~~ Base Revendas.
+    if diretorio == "base_revendas":
+        diretorio_escolhido = r"N:\NNPI\NN\Projeto Vendas 1 a 1\Cadastros Clientes\Base Consolidada de REVENDAS.xlsx"
+
+    # ~~ Base Cadastros.
+    if diretorio == "base_cadastros":
+        diretorio_escolhido = r"N:\NNPI\NN\Projeto Vendas 1 a 1\Cadastros Clientes\Base de Novos Cadastros.xlsx"
+
+    # ~~ Retorna.
+    return diretorio_escolhido
 
 # ================================================== #
 
@@ -1979,15 +2016,19 @@ def utilitarios_obter_diretorio_atual() -> str:
 
 # ================================================== #
 
-# ~~ Consulta os dados financeiros do cliente.
-def funcao_consultar_dados_financeiros() -> None:
+# ~~ Importa status de assinaturas nas bases (Base Cadastros / Base Revendas).
+def utilitarios_bases_importar_status_assinatura(base: str, cnpj: str, status: str) -> None:
 
     """
     Resumo:
-    - Consulta os dados financeiros do cliente.
+    - Importa status de assinaturas nas bases (Base Cadastros / Base Revendas).
     
     Parâmetros:
-    - ===
+    - base (str):
+        - "cadastros"
+        - "revendas"
+    - cnpj (str)
+    - status (str)
     
     Retorna:
     - ===
@@ -1996,160 +2037,46 @@ def funcao_consultar_dados_financeiros() -> None:
     - ===
     """
 
-    # ~~ Captura de erros.
-    try:
-
-        # ~~ Vincula SAP.
-        sap = sap_instanciar()
-
-        # ~~ Solicita input da raiz do CNPJ.
-        utilitarios_printar_mensagem(mostrar_data_hora="Only")
-        raiz_cnpj = input("Informe a raiz do CNPJ (somente números): ")
-        utilitarios_printar_mensagem(char_type="=", char_qtd=50)
-
-        # ~~ Faz coleta dos dados.
-        utilitarios_printar_mensagem(mensagem=f"Coletando dados financeiros do cliente: {raiz_cnpj}.", char_type="=", char_qtd=50, char_side="bot")
-        sap_coletar_dados_financeiros_cliente(sap=sap, raiz_cnpj=raiz_cnpj, printar_dados=True)
-
-        # ~~ Encerra conexão.
-        sap_tela_inicial(sap)
-
-    # ~~ Caso seja capturado erro.
-    except Exception as erro:
-        utilitarios_printar_mensagem(mensagem=erro, char_type="=", char_qtd=50, char_side="bot")
-        exit()
-
-# ================================================== #
-
-# ~~ Consulta CNPJ na Receita Federal.
-def funcao_consultar_receita_federal() -> None:
-
-    """
-    Resumo:
-    - Consulta CNPJ na Receita Federal.
-    
-    Parâmetros:
-    - ===
-    
-    Retorna:
-    - ===
-    
-    Exceções:
-    - ===
-    """
-
-    # ~~ Solicita o input do CNPJ.
-    utilitarios_printar_mensagem(mostrar_data_hora="Only")
-    cnpj = input("Digite o CNPJ (somente números): ").strip()
-    utilitarios_printar_mensagem(char_type="=", char_qtd=50)
-
-    # ~~ Executa função.
-    try:
-        utilitarios_consultar_receita_federal(cnpj=cnpj, printar_dados=True)
-    except Exception as erro:
-        utilitarios_printar_mensagem(mensagem=erro, char_type="=", char_qtd=50, char_side="bot")
-
-# ================================================== #
-
-# ~~ Conferência assinaturas bases (Base Cadastros / Base Revendas).
-def funcao_conferencia_assinaturas_bases() -> None:
-
-    """
-    Resumo:
-    - Conferência assinaturas bases (Base Cadastros / Base Revendas).
-    
-    Parâmetros:
-    - ===
-    
-    Retorna:
-    - ===
-    
-    Exceções:
-    - ===
-    """
-
-    # ~~ While True para manter script ativo até ser selecionado uma opção válida.
-    while True:
-
-        # ~~ Input para decidir qual base atualizar. Armazena index escolhido.
-        utilitarios_printar_mensagem(mostrar_data_hora="Only")
-        index_planilha = int(input("1 - Base de Revendas\n2 - Base de Cadastros\n\nEscolha qual base atualizar: "))
-        utilitarios_printar_mensagem(char_type="=", char_qtd=50)
-
-        # ~~ Com base no index escolhido, armazena qual base será atualizada.
-        if index_planilha == 1:
-            diretorio_planilha = os.getenv("DIRETORIO_BASE_REVENDAS")
-            abas = ["Consolidado", "Status Assinatura"]
-            aba_leitura = "Consolidado"
-            break
-        elif index_planilha == 2:
-            diretorio_planilha = os.getenv("DIRETORIO_BASE_CADASTROS")
-            abas = ["BASE CADASTRO", "Status Assinatura"]
-            aba_leitura = "BASE CADASTRO"
-            break
-        else:
-            utilitarios_printar_mensagem(mensagem="Selecione dentre uma das opções listadas.", char_type="=", char_qtd=50, char_side="bot")
-
-    # ~~ Instancia navegador e loga na GoDeep.
-    driver = navegador_instanciar()
-    navegador_acessar_godeep(driver)
+    # ~~ Com base no index escolhido, armazena qual base será atualizada.
+    if base == "revendas":
+        diretorio_planilha = utilitarios_diretorios("base_revendas")
+        abas = ["Consolidado", "Status Assinatura"]
+        aba_leitura = "Consolidado"
+        linha_cabecalho = 3
+        coluna = "CNPJ Cliente.1"
+        coluna_importar = "STATUS DOC"
+    else:
+        diretorio_planilha = utilitarios_diretorios("base_cadastros")
+        abas = ["BASE CADASTRO", "Status Assinatura"]
+        aba_leitura = "BASE CADASTRO"
+        linha_cabecalho = 1
+        coluna = "CNPJ"
+        coluna_importar = "STATUS"
 
     # ~~ Instancia planilha.
     planilha = excel_instanciar(diretorio_planilha, abas)
 
     # ~~ Faz leitura da aba planilha usando pandas para atualizar os status de forma otimizada.
-    utilitarios_printar_mensagem(mensagem="Fazendo leitura da planilha. Aguarde...", char_type="-", char_qtd=3, char_side="bot")
     excel_salvar_planilha(planilha)
-    if index_planilha == 1:
-        df = pandas_criar_df(diretorio_planilha=diretorio_planilha, aba="Consolidado", linha_cabecalho=3, colunas_nomes=["CNPJ Cliente.1"])
-    else:
-        df = pandas_criar_df(diretorio_planilha=diretorio_planilha, aba="BASE CADASTRO", linha_cabecalho=1, colunas_nomes=["CNPJ"])
-    utilitarios_printar_mensagem(mensagem="Concluído.", char_type="=", char_qtd=50, char_side="bot")
+    df = pandas_criar_df(diretorio_planilha=diretorio_planilha, aba=aba_leitura, linha_cabecalho=linha_cabecalho, colunas_nomes=[coluna])
 
-    # ~~ Loop para verificar linha a linha da aba "Status Assinatura".
-    for linha_status_assinatura in range(2, 999999):
-
-        # ~~ Coleta CNPJ.
-        cnpj_status_assinatura = excel_coletar_dados(planilha=planilha, aba_nome="Status Assinatura", coluna_nome="CNPJ", linha=linha_status_assinatura, linha_cabecalho=1)
-
-        # ~~ Se não encontra CNPJ, encerrou a lista.
-        if cnpj_status_assinatura is None:
-            break
-
-        # ~~ Mensagem.
-        utilitarios_printar_mensagem(mensagem=f"Verificando status de assinatura do CNPJ: {cnpj_status_assinatura}.", char_type="-", char_qtd=3, char_side="bot")
-
-        # ~~ Função que coleta o status de assinatura.
-        status = navegador_coletar_status_assinatura_godeep(driver=driver, cnpj=cnpj_status_assinatura)
-
-        # ~~ Printa status.
-        utilitarios_printar_mensagem(mensagem=f"Status: {status}.", char_type="=", char_qtd=50, char_side="bot", mostrar_data_hora="False")
-
-        # ~~ Insere status na planilha, usando o data frame para localizar a linha correspondente.
-        if index_planilha == 1:
-            linhas_consolidado = pandas_localizar_index(df=df, coluna_nome="CNPJ Cliente.1", localizar=cnpj_status_assinatura, linha_cabecalho=3)
-            for linha in linhas_consolidado:
-                excel_inserir_dados(planilha=planilha, dado=status, aba_nome="Consolidado", coluna_nome="STATUS DOC", linha=linha, linha_cabecalho=3)
-        else:
-            linhas_base = pandas_localizar_index(df=df, coluna_nome="CNPJ", localizar=cnpj_status_assinatura, linha_cabecalho=1)
-            for linha in linhas_base:
-                excel_inserir_dados(planilha=planilha, dado=status, aba_nome="BASE CADASTRO", coluna_nome="STATUS", linha=linha, linha_cabecalho=1)
-
-    # ~~ Após encerrar lista na aba "Status Assinatura", encerra driver e execução do código.
-    utilitarios_printar_mensagem(mensagem="Lista finalizada. Encerrando execução...", char_type="=", char_qtd=50, char_side="bot")
-    navegador_fechar(driver)
+    # ~~ Insere status na planilha, usando o data frame para localizar a linha correspondente.
+    linhas = pandas_localizar_index(df=df, coluna_nome=coluna, localizar=cnpj, linha_cabecalho=linha_cabecalho)
+    for linha in linhas:
+        excel_inserir_dados(planilha=planilha, dado=status, aba_nome=aba_leitura, coluna_nome=coluna_importar, linha=linha, linha_cabecalho=linha_cabecalho)
 
 # ================================================== #
 
-# ~~ Consulta status de assinatura.
-def funcao_consultar_status_assinaturas() -> None:
+# ~~ Importa dados financeiros na carteira.
+def utilitarios_carteira_importar_dados_financeiros(cliente: str, dados: dict) -> None:
 
     """
     Resumo:
-    - Consulta status de assinatura.
+    - Importa dados financeiros na carteira.
     
     Parâmetros:
-    - ===
+    - cliente (str): Código ERP.
+    - dados (dict): Dicionário contendo os dados financeiros.
     
     Retorna:
     - ===
@@ -2157,141 +2084,26 @@ def funcao_consultar_status_assinaturas() -> None:
     Exceções:
     - ===
     """
-
-    # ~~ Input do CNPJ.
-    utilitarios_printar_mensagem(mostrar_data_hora="Only")
-    cnpj = input("Insira o CNPJ para consultar o status de assinatura (somente números): ")
-    utilitarios_printar_mensagem(char_type="=", char_qtd=50)
-
-    # ~~ Cria instância e acessa GoDeep.
-    driver = navegador_instanciar()
-    navegador_acessar_godeep(driver)
-
-    # ~~ Mensagem.
-    utilitarios_printar_mensagem(mensagem=f"Verificando status de assinatura do CNPJ: {cnpj}.", char_type="-", char_qtd=3, char_side="bot")
-
-    # ~~ Coleta status.
-    status = navegador_coletar_status_assinatura_godeep(driver, cnpj)
-
-    # ~~ Printa status.
-    utilitarios_printar_mensagem(mensagem=f"Status: {status}.", char_type="=", char_qtd=50, char_side="bot", mostrar_data_hora="False")
-
-    # ~~ Fecha navegador.
-    navegador_fechar(driver)
-
-# ================================================== #
-
-# ~~ Consulta limites e insere na carteira.
-def funcao_consultar_limites_carteira() -> None:
-
-    """
-    Resumo:
-    - Consulta limites e insere na carteira.
-    
-    Parâmetros:
-    - ===
-    
-    Retorna:
-    - ===
-    
-    Exceções:
-    - ===
-    """
-
-    # ~~ Coleta data para encontrar a planilha da carteira mais atualizada.
-    data = utilitarios_coletar_data_atual()
-    matrícula = utilitarios_coletar_matricula()
 
     # ~~ Define caminho da Carteira mais atualizada.
-    caminho_planilha = fr"C:\Users\{matrícula}\OneDrive - Positivo\Documentos - Carteira_Faturamento\Carteira_Status {data["mes_extenso"]} {data["dia_numero"]}{data["mes_numero"]}.xlsm"
+    caminho_planilha = utilitarios_diretorios("carteira")
 
     # ~~ Vincula planilha.
     abas = ["Carteira", "Consultar Limites"]
     planilha = excel_instanciar(caminho_planilha, abas)
 
-    # ~~ Vincula SAP.
-    try:
-        sap = sap_instanciar()
-    except Exception as erro:
-        print(erro)
-        exit()
-
     # ~~ Faz leitura da planilha.
+    excel_salvar_planilha(planilha)
     df = pandas_criar_df(diretorio_planilha=caminho_planilha, aba="Carteira", linha_cabecalho=16, colunas_nomes=["Código SAP"])
 
-    # ~~ Loop para pegar cada código ERP na aba "Consultar Limites" e consultar.
-    for linha in range(2, 999999):
-        cliente_consultado = excel_coletar_dados(planilha=planilha, aba_nome="Consultar Limites", coluna_nome="Código SAP", linha=linha, linha_cabecalho=1)
-        if cliente_consultado is None:
-            sap_tela_inicial(sap)
-            exit()
-        cliente_consultado = int(cliente_consultado)
-        cliente_consultado = str(cliente_consultado)
-        utilitarios_printar_mensagem(mensagem=f"Analisando cliente: {cliente_consultado}.", char_type="=", char_qtd=50, char_side="bot")
-        cnpj = sap_coletar_cnpj_xd03(sap=sap, codigo_erp=cliente_consultado)
-        raiz_cnpj = cnpj[:8]
-        retorno_análise = sap_coletar_dados_financeiros_cliente(sap=sap, raiz_cnpj=raiz_cnpj, printar_dados=True)
-        linhas_carteira = pandas_localizar_index(df=df, coluna_nome="Código SAP", localizar=cliente_consultado, linha_cabecalho=16)
-        for linha in linhas_carteira:
-            excel_inserir_dados(planilha=planilha, dado=retorno_análise["limite"], aba_nome="Carteira", coluna_nome="Limite", linha=linha, linha_cabecalho=16)
-            excel_inserir_dados(planilha=planilha, dado=retorno_análise["vencimento"], aba_nome="Carteira", coluna_nome="Vencimento Limite", linha=linha, linha_cabecalho=16)
-            excel_inserir_dados(planilha=planilha, dado=retorno_análise["margem"], aba_nome="Carteira", coluna_nome="Margem", linha=linha, linha_cabecalho=16)
-            excel_inserir_dados(planilha=planilha, dado=retorno_análise["nfs_vencidas"], aba_nome="Carteira", coluna_nome="Vencidos", linha=linha, linha_cabecalho=16)
+    # ~~ Coleta todas as linhas que o cliente está.
+    linhas_carteira = pandas_localizar_index(df=df, coluna_nome="Código SAP", localizar=cliente, linha_cabecalho=16)
 
-# ================================================== #
-
-# ~~ Escolher qual função do bolt irá utilizar.
-def funcao_iniciar() -> None:
-
-    """
-    Resumo:
-    - Escolher qual função do bolt irá utilizar.
-    
-    Parâmetros:
-    - ===
-    
-    Retorna:
-    - ===
-    
-    Exceções:
-    - ===
-    """
-
-    # ~~ Início.
-    utilitarios_printar_mensagem(char_type="=", char_qtd=50)
-    utilitarios_printar_mensagem(mostrar_data_hora="Only")
-
-    # ~~ Input.
-    funcao = int(input(
-        "1 - Conferência de assinaturas das bases (Base de Cadastros / Base de Revendas).\n" \
-        "2 - Consultar status de assinatura na GoDeep.\n" \
-        "3 - Consultar Receita Federal.\n" \
-        "4 - Consultar dados financeiros.\n" \
-        "5 - Consultar dados financeiro (Carteira).\n\n" \
-        "Escolha qual executar (inserir número): "
-        ))
-    utilitarios_printar_mensagem(char_type="=", char_qtd=50)
-
-    # ~~ Inicia função escolhida.
-    while True:
-        if funcao == 1:
-            funcao_conferencia_assinaturas_bases()
-            break
-        elif funcao == 2:
-            funcao_consultar_status_assinaturas()
-            break
-        elif funcao == 3:
-            funcao_consultar_receita_federal()
-            break
-        elif funcao == 4:
-            funcao_consultar_dados_financeiros()
-            break
-        elif funcao == 5:
-            funcao_consultar_limites_carteira()
-            break
-        else:
-            utilitarios_printar_mensagem(mostrar_data_hora="Only")
-            funcao = int(input("Não encontrado na lista. Inserir número válido: "))
-            utilitarios_printar_mensagem(char_type="=", char_qtd=50)
+    # ~~ Para cada linha, importa os dados.
+    for linha in linhas_carteira:
+        excel_inserir_dados(planilha=planilha, dado=dados["limite"], aba_nome="Carteira", coluna_nome="Limite", linha=linha, linha_cabecalho=16)
+        excel_inserir_dados(planilha=planilha, dado=dados["vencimento"], aba_nome="Carteira", coluna_nome="Vencimento Limite", linha=linha, linha_cabecalho=16)
+        excel_inserir_dados(planilha=planilha, dado=dados["margem"], aba_nome="Carteira", coluna_nome="Margem", linha=linha, linha_cabecalho=16)
+        excel_inserir_dados(planilha=planilha, dado=dados["nfs_vencidas"], aba_nome="Carteira", coluna_nome="Vencidos", linha=linha, linha_cabecalho=16)
 
 # ================================================== #

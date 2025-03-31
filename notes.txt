@@ -1,0 +1,32 @@
+# ================================================== #
+
+Comando para iniciar server:
+    python manage.py runserver
+
+Comando para migrar ao banco de dados:
+    python manage.py makemigrations
+    python manage.py migrate
+
+Comando para criar superuser no admin:
+    python manage.py migrate
+    pythom manage.py createsuperuser
+
+Comando para iniciar server do WebDriver:
+    python -m uvicorn app.instance:app --host 127.0.0.1 --port 5001
+
+# ================================================== #
+
+Super User:
+    Login: 72776
+    Password: 73571951
+
+# ================================================== #
+
+Funcionamento:
+    Processo 1 (Django Server):
+        |__ Thread 1 (Rodando o server.)
+    Processo 2 (WebDriver):
+        |__ Thread 1 (Rodando o FastAPI.)
+        |__ Thread 2 (Monitorando encerramento da janela do navegador.)
+
+# ================================================== #

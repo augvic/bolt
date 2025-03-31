@@ -1,0 +1,113 @@
+<!-- Carrega os arquivos estáticos. -->
+{% load static %}
+
+<!-- Head. -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'database/database_comercial.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'database/database.ico' %}">
+    <title>Database - Comercial</title>
+</head>
+
+<!-- Body. -->
+<body>
+
+    <!-- Container que irá abrigar o formulário e a tabela. -->
+    <div class="container">
+
+        <!-- Cabeçalho. -->
+        <div class="cabecalho">Database - Comercial</div>
+
+        <!-- Formulário para inserção de dados no banco. -->
+        <form class="inserir_assistente" action="{% url 'database_comercial_inserir' %}" method="POST">
+
+            <!-- Proteção contra ataques CSRF. -->
+            {% csrf_token %}
+
+            <!-- Inputs. -->
+            <input class="inputs" name="nome" placeholder="Nome" required>
+            <br>
+            <input class="inputs" name="escritorio" placeholder="Escritório" required>
+            <br>
+            <input class="inputs" name="codigo_zage" placeholder="Código ZAGE" required>
+            <br>
+            <input class="inputs" name="codigo_assistente" placeholder="Código Assistente" required>
+            <br>
+            <input class="inputs" name="codigo_fornecedor" placeholder="Código Fornecedor" required>
+            <br>
+            <input class="inputs" name="email" placeholder="E-mail" required>
+            <br>
+            <input class="inputs" name="superior" placeholder="Superior" required>
+            <br>
+            <button class="send_button" type="submit">Inserir</button>
+
+        <!-- Fecha formulário. -->
+        </form>
+
+        <!-- Tabela onde serão exibidos os dados do banco. -->
+        <div class="tabela_container">
+
+            <!-- Cabeçalho da tabela. -->
+            <div class="tabela_header">
+                <div class="tabela_header_nome">Nome</div>
+                <div class="tabela_header_escritorio">Escritório</div>
+                <div class="tabela_header_zage">ZAGE</div>
+                <div class="tabela_header_assistente">Assistente</div>
+                <div class="tabela_header_fornecedor">Fornecedor</div>
+                <div class="tabela_header_email">E-mail</div>
+                <div class="tabela_header_superior">Superior</div>
+                <div class="tabela_header_buttons"></div>
+            </div>
+
+            <!-- Corpo da tabela. -->
+            <div class="tabela_body">
+
+                <!-- Loop para criar uma linha na tabela de cada assistente no banco. -->
+                {% for assistente in assistentes %} 
+
+                <!-- Formulário para edição dos dados. -->
+                <form class="tabela_body_row" action="{% url 'database_comercial_edit' assistente.id %}" method="POST">
+
+                    <!-- Proteção contra ataques CSRF. -->
+                    {% csrf_token %}
+
+                    <!-- Cada célula dentro da linha. -->
+                    <div class="tabela_body_row_nome"><input name="nome" class="tabela_body_row_inputs" value="{{ assistente.nome }}"></div>
+                    <div class="tabela_body_row_escritorio"><input name="escritorio" class="tabela_body_row_inputs" value="{{ assistente.escritorio }}"></div>
+                    <div class="tabela_body_row_zage"><input name="codigo_zage" class="tabela_body_row_inputs" value="{{ assistente.codigo_zage }}"></div>
+                    <div class="tabela_body_row_assistente"><input name="codigo_assistente" class="tabela_body_row_inputs" value="{{ assistente.codigo_assistente }}"></div>
+                    <div class="tabela_body_row_fornecedor"><input name="codigo_fornecedor" class="tabela_body_row_inputs" value="{{ assistente.codigo_fornecedor }}"></div>
+                    <div class="tabela_body_row_email"><input name="email" class="tabela_body_row_inputs" value="{{ assistente.email }}"></div>
+                    <div class="tabela_body_row_superior"><input name="superior" class="tabela_body_row_inputs" value="{{ assistente.superior }}"></div>
+
+                    <!-- Botões de editar e deletar. -->
+                    <div class="tabela_body_row_buttons">
+                        <input id="submit_{{ assistente.id }}" type="submit" style="display: none;">
+                        <label for="submit_{{ assistente.id }}">
+                            <i id="tabela_body_row_buttons_edit" class="fa-solid fa-edit"></i>
+                        </label>
+                        <a class="tabela_body_row_buttons_delete" href="{% url 'database_comercial_delete' assistente.id %}">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                
+                <!-- Fecha formulário. -->
+                </form>
+
+                <!-- Encerra loop. Criando um form para cada assistente. -->
+                {% endfor %}
+
+            <!-- Fecha a tabela body. -->
+            </div>
+        
+        <!-- Fecha tabela container. -->
+        </div>
+    
+    <!-- Fecha container principal. -->
+    </div>
+</body>
+</html>

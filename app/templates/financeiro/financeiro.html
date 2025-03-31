@@ -1,0 +1,40 @@
+<!-- Carrega os arquivos estáticos. -->
+{% load static %}
+
+<!-- Head. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'financeiro/financeiro.css' %}">
+    <title>Consultar Financeiro</title>
+</head>
+
+<!-- Body. -->
+<body>
+    <div class="container">
+
+        <!-- Cabeçalho como formulário. -->
+        <form class="container_header" action="" method="POST">
+
+            <!-- Proteção contra ataques CSRF. -->
+            {% csrf_token %}
+
+            <!-- Inputs. -->
+            <input class="container_header_input" placeholder="Raiz do CNPJ">
+            <p style="cursor: default;">ou</p>
+            <input class="container_header_input" placeholder="Código ERP">
+            <input class="container_header_button" type="submit" value="Consultar">
+        </form>
+
+        <!-- Corpo. -->
+        <div class="container_body">
+            <div class="container_body_dados"></div>
+            <div class="container_body_tabela"></div>
+        </div>
+
+        <!-- Fecha container principal. -->
+    </div>
+</body>
+</html>
