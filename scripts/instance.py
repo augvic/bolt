@@ -2,7 +2,7 @@
 
 # ~~ Imports.
 from fastapi import FastAPI
-from . import library
+from . import utilitarios
 import time
 import threading
 
@@ -10,7 +10,7 @@ import threading
 
 # ~~ Criando server e instância do webdriver.
 app = FastAPI()
-driver = library.navegador_instanciar()
+driver = utilitarios.navegador_instanciar()
 driver.get("http://127.0.0.1:8000")
 
 # ================================================== #
@@ -23,7 +23,7 @@ def monitorar_webdriver():
             driver.title
         except:
             driver.quit()
-            driver = library.navegador_instanciar()
+            driver = utilitarios.navegador_instanciar()
             driver.get("http://127.0.0.1:8000")
         time.sleep(5)
 

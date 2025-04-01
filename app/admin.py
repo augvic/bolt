@@ -90,7 +90,7 @@ class PedidoLogsAdmin(admin.ModelAdmin):
 # ================================================== #
 
 # ~~ Tabelas para aparecer no admin.
-admin.site.register(Comercial)
+admin.site.register(Comercial, ComercialAdmin)
 admin.site.register(DatabaseAuth, DatabaseAuthAdmin)
 admin.site.register(PedidoDados, PedidoDadosAdmin)
 admin.site.register(PedidoRemessas, PedidoRemessasAdmin)
