@@ -1,8 +1,15 @@
 # ================================================== #
 
+# ~~ Subindo para raiz do projeto.
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# ================================================== #
+
 # ~~ Bibliotecas.
-import pandas_tools
-import excel
+import scripts.pandas_tools as pandas_tools
+import scripts.excel as excel
 import pandas
 import os
 import requests
@@ -21,7 +28,8 @@ from rich.table import Table
 # ================================================== #
 
 # ~~ Variáveis de ambiente.
-load_dotenv()
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv(dotenv_path)
 
 # ================================================== #
 

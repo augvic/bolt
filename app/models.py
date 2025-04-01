@@ -118,3 +118,34 @@ class PedidoLogs(models.Model):
         return self.pedido
 
 # ================================================== #
+
+# ~~ Modelo contendo os dados financeiros de clientes.
+class DadosFinaceirosClientes(models.Model):
+
+    # ~~ Atributos.
+    raiz_cnpj = models.CharField(max_length=200, primary_key=True)
+    vencimento_limite = models.DateField()
+    valor_limite = models.CharField(max_length=200)
+    valor_em_aberto = models.CharField(max_length=200)
+    margem = models.CharField(max_length=200)
+    nfs_vencidas = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.raiz_cnpj
+
+# ================================================== #
+
+# ~~ Modelo contendo os pedidos e valores pendentes.
+class PedidosPendentes(models.Model):
+
+    # ~~ Atributos.
+    raiz_cnpj = models.CharField(max_length=200)
+    pedido = models.CharField(max_length=200)
+    valor = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.raiz_cnpj
+
+# ================================================== #

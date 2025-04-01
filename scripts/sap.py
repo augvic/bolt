@@ -1,9 +1,16 @@
 # ================================================== #
 
+# ~~ Subindo para raiz do projeto.
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# ================================================== #
+
 # ~~ Bibliotecas.
 import pandas
 import win32com.client
-import utilitarios
+import scripts.utilitarios as utilitarios
 from datetime import datetime
 
 # ================================================== #

@@ -1,8 +1,15 @@
 # ================================================== #
 
+# ~~ Subindo para raiz do projeto.
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# ================================================== #
+
 # ~~ Imports.
 from fastapi import FastAPI
-from . import utilitarios
+import scripts.utilitarios as utilitarios
 import time
 import threading
 

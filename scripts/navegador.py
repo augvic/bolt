@@ -1,8 +1,15 @@
 # ================================================== #
 
+# ~~ Subindo para raiz do projeto.
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# ================================================== #
+
 # ~~ Bibliotecas.
 import time
-import utilitarios
+import scripts.utilitarios as utilitarios
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys

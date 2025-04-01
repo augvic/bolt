@@ -89,6 +89,28 @@ class PedidoLogsAdmin(admin.ModelAdmin):
 
 # ================================================== #
 
+# ~~ Filtros da tabela DadosFinaceirosClientesAdmin.
+class DadosFinaceirosClientesAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("raiz_cnpj", "vencimento_limite", "valor_limite", "valor_em_aberto", "margem")
+
+    # ~~ Campo de busca.
+    search_fields = (["raiz_cnpj"])
+
+# ================================================== #
+
+# ~~ Filtros da tabela PedidosPendentes.
+class PedidosPendentesAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("raiz_cnpj", "pedido", "valor")
+
+    # ~~ Campo de busca.
+    search_fields = ("raiz_cnpj", "pedido")
+
+# ================================================== #
+
 # ~~ Tabelas para aparecer no admin.
 admin.site.register(Comercial, ComercialAdmin)
 admin.site.register(DatabaseAuth, DatabaseAuthAdmin)
@@ -97,5 +119,7 @@ admin.site.register(PedidoRemessas, PedidoRemessasAdmin)
 admin.site.register(PedidoDts, PedidoDtsAdmin)
 admin.site.register(PedidoNfs, PedidoNfsAdmin)
 admin.site.register(PedidoLogs, PedidoLogsAdmin)
+admin.site.register(DadosFinaceirosClientes, DadosFinaceirosClientesAdmin)
+admin.site.register(PedidosPendentes, PedidosPendentesAdmin)
 
 # ================================================== #

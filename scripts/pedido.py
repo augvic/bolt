@@ -1,14 +1,23 @@
 # ================================================== #
 
+# ~~ Subindo para raiz do projeto.
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# ================================================== #
+
 # ~~ Bibliotecas.
 import time
-import os
-import pandas_tools
+import scripts.sap as sap
+import scripts.utilitarios as utilitarios
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
+from app.models import *
+from django.shortcuts import get_object_or_404
 
 # ================================================== #
 
@@ -88,7 +97,10 @@ def coletar_condição_pagamento(driver: webdriver.Chrome) -> str:
     """
 
     # ~~ Coleta condição de pagamento.
-    condição_pagamento = driver.find_element(By.XPATH, value="//label[@for='payment_slip_installments_description']/following-sibling::div[@class='col-md-12']").text
+    try:
+        condição_pagamento = driver.find_element(By.XPATH, value="//label[@for='payment_slip_installments_description']/following-sibling::div[@class='col-md-12']").text
+    except:
+        condição_pagamento = driver.find_element(By.XPATH, value="//label[@for='payment_card_installments_description']/following-sibling::div[@class='col-md-12']").text
 
     # ~~ Retorna a condição de pagamento.
     return condição_pagamento
@@ -265,22 +277,22 @@ def coletar_codigo_erp(driver: webdriver.Chrome) -> str:
     - driver (webdriver.Chrome)
     
     Retorna:
-    - código_erp (str)
+    - codigo_erp (str)
     
     Exceções:
     - "Cliente sem código ERP.": Quando não há código ERP cadastrado no SAP, não aparece na página do pedido.
     """
 
     # ~~ Coleta razão social.
-    código_erp = driver.find_element(By.XPATH, value="//label[@for='client_name_corporate']/following-sibling::div[@class='col-md-12']").text
+    codigo_erp = driver.find_element(By.XPATH, value="//label[@for='client_name_corporate']/following-sibling::div[@class='col-md-12']").text
     try:
-        código_erp = str(código_erp).split(" (")[1]
-        código_erp = str(código_erp).replace(")", "")
+        codigo_erp = str(codigo_erp).split(" (")[1]
+        codigo_erp = str(codigo_erp).replace(")", "")
     except:
         raise Exception("Cliente sem código ERP.")
 
     # ~~ Retorna.
-    return código_erp
+    return codigo_erp
 
 # ================================================== #
 
@@ -292,15 +304,20 @@ def coletar_vendedor(driver: webdriver.Chrome) -> str:
     - Coleta vendedor do pedido. Página do pedido deve estar aberta.
     
     Parâmetros:
-    - driver (webdriver.Chrome)
+    - (driver: webdriver.Chrome)
     
     Retorna:
-    - vendedor (str)
+    - (vendedor: str):
+        - "{vendedor}"
+        - "-"
     
     Exceções:
     - ===
     """
     
+    # ~~ Valor padrão de vendedor.
+    vendedor = "-"
+
     # ~~ Coleta vendedor.
     cnpj = driver.find_element(By.XPATH, value="//label[@for='client_cnpj']/following-sibling::div[@class='col-md-12']").text 
     driver.get("https://www.revendedorpositivo.com.br/admin/clients")
@@ -308,14 +325,15 @@ def coletar_vendedor(driver: webdriver.Chrome) -> str:
     pesquisa.clear()
     pesquisa.send_keys(cnpj)
     pesquisa.send_keys(Keys.ENTER)
+    time.sleep(3)
     try:
         editar = driver.find_elements(By.XPATH, value="//table/tbody/tr")[1].find_elements(By.XPATH, value=".//td")[10].find_element(By.XPATH, value=".//a") 
         editar = editar.get_attribute("href")
         driver.get(str(editar)) 
-        time.sleep(2)
+        time.sleep(3)
         carteira = driver.find_element(By.XPATH, value="//section").find_elements(By.XPATH, value=".//ul/li")[10].find_element(By.XPATH, value=".//a")
         carteira.click()
-        carteira = driver.find_element(By.XPATH, value="(//select[@class='form-control select-multiple char_side2char_side-selected-options char_side2char_side-select-taller'])[1]")
+        carteira = driver.find_element(By.XPATH, value="(//select[@class='form-control select-multiple side2side-selected-options side2side-select-taller'])[1]")
         carteira = Select(carteira)
         carteira = carteira.options
         vendedor = carteira[0].text
@@ -330,6 +348,7 @@ def coletar_vendedor(driver: webdriver.Chrome) -> str:
             ativo = driver.find_element(By.ID, value="active-1")
             ativo.click()
             pesquisa.send_keys(Keys.ENTER)
+            time.sleep(3)
             editar = driver.find_elements(By.XPATH, value="//table/tbody/tr")[1].find_element(By.XPATH, value="//td[contains(@data-title, 'Ações')]/a").get_attribute("href")
             driver.get(str(editar))
             cnpj = driver.find_element(By.ID, value="resale_cnpj").get_attribute("value")
@@ -337,14 +356,15 @@ def coletar_vendedor(driver: webdriver.Chrome) -> str:
             pesquisa = driver.find_element(By.ID, value="keyword")
             pesquisa.clear() 
             pesquisa.send_keys(cnpj) 
-            pesquisa.send_keys(Keys.ENTER) 
+            pesquisa.send_keys(Keys.ENTER)
+            time.sleep(3)
             editar = driver.find_elements(By.XPATH, value="//table/tbody/tr")[1].find_elements(By.XPATH, value=".//td")[10].find_element(By.XPATH, value=".//a") 
             editar = editar.get_attribute("href") 
             driver.get(str(editar)) 
-            time.sleep(2)
+            time.sleep(3)
             carteira = driver.find_element(By.XPATH, value="//section").find_elements(By.XPATH, value=".//ul/li")[10].find_element(By.XPATH, value=".//a") 
             carteira.click() 
-            carteira = driver.find_element(By.XPATH, value="(//select[@class='form-control select-multiple char_side2char_side-selected-options char_side2char_side-select-taller'])[1]") 
+            carteira = driver.find_element(By.XPATH, value="(//select[@class='form-control select-multiple side2side-selected-options side2side-select-taller'])[1]") 
             carteira = Select(carteira) 
             carteira = carteira.options 
             vendedor = carteira[0].text 
@@ -358,6 +378,7 @@ def coletar_vendedor(driver: webdriver.Chrome) -> str:
             inativo = driver.find_element(By.ID, value="active-0")
             inativo.click()
             pesquisa.send_keys(Keys.ENTER)
+            time.sleep(3)
             editar = driver.find_elements(By.XPATH, value="//table/tbody/tr")[1].find_element(By.XPATH, value="//td[contains(@data-title, 'Ações')]/a").get_attribute("href")
             driver.get(str(editar))
             cnpj = driver.find_element(By.ID, value="resale_cnpj").get_attribute("value")
@@ -365,14 +386,15 @@ def coletar_vendedor(driver: webdriver.Chrome) -> str:
             pesquisa = driver.find_element(By.ID, value="keyword")
             pesquisa.clear() 
             pesquisa.send_keys(cnpj) 
-            pesquisa.send_keys(Keys.ENTER) 
+            pesquisa.send_keys(Keys.ENTER)
+            time.sleep(3)
             editar = driver.find_elements(By.XPATH, value="//table/tbody/tr")[1].find_elements(By.XPATH, value=".//td")[10].find_element(By.XPATH, value=".//a") 
             editar = editar.get_attribute("href") 
             driver.get(str(editar)) 
-            time.sleep(2)
+            time.sleep(3)
             carteira = driver.find_element(By.XPATH, value="//section").find_elements(By.XPATH, value=".//ul/li")[10].find_element(By.XPATH, value=".//a") 
             carteira.click() 
-            carteira = driver.find_element(By.XPATH, value="(//select[@class='form-control select-multiple char_side2char_side-selected-options char_side2char_side-select-taller'])[1]") 
+            carteira = driver.find_element(By.XPATH, value="(//select[@class='form-control select-multiple side2side-selected-options side2side-select-taller'])[1]") 
             carteira = Select(carteira)
             carteira = carteira.options
             vendedor = carteira[0].text
@@ -383,31 +405,31 @@ def coletar_vendedor(driver: webdriver.Chrome) -> str:
 # ================================================== #
 
 # ~~ Retorna escritório do vendedor.
-def coletar_escritório(vendedor: str) -> int:
+def coletar_escritório(vendedor: str) -> str:
 
     """
     Resumo:
     - Retorna escritório do vendedor.
 
     Parâmetros:
-    - vendedor (str)
+    - (vendedor: str)
 
     Retorna:
-    - escritorio (int)
+    - (escritorio: str):
+        - "{escritorio}"
+        - "-"
 
     Exceções:
-    - "Vendedor {vendedor} não encontrado na lista."
+    - ===
     """
 
-    # ~~ Cria DataFrame.
-    df = pandas_tools.criar_df_planilha(diretorio_planilha=os.path.dirname(os.path.abspath(__file__)) + r"\comercial.xlsx", aba="COMERCIAL", linha_cabecalho=1, colunas_nomes=["NOME", "ESCRITÓRIO"])
-
-    # ~~ Localiza vendedor.
-    linha = df.index[df["NOME"] == str(vendedor)].tolist()
-
-    # ~~ Coleta escritório.
-    escritorio = df.iloc[linha]["ESCRITÓRIO"].values
-    escritorio = int(escritorio)
+    # ~~ Coleta escritório do banco de dados.
+    escritorio_query = Comercial.objects.filter(nome=vendedor).values_list("escritorio", flat=True)
+    if not escritorio_query:
+        escritorio = "-"
+    else:
+        for i in escritorio_query:
+            escritorio = str(i)
 
     # ~~ Retorna escritório.
     return escritorio
@@ -422,23 +444,30 @@ def coletar_dados_completos(driver: webdriver.Chrome, pedido: int) -> dict:
     - Coleta dados do pedido no site.
     
     Parâmetros:
-    - driver (webdriver.Chrome)
-    - pedido (int): Nº do pedido.
+    - (driver: webdriver.Chrome)
+    - (pedido: int)
     
     Retorna:
-    - dados_pedido (dict): Dicionário com os dados abaixo. 
-        - ["pedido"]
-        - ["data"]
-        - ["condição_pagamento"]
-        - ["razão_social"]
-        - ["cnpj"]
-        - ["código_erp"]
-        - ["valor_pedido"]
-        - ["status"]
-        - ["vendedor"]
+    - (dados_pedido: dict): 
+        - (pedido: str)
+        - (data: datetime)
+        - (condição_pagamento: str)
+        - (razão_social: str)
+        - (cnpj: str)
+        - (codigo_erp: str):
+            - "{codigo_erp}"
+            - "-"
+        - (valor_pedido: float)
+        - (status: str)
+        - (vendedor: str):
+            - "{vendedor}"
+            - "-"
+        - (escritorio: str):
+            - "{escritorio}"
+            - "-"
     
     Exceções:
-    - "Pedido {pedido} não inserido no site ainda."
+    - ("Pedido {pedido} não inserido no site ainda.")
     """
 
     # ~~ Cria dicionário para os dados do pedido.
@@ -448,7 +477,7 @@ def coletar_dados_completos(driver: webdriver.Chrome, pedido: int) -> dict:
     acessar(driver=driver, pedido=pedido)
 
     # ~~ Coleta dados do pedido.
-    dados_pedido["pedido"] = pedido
+    dados_pedido["pedido"] = str(pedido)
     dados_pedido["data"] = coletar_data(driver=driver)
     dados_pedido["forma_pagamento"] = coletar_forma_pagamento(driver=driver)
     dados_pedido["condição_pagamento"] = coletar_condição_pagamento(driver=driver)
@@ -461,8 +490,129 @@ def coletar_dados_completos(driver: webdriver.Chrome, pedido: int) -> dict:
     dados_pedido["valor_pedido"] = coletar_valor(driver=driver)
     dados_pedido["status"] = coletar_status(driver=driver)
     dados_pedido["vendedor"] = coletar_vendedor(driver=driver)
+    dados_pedido["escritorio"] = coletar_escritório(dados_pedido["vendedor"])
 
     # ~~ Retorna dados.
     return dados_pedido
+
+# ================================================== #
+
+# ~~ Faz análise de crédito do pedido.
+def analise_crédito(dados_pedido: dict, printar_dados: bool = False, log_path: str = None) -> dict:
+
+    """
+    Resumo:
+    - Faz análise de crédito do pedido.
+    
+    Parâmetros:
+    - (dados_pedido: dict):
+        -()
+    
+    Retorna:
+    - (resposta_analise: dict):
+        - (mensagem: str)
+        - (status: str):
+            - "LIBERADO"
+            - "NÃO LIBERADO"
+    
+    Exceções:
+    - ===
+    """
+
+    # ~~ Cria dicionário para os dados da análise.
+    resposta_análise = {}
+
+    # ~~ Coleta dados financeiros do cliente.
+    sessao_sap = sap.instanciar()
+    dados_financeiros = sap.coletar_dados_financeiros_cliente(sap=sessao_sap, raiz_cnpj=dados_pedido["cnpj"][:8], printar_dados=printar_dados, log_path=log_path)
+    sap.ir_tela_inicial(sessao_sap)
+
+    # ~~ Acessa database para verificar se há valores de pedidos pendentes.
+    valores_pendentes = PedidosPendentes.objects.filter(raiz_cnpj=dados_pedido["cnpj"][:8]).values_list("valor", flat=True)
+
+    # ~~ Atualiza valor da margem de acordo com os valores pendentes.
+    if valores_pendentes:
+        valores_pendentes_float = []
+        for valor in valores_pendentes:
+            valores_pendentes_float.append(float(valor))
+        valor_pendente_total = sum(valores_pendentes_float)
+        margem = dados_financeiros["margem"] - valor_pendente_total
+    else:
+        margem = dados_financeiros["margem"]
+
+    # ~~ Importa dados no database.
+    cliente = DadosFinaceirosClientes.objects.filter(raiz_cnpj=dados_pedido["cnpj"][:8]).first()
+    if cliente:
+        cliente.vencimento_limite = dados_financeiros["vencimento"]
+        cliente.valor_limite = dados_financeiros["limite"]
+        cliente.valor_em_aberto = dados_financeiros["em_aberto"]
+        cliente.margem = margem
+        cliente.nfs_vencidas = dados_financeiros["nfs_vencidas"]
+        cliente.save()
+    else:
+        novo_cliente = DadosFinaceirosClientes(
+            raiz_cnpj=dados_pedido["cnpj"][:8],
+            vencimento_limite = dados_financeiros["vencimento"],
+            valor_limite = dados_financeiros["limite"],
+            valor_em_aberto = dados_financeiros["em_aberto"],
+            margem = margem,
+            nfs_vencidas = dados_financeiros["nfs_vencidas"]
+        )
+        novo_cliente.save()
+
+    # ~~ Inicia análise definindo valores padrão.
+    limite_ativo = True
+    motivos = ""
+    status = "LIBERADO"
+
+    # ~~ Verifica se possui limite ativo.
+    if dados_financeiros["limite"] == "Sem limite ativo." or dados_financeiros["vencimento"] == "Sem limite ativo.":
+        motivos += "\n- Sem limite de crédito ativo."
+        status = "NÃO LIBERADO"
+        limite_ativo = False
+
+    # ~~ Verifica vencimento do limite.
+    elif dados_financeiros["vencimento"] < datetime.now().date():
+        motivos += f"\n- Limite vencido em {datetime.strftime(dados_financeiros["vencimento"], "%d/%m/%Y")}."
+        status = "NÃO LIBERADO"
+        limite_ativo = False
+
+    # ~~ Verifica se pedido está dentro da margem.
+    if limite_ativo == True:
+        if margem < dados_pedido["valor_pedido"]:
+            motivos += f"\n- Valor do pedido excede a margem disponível. Valor do pedido: {f"R$ {dados_pedido["valor_pedido"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")} / margem livre: {f"R$ {margem:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}."
+            status = "NÃO LIBERADO"
+
+    # ~~ Verifica se possui notas vencidas.
+    if dados_financeiros["nfs_vencidas"] != "Sem vencidos.":
+        motivos += f"\n- Possui vencidos: {dados_financeiros["nfs_vencidas"]}."
+        status = "NÃO LIBERADO"
+
+    # ~~ Verifica se pode ser liberado. Se puder, importa seu valor como pendente no database.
+    if status == "LIBERADO":
+        resposta_análise["mensagem"] = f"Pedido {dados_pedido["pedido"]} liberado."
+        resposta_análise["status"] = "LIBERADO"
+        pedido_liberado = PedidosPendentes.objects.filter(pedido=dados_pedido["pedido"]).first()
+        if not pedido_liberado:
+            valor_pendente_novo = PedidosPendentes(
+                raiz_cnpj=dados_pedido["cnpj"][:8],
+                pedido=dados_pedido["pedido"],
+                valor=dados_pedido["valor_pedido"]
+            )
+            valor_pendente_novo.save()
+        margem_atualizada = margem - dados_pedido["valor_pedido"]
+        cliente.margem = margem_atualizada
+        cliente.save()
+    else:
+        resposta_análise["mensagem"] = f"Pedido {dados_pedido["pedido"]} recusado:{motivos}"
+        resposta_análise["status"] = "NÃO LIBERADO"
+
+    # ~~ Printa dados.
+    if printar_dados == True:
+        utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {dados_pedido["valor_pedido"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+        utilitarios.printar_mensagem(mensagem=resposta_análise["mensagem"], char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+
+    # ~~ Retorna com dados de liberação.
+    return resposta_análise
 
 # ================================================== #
