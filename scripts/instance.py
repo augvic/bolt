@@ -1,23 +1,23 @@
 # ================================================== #
 
-# ~~ Subindo para raiz do projeto.
-import sys
+# ~~ Adiciona raiz ao path.
 import os
+import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ================================================== #
 
 # ~~ Imports.
-from fastapi import FastAPI
-import scripts.utilitarios as utilitarios
-import time
+import  time
 import threading
+from fastapi import FastAPI
+from scripts import navegador
 
 # ================================================== #
 
 # ~~ Criando server e instância do webdriver.
 app = FastAPI()
-driver = utilitarios.navegador_instanciar()
+driver = navegador.instanciar()
 driver.get("http://127.0.0.1:8000")
 
 # ================================================== #
@@ -30,7 +30,7 @@ def monitorar_webdriver():
             driver.title
         except:
             driver.quit()
-            driver = utilitarios.navegador_instanciar()
+            driver = navegador.instanciar()
             driver.get("http://127.0.0.1:8000")
         time.sleep(5)
 

@@ -1,8 +1,8 @@
 # ================================================== #
 
-# ~~ Subindo para raiz do projeto.
-import sys
+# ~~ Adiciona raiz ao path.
 import os
+import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ================================================== #
@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # ~~ Bibliotecas.
 import pandas
 import win32com.client
-import scripts.utilitarios as utilitarios
+from scripts import utilitarios
 from datetime import datetime
 
 # ================================================== #

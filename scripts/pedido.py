@@ -1,22 +1,29 @@
 # ================================================== #
 
-# ~~ Subindo para raiz do projeto.
-import sys
+# ~~ Adiciona raiz ao path.
 import os
+import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# ================================================== #
+
+# ~~ Inicia setup Django.
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
+django.setup()
 
 # ================================================== #
 
 # ~~ Bibliotecas.
 import time
-import scripts.sap as sap
-import scripts.utilitarios as utilitarios
+from scripts import sap
+from scripts import utilitarios
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from app.models import *
+from app.models import Comercial, PedidosPendentes, DadosFinaceirosClientes
 from django.shortcuts import get_object_or_404
 
 # ================================================== #
@@ -483,6 +490,7 @@ def coletar_dados_completos(driver: webdriver.Chrome, pedido: int) -> dict:
     dados_pedido["condição_pagamento"] = coletar_condição_pagamento(driver=driver)
     dados_pedido["razão_social"] = coletar_razao_social(driver=driver)
     dados_pedido["cnpj"] = coletar_cnpj(driver=driver)
+    dados_pedido["raiz_cnpj"] = dados_pedido["cnpj"][:8]
     try:
         dados_pedido["código_erp"] = coletar_codigo_erp(driver=driver)
     except:
@@ -498,7 +506,7 @@ def coletar_dados_completos(driver: webdriver.Chrome, pedido: int) -> dict:
 # ================================================== #
 
 # ~~ Faz análise de crédito do pedido.
-def analise_crédito(dados_pedido: dict, printar_dados: bool = False, log_path: str = None) -> dict:
+def analise_credito(dados_pedido: dict, printar_dados: bool = False, log_path: str = None) -> dict:
 
     """
     Resumo:
@@ -506,7 +514,11 @@ def analise_crédito(dados_pedido: dict, printar_dados: bool = False, log_path: 
     
     Parâmetros:
     - (dados_pedido: dict):
-        -()
+        - (raiz_cnpj: str)
+        - (pedido: str)
+        - (valor_pedido: float)
+    - (printar_dados: bool): Padrão é False.
+    - (log_path: str): Padrão é None.
     
     Retorna:
     - (resposta_analise: dict):
@@ -516,7 +528,7 @@ def analise_crédito(dados_pedido: dict, printar_dados: bool = False, log_path: 
             - "NÃO LIBERADO"
     
     Exceções:
-    - ===
+    - ("Não foi encontrado tela SAP disponível para conexão.")
     """
 
     # ~~ Cria dicionário para os dados da análise.
@@ -524,39 +536,48 @@ def analise_crédito(dados_pedido: dict, printar_dados: bool = False, log_path: 
 
     # ~~ Coleta dados financeiros do cliente.
     sessao_sap = sap.instanciar()
-    dados_financeiros = sap.coletar_dados_financeiros_cliente(sap=sessao_sap, raiz_cnpj=dados_pedido["cnpj"][:8], printar_dados=printar_dados, log_path=log_path)
+    dados_financeiros = sap.coletar_dados_financeiros_cliente(sap=sessao_sap, raiz_cnpj=dados_pedido["raiz_cnpj"], printar_dados=printar_dados, log_path=log_path)
     sap.ir_tela_inicial(sessao_sap)
 
     # ~~ Acessa database para verificar se há valores de pedidos pendentes.
-    valores_pendentes = PedidosPendentes.objects.filter(raiz_cnpj=dados_pedido["cnpj"][:8]).values_list("valor", flat=True)
+    valores_pendentes = PedidosPendentes.objects.filter(raiz_cnpj=dados_pedido["raiz_cnpj"]).values_list("valor", flat=True)
 
     # ~~ Atualiza valor da margem de acordo com os valores pendentes.
-    if valores_pendentes:
-        valores_pendentes_float = []
-        for valor in valores_pendentes:
-            valores_pendentes_float.append(float(valor))
-        valor_pendente_total = sum(valores_pendentes_float)
-        margem = dados_financeiros["margem"] - valor_pendente_total
+    if dados_financeiros["margem"] != "Sem margem disponível.":
+        if valores_pendentes:
+            valores_pendentes_float = []
+            for valor in valores_pendentes:
+                valores_pendentes_float.append(float(valor))
+            valor_pendente_total = sum(valores_pendentes_float)
+            margem = dados_financeiros["margem"] - valor_pendente_total
+        else:
+            margem = dados_financeiros["margem"]
     else:
-        margem = dados_financeiros["margem"]
+        margem = "Sem margem disponível."
+
+    # ~~ Verifica se vencimento é data ou não e converte ele caso seja.
+    if dados_financeiros["vencimento"] == "Sem limite ativo.":
+        vencimento = "Sem limite ativo."
+    else:
+        vencimento = datetime.strftime(dados_financeiros["vencimento"], "%d/%m/%Y")
 
     # ~~ Importa dados no database.
-    cliente = DadosFinaceirosClientes.objects.filter(raiz_cnpj=dados_pedido["cnpj"][:8]).first()
+    cliente = DadosFinaceirosClientes.objects.filter(raiz_cnpj=dados_pedido["raiz_cnpj"]).first()
     if cliente:
-        cliente.vencimento_limite = dados_financeiros["vencimento"]
-        cliente.valor_limite = dados_financeiros["limite"]
-        cliente.valor_em_aberto = dados_financeiros["em_aberto"]
-        cliente.margem = margem
-        cliente.nfs_vencidas = dados_financeiros["nfs_vencidas"]
+        cliente.vencimento_limite = vencimento
+        cliente.valor_limite = str(dados_financeiros["limite"])
+        cliente.valor_em_aberto = str(dados_financeiros["em_aberto"])
+        cliente.margem = str(margem)
+        cliente.nfs_vencidas = str(dados_financeiros["nfs_vencidas"])
         cliente.save()
     else:
         novo_cliente = DadosFinaceirosClientes(
-            raiz_cnpj=dados_pedido["cnpj"][:8],
-            vencimento_limite = dados_financeiros["vencimento"],
-            valor_limite = dados_financeiros["limite"],
-            valor_em_aberto = dados_financeiros["em_aberto"],
-            margem = margem,
-            nfs_vencidas = dados_financeiros["nfs_vencidas"]
+            raiz_cnpj=str(dados_pedido["raiz_cnpj"]),
+            vencimento_limite=vencimento,
+            valor_limite=str(dados_financeiros["limite"]),
+            valor_em_aberto=str(dados_financeiros["em_aberto"]),
+            margem=str(margem),
+            nfs_vencidas=str(dados_financeiros["nfs_vencidas"])
         )
         novo_cliente.save()
 
@@ -588,20 +609,20 @@ def analise_crédito(dados_pedido: dict, printar_dados: bool = False, log_path: 
         motivos += f"\n- Possui vencidos: {dados_financeiros["nfs_vencidas"]}."
         status = "NÃO LIBERADO"
 
-    # ~~ Verifica se pode ser liberado. Se puder, importa seu valor como pendente no database.
+    # ~~ Verifica se pode ser liberado. Se puder, importa seu valor como pendente no database e atualiza margem do cliente.
     if status == "LIBERADO":
         resposta_análise["mensagem"] = f"Pedido {dados_pedido["pedido"]} liberado."
         resposta_análise["status"] = "LIBERADO"
         pedido_liberado = PedidosPendentes.objects.filter(pedido=dados_pedido["pedido"]).first()
         if not pedido_liberado:
             valor_pendente_novo = PedidosPendentes(
-                raiz_cnpj=dados_pedido["cnpj"][:8],
+                raiz_cnpj=dados_pedido["raiz_cnpj"],
                 pedido=dados_pedido["pedido"],
                 valor=dados_pedido["valor_pedido"]
             )
             valor_pendente_novo.save()
         margem_atualizada = margem - dados_pedido["valor_pedido"]
-        cliente.margem = margem_atualizada
+        cliente.margem = str(margem_atualizada)
         cliente.save()
     else:
         resposta_análise["mensagem"] = f"Pedido {dados_pedido["pedido"]} recusado:{motivos}"
@@ -614,5 +635,48 @@ def analise_crédito(dados_pedido: dict, printar_dados: bool = False, log_path: 
 
     # ~~ Retorna com dados de liberação.
     return resposta_análise
+
+# ================================================== #
+
+# ~~ Remove do database o valor de pedido pendente.
+def remover_pendente(numero_pedido: str, adicionar_ao_em_aberto: bool) -> dict:
+
+    """
+    Resumo:
+    - Remove do database o valor de pedido pendente.
+    
+    Parâmetros:
+    - (pedido: str):
+    
+    Retorna:
+    - ===
+    
+    Exceções:
+    - ===
+    """
+
+    # ~~ Coleta pedido pendente.
+    pedido = get_object_or_404(PedidosPendentes, pedido=numero_pedido)
+
+    # ~~ Coleta cliente.
+    cliente = get_object_or_404(DadosFinaceirosClientes, raiz_cnpj=pedido.raiz_cnpj)
+
+    # ~~ Coleta valores.
+    margem = float(cliente.margem)
+    valor_pedido = float(pedido.valor)
+    if cliente.valor_em_aberto != "Sem valores em aberto.":
+        em_aberto = float(cliente.valor_em_aberto)
+    else:
+        em_aberto = 0
+
+    # ~~ Se for para adicionar o valor ao "em aberto".
+    if adicionar_ao_em_aberto == True:
+        cliente.valor_em_aberto = em_aberto + valor_pedido
+    else:
+        cliente.margem = margem + valor_pedido
+    cliente.save()
+
+    # ~~ Deleta pedido.
+    pedido.delete()
 
 # ================================================== #

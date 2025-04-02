@@ -1,15 +1,13 @@
 # ================================================== #
 
-# ~~ Subindo para raiz do projeto.
-import sys
+# ~~ Adiciona raiz ao path.
 import os
+import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ================================================== #
 
 # ~~ Bibliotecas.
-import scripts.pandas_tools as pandas_tools
-import scripts.excel as excel
 import pandas
 import os
 import requests
@@ -24,12 +22,13 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from rich.console import Console
 from rich.table import Table
+from scripts import pandas_tools
+from scripts import excel
 
 # ================================================== #
 
 # ~~ Variáveis de ambiente.
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path)
+load_dotenv()
 
 # ================================================== #
 

@@ -124,7 +124,7 @@ class DadosFinaceirosClientes(models.Model):
 
     # ~~ Atributos.
     raiz_cnpj = models.CharField(max_length=200, primary_key=True)
-    vencimento_limite = models.DateField()
+    vencimento_limite = models.CharField(max_length=200)
     valor_limite = models.CharField(max_length=200)
     valor_em_aberto = models.CharField(max_length=200)
     margem = models.CharField(max_length=200)
@@ -141,7 +141,7 @@ class PedidosPendentes(models.Model):
 
     # ~~ Atributos.
     raiz_cnpj = models.CharField(max_length=200)
-    pedido = models.CharField(max_length=200)
+    pedido = models.CharField(max_length=200, primary_key=True)
     valor = models.CharField(max_length=200)
 
     # ~~ Retorno no admin.
