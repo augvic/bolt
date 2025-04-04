@@ -512,6 +512,3 @@ def ir_tela_inicial(sap: object) -> None:
                 sap.findById("wnd[0]").sendVKey(3)
 
 # ================================================== #
-
-sap = instanciar()
-coletar_dados_financeiros_cliente(sap, "42491006", printar_dados=True)

@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ================================================== #
 
@@ -31,8 +31,9 @@ class ArquivoNaoEncontradoError(ExcelError):
     # ~~ Erro.
     def __init__(self, caminho):
 
-        """Erro para quando arquivo do Excel não for encontrado."""
+        """Quando arquivo do Excel não for encontrado."""
 
+        # ~~ Raise.
         super().__init__(f"Arquivo Excel não encontrado no caminho: '{caminho}'.")
 
 # ================================================== #
@@ -45,8 +46,9 @@ class AbaNaoEncontradaError(ExcelError):
     # ~~ Erro.
     def __init__(self, aba, planilha):
 
-        """Erro para quando uma aba especificada não existe na planilha."""
+        """Quando uma aba especificada não existe na planilha."""
 
+        # ~~ Raise.
         super().__init__(f"Aba '{aba}' não existe na planilha '{planilha}'")
 
 # ================================================== #
@@ -59,8 +61,9 @@ class ColunaNaoEncontradaError(ExcelError):
     # ~~ Erro.
     def __init__(self, coluna, aba):
 
-        """Erro para quando uma coluna especificada não existe na aba."""
+        """Quando uma coluna especificada não existe na aba."""
 
+        # ~~ Raise.
         super().__init__(f"Coluna '{coluna}' não existe na aba '{aba}'")
 
 # ================================================== #
@@ -73,8 +76,9 @@ class SalvarPlanilhaError(ExcelError):
     # ~~ Erro.
     def __init__(self, planilha):
 
-        """Erro quando não é possível salvar planilha."""
+        """Quando não é possível salvar planilha."""
 
+        # ~~ Raise.
         super().__init__(f"Não foi possível salvar a planilha {planilha}")
 
 # ================================================== #
@@ -85,10 +89,11 @@ class PlanilhaReferenciadaError(ExcelError):
     """Subclasse para erros do Excel."""
 
     # ~~ Erro.
-    def __init__(self, planilha):
+    def __init__(self):
 
-        """Erro para quando não há planilha referenciada."""
+        """Quando não há planilha referenciada."""
 
+        # ~~ Raise.
         super().__init__(f"Sem planilha referenciada.")
 
 # ================================================== #
@@ -140,8 +145,8 @@ class Excel:
         - ===
 
         Exceções:
-        - (ArquivoNaoEncontradoError)
-        - (AbaNaoEncontradaError)
+        - (ArquivoNaoEncontradoError): Quando arquivo do Excel não for encontrado.
+        - (AbaNaoEncontradaError): Quando uma aba especificada não existe na planilha.
         """
 
         # ~~ Dicionário para armazenar planilha e abas.
@@ -186,8 +191,8 @@ class Excel:
         - ===
         
         Exceções:
-        - (ColunaNaoEncontradaError)
-        - (PlanilhaReferenciadaError)
+        - (ColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
+        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
         """
 
         # ~~ Se não tiver planilha referenciada.
@@ -232,8 +237,8 @@ class Excel:
         - (dado: any): Pode ser str, int, float, datetime, etc.
 
         Exceções:
-        - (ColunaNaoEncontradaError)
-        - (PlanilhaReferenciadaError)
+        - (ColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
+        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
         """
 
         # ~~ Se não tiver planilha referenciada.
@@ -278,8 +283,8 @@ class Excel:
         - ===
         
         Exceções:
-        - (SalvarPlanilhaError)
-        - (PlanilhaReferenciadaError)
+        - (SalvarPlanilhaError): Quando não é possível salvar planilha.
+        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
         """
 
         # ~~ Se não tiver planilha referenciada.
@@ -320,9 +325,9 @@ class Excel:
         - (ultima_linha: int)
 
         Exceções:
-        - (AbaNaoEncontradaError)
-        - (ColunaNaoEncontradaError)
-        - (PlanilhaReferenciadaError)
+        - (AbaNaoEncontradaError): Quando uma aba especificada não existe na planilha.
+        - (ColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
+        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
         """
 
         # ~~ Se não tiver planilha referenciada.

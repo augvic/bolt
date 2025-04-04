@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ================================================== #
 
@@ -17,6 +17,31 @@ from selenium.webdriver.chrome.options import Options
 
 # ================================================== #
 
+# ~~ Classe base de erros relacionados ao Navegador.
+class NavegadorError(Exception):
+
+    """Classe base para erros do Navegador."""
+
+    # ~~ Pass.
+    pass
+
+# ================================================== #
+
+# ~~ Classe de erro para objeto não instanciado.
+class NavegadorInstanciaError(NavegadorError):
+
+    """Subclasse de erros do Navegador."""
+
+    # ~~ Erro.
+    def __init__(self):
+
+        """Quando objeto não foi instanciado."""
+
+        # ~~ Raise.
+        super().__init__("Navegador não instanciado.")
+
+# ================================================== #
+
 # ~~ Classe Navegador.
 class Navegador:
 
@@ -25,12 +50,12 @@ class Navegador:
     - Classe que manipula navegador.
 
     Atributos:
-    - (driver: Chrome): Criado ao executar "instanciar_webdriver".
+    - (driver: Chrome): Instância do navegador.
     - (by: By)
     - (keys: Keys)
 
     Métodos:
-    - (instanciar_webdriver): Cria instância do navegador.
+    - (instanciar_webdriver): Cria atributo "driver", instanciando navegador.
     - (monitorar_navegador): Verifica se navegador é fechado e abre ele novamente.
     - (acessar_godeep): Acessa site GoDeep e loga nele.
     """
@@ -102,7 +127,14 @@ class Navegador:
         """
         Resumo:
         - Acessa e loga na GoDeep.
+
+        Exceções:
+        - (NavegadorInstanciaError): Quando objeto não foi instanciado.
         """
+
+        # ~~ Verifica se navegador está instanciado.
+        if self.driver == None:
+            raise NavegadorInstanciaError()
 
         # ~~ Acessando GoDeep e fazendo login.
         self.driver.get(f"https://www.revendedorpositivo.com.br/admin/")
