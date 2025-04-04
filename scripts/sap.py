@@ -321,7 +321,7 @@ def coletar_dados_financeiros_cliente(sap: object, raiz_cnpj: str, printar_dados
 
                         # ~~ Verifica se há data de vencimento prorrogada no campo atribuição.
                         data_vencimento = sap.findById(f"wnd[0]/usr/lbl[9,{linha}]").text
-                        data_vencimento = utilitarios.extrair_data(data_vencimento)
+                        data_vencimento = utilitarios.extrair_data_da_string(data_vencimento)
 
                         # ~~ Tenta converter para objeto datetime. Em caso de sucesso, é porque é uma data de prorrogação. 
                         try:
@@ -512,3 +512,6 @@ def ir_tela_inicial(sap: object) -> None:
                 sap.findById("wnd[0]").sendVKey(3)
 
 # ================================================== #
+
+sap = instanciar()
+coletar_dados_financeiros_cliente(sap, "42491006", printar_dados=True)
