@@ -47,7 +47,7 @@ class Main:
 
     # ================================================== #
 
-    # ~~ Main.
+    # ~~ Iniciar.
     def iniciar(self) -> None:
 
         """

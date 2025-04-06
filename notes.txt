@@ -1,18 +1,24 @@
 # ================================================== #
 
+Comando para iniciar projeto Django:
+|__ python -m django-admin startproject {nome}
+
 Comando para iniciar server:
-|__ python manage.py runserver
+|__ python django_server.py runserver
 
 Comando para migrar ao banco de dados:
-|__ python manage.py makemigrations
-|__ python manage.py migrate
+|__ python django_server.py makemigrations
+|__ python django_server.py migrate
+
+Comando para criar app:
+|__ python django_server.py startapp {nome}
 
 Comando para criar superuser no admin:
-|__ python manage.py migrate
-|__ pythom manage.py createsuperuser
+|__ python django_server.py migrate
+|__ pythom django_server.py createsuperuser
 
 Comando para iniciar server do FastAPI:
-|__ python -m uvicorn main.fastapi:app --host 127.0.0.1 --port 5001
+|__ python -m uvicorn fastapi_server:app --host 127.0.0.1 --port 5001
 
 # ================================================== #
 
@@ -31,7 +37,7 @@ Funcionamento:
         |__ Thread 1 (Servidor FastAPI).
         |__ Thread 2 (Monitoramento do WebDriver).
     Processo 2 (Chrome WebDriver):
-    |__ Subprocessos próprios. 
+    |__ Subprocessos próprios.
         |__ Threads próprias.
 
 # ================================================== #

@@ -56,7 +56,6 @@ class Navegador:
 
     Métodos:
     - (instanciar_webdriver): Cria atributo "driver", instanciando navegador.
-    - (monitorar_navegador): Verifica se navegador é fechado e abre ele novamente.
     - (acessar_godeep): Acessa site GoDeep e loga nele.
     """
 
@@ -99,25 +98,6 @@ class Navegador:
 
         # ~~ Acessa rota principal do server Django.
         self.driver.get("http://127.0.0.1:8000")
-
-    # ================================================== #
-
-    # ~~ Monitora se navegador foi fechado e abre novamente.
-    def monitorar_navegador(self) -> None:
-
-        """
-        Resumo:
-        - Monitora se navegador foi fechado e abre novamente.
-        """
-
-        while True:
-            try:
-                self.driver.title
-            except:
-                self.driver.quit()
-                self.instanciar_webdriver()
-                self.driver.get("http://127.0.0.1:8000")
-            time.sleep(5)
 
     # ================================================== #
 

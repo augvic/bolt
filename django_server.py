@@ -6,27 +6,44 @@ import sys
 
 # ================================================== #
 
-# ~~ Main.
-def main():
-    
-    """Run administrative tasks."""
+# ~~ Classe DjangoServer.
+class DjangoServer:
 
-    # ~~ Manage.
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
-    try:
-        from django.core.management import execute_from_command_line
-    except ImportError as exc:
-        raise ImportError(
-            "Couldn't import Django. Are you sure it's installed and "
-            "available on your PYTHONPATH environment variable? Did you "
-            "forget to activate a virtual environment?"
-        ) from exc
-    execute_from_command_line(sys.argv)
+    """
+    Resumo:
+    - Controla comandos do server Django.
+
+    Métodos:
+    - (main): Roda tarefas administrativas.
+    """
+
+    # ================================================== #
+
+    # ~~ Main.
+    def main(self):
+        
+        """Run administrative tasks."""
+
+        # ~~ Manage.
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
+        try:
+            from django.core.management import execute_from_command_line
+        except ImportError as exc:
+            raise ImportError(
+                "Couldn't import Django. Are you sure it's installed and "
+                "available on your PYTHONPATH environment variable? Did you "
+                "forget to activate a virtual environment?"
+            ) from exc
+        execute_from_command_line(sys.argv)
+
+    # ================================================== #
 
 # ================================================== #
 
-# ~~ Start.
-if __name__ == '__main__':
-    main()
+# ~~ Cria instância do DjangoServer.
+django_server = DjangoServer()
+
+# ~~ Inicia o main.
+django_server.main()
 
 # ================================================== #
