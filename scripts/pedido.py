@@ -38,6 +38,9 @@ class Pedido:
 
     Atributos:
     - (navegador: Navegador): Instância do "Navegador".
+
+    Métodos:
+    - (armazenar_navegador): Cria atributo "navegador", armazenando instância da classe "Navegador".
     """
 
     # ~~ Atributos.
@@ -46,19 +49,29 @@ class Pedido:
     # ================================================== #
 
     # ~~ Armazena instância "Navegador."
-    def armazenar_navegador(self)
+    def armazenar_navegador(self, navegador: Navegador) -> None:
+
+        """
+        Resumo:
+        - Armazena instância do "Navegador".
+
+        Atributos:
+        - (navegador: Navegador)
+        """
+
+        # ~~ Armazena instância.
+        self.navegador = navegador
 
     # ================================================== #
 
     # ~~ Acessa pedido no site.
-    def acessar(driver: webdriver.Chrome, pedido: int) -> None:
+    def acessar(self, pedido: int) -> None:
 
         """
         Resumo:
         - Acessa a página do pedido no site.
         
         Parâmetros:
-        - driver (webdriver.Chrome)
         - pedido (int)
         
         Retorna:
@@ -69,10 +82,10 @@ class Pedido:
         """
 
         # ~~ Acessa pedido.
-        driver.get(f"https://www.revendedorpositivo.com.br/admin/orders/edit/id/{pedido}")
+        self.navegador.driver.get(f"https://www.revendedorpositivo.com.br/admin/orders/edit/id/{pedido}")
 
         # ~~ Coleta conteúdo da página.
-        conteúdo_página = driver.find_element(By.TAG_NAME, value="body").text
+        conteúdo_página = self.navegador.driver.find_element(By.TAG_NAME, value="body").text
 
         # ~~ Se pedido não foi inputado ainda, retorna erro.
         if "Application error: Mysqli statement execute error" in conteúdo_página:
