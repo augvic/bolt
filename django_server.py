@@ -14,7 +14,7 @@ class DjangoServer:
     - Controla comandos do server Django.
 
     Métodos:
-    - (main): Roda tarefas administrativas.
+    - (main): Executa comandos do Django. Argumentos devem ser passados via terminal ao executar script.
     """
 
     # ================================================== #
@@ -22,7 +22,10 @@ class DjangoServer:
     # ~~ Main.
     def main(self):
         
-        """Run administrative tasks."""
+        """
+        Resumo:
+        - Executa comandos do Django. Argumentos devem ser passados via terminal ao executar script.
+        """
 
         # ~~ Manage.
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')

@@ -9,46 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ~~ Bibliotecas.
 import pandas
-
-# ================================================== #
-
-# ~~ Classe base para erros relacionados ao PandasTools.
-class PandasToolsError(Exception):
-
-    """Clase base para erros do PandasTools."""
-
-    # ~~ Pass.
-    pass
-
-# ================================================== #
-
-# ~~ Classe para erro de planilha não encontrada.
-class PandasToolsPlanilhaError(PandasToolsError):
-
-    """Subclasse para erros do PandasTools."""
-
-    # ~~ Erro.
-    def __init__(self):
-
-        """Quando diretório da planilha não foi encontrado."""
-
-        # ~~ Raise.
-        super().__init__("Planilha não encontrada.")
-
-# ================================================== #
-
-# ~~ Classe para erro de dado não encontrado.
-class PandasToolsDadoError(PandasToolsError):
-
-    """Subclasse para erros do PandasTools."""
-
-    # ~~ Erro.
-    def __init__(self):
-
-        """Quando dado não foi encontrado."""
-
-        # ~~ Raise.
-        super().__init__("Dado não encontrado.")
+from scripts.erros import *
 
 # ================================================== #
 

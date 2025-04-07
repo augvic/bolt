@@ -53,7 +53,7 @@ class PedidoDados(models.Model):
     codigo_erp = models.CharField(max_length=200)
     comissao_over = models.CharField(max_length=200)
     porcentagem_z6 = models.CharField(max_length=200)
-    valor_total = models.FloatField()
+    valor_total = models.CharField(max_length=200)
     observacao = models.CharField(max_length=200)
     centros = models.CharField(max_length=200)
     ordem = models.CharField(max_length=200)

@@ -16,7 +16,7 @@ class Main:
     Métodos:
     - (iniciar_django): Inicializa o Django Server.
     - (iniciar_fastapi): Inicializa o FastAPI Server.
-    - (iniciar): Inicia projeto.
+    - (iniciar): Inicia subprocessos.
     """
 
     # ================================================== #

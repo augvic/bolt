@@ -11,34 +11,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import time
 from scripts import utilitarios
 from selenium import webdriver
+from scripts.erros import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
-
-# ================================================== #
-
-# ~~ Classe base de erros relacionados ao Navegador.
-class NavegadorError(Exception):
-
-    """Classe base para erros do Navegador."""
-
-    # ~~ Pass.
-    pass
-
-# ================================================== #
-
-# ~~ Classe de erro para objeto não instanciado.
-class NavegadorInstanciaError(NavegadorError):
-
-    """Subclasse de erros do Navegador."""
-
-    # ~~ Erro.
-    def __init__(self):
-
-        """Quando objeto não foi instanciado."""
-
-        # ~~ Raise.
-        super().__init__("Navegador não instanciado.")
 
 # ================================================== #
 

@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # ~~ Imports.
 import time
 from scripts.navegador import Navegador
+from scripts.erros import *
 
 # ================================================== #
 
@@ -22,6 +23,9 @@ class BasesHandler:
 
     Atributos:
     - (navegador: Navegador): Instância da classe "Navegador".
+        - (driver: Chrome): Instância do navegador.
+        - (by: By)
+        - (keys: Keys)
 
     Métodos:
     - (armazenar_navegador): Cria atributo "navegador", armazenando instância da classe "Navegador".
@@ -68,7 +72,14 @@ class BasesHandler:
             - Cadastro Concluído
             - Assinatura Incompleta
             - Aguardando Assinatura
+        
+        Exceções:
+        - (BasesHandlerNavegadorError): Quando não há navegador armazenado.
         """
+
+        # ~~ Verifica se há navegador armazenado.
+        if self.navegador == None:
+            raise BasesHandlerNavegadorError()
 
         # ~~ Valor padrão.
         status = ""
