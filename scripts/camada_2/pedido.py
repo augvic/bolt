@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
@@ -16,10 +16,9 @@ django.setup()
 
 # ~~ Bibliotecas.
 import time
-from scripts.navegador import Navegador
+from scripts.camada_1.navegador import Navegador
+from scripts.camada_1.financeiro import Financeiro
 from scripts.erros import *
-from scripts import sap
-from scripts import utilitarios
 from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -38,9 +37,7 @@ class Pedido:
 
     Atributos:
     - (navegador: Navegador): Instância do "Navegador".
-        - (driver: Chrome): Instância do navegador.
-        - (by: By)
-        - (keys: Keys)
+    - (financeiro: Financeiro): Instância da classe "Financeiro".
     - (pedido: str)
     - (data: str)
     - (forma_pagamento: str) 
@@ -54,32 +51,63 @@ class Pedido:
     - (vendedor: str)
     - (escritorio: str)
     - (retorno_analise: str)
-    - (status_analise: str):
-        - "LIBERADO"
-        - "NÃO LIBERADO"
+    - (status_analise):
+        - ("LIBERADO": str)
+        - OU ("NÃO LIBERADO")
 
     Métodos:
-    - (armazenar_navegador): Cria atributo "navegador", armazenando instância da classe "Navegador".
+    - (__init__): Cria atributos.
+    - (acessar): Acessa a página do pedido no site.
+    - (coletar_data): Coleta a data do pedido no site.
+    - (coletar_condicao_pagamento): Coleta a condição de pagamento do pedido no site.
+    - (coletar_forma_pagamento): Coleta a forma de pagamento do pedido no site.
+    - (coletar_cnpj): Coleta o CNPJ do cliente no site.
+    - (coletar_valor): Coleta o valor do pedido no site.
+    - (coletar_status): Coleta o status do pedido no site.
+    - (coletar_razao_social): Coleta a razão social do pedido no site.
+    - (coletar_codigo_erp): Coleta código ERP do pedido no site.
+    - (coletar_vendedor): Coleta vendedor do pedido.
+    - (coletar_escritório): Retorna escritório do vendedor.
+    - (coletar_dados_completos): Coleta dados do pedido no site.
+    - (analise_credito): Faz análise de crédito do pedido.
+    - (remover_pendente): Remove do database o valor de pedido pendente.
     """
-
-    # ~~ Atributos.
-    navegador = None
 
     # ================================================== #
 
-    # ~~ Armazena instância "Navegador."
-    def armazenar_navegador(self, navegador: Navegador) -> None:
+    # ~~ Armazena instância "Navegador".
+    def __init__(self, navegador: Navegador, financeiro: Financeiro) -> None:
 
         """
         Resumo:
-        - Armazena instância do "Navegador".
+        - Cria atributos.
+
+        Parâmetros:
+        - (navegador: Navegador): Instância da classe "Navegador".
+        - (financeiro: Financeiro): Instância da classe "Financeiro".
 
         Atributos:
-        - (navegador: Navegador)
+        - (navegador: Navegador): Instância da classe "Navegador".
+        - (financeiro: Financeiro): Instância da classe "Financeiro".
         """
 
         # ~~ Armazena instância.
         self.navegador = navegador
+        self.financeiro = financeiro
+
+        # ~~ Cria restante como None.
+        self.pedido = None
+        self.data = None
+        self.forma_pagamento = None
+        self.condicao_pagamento = None
+        self.razao_social = None
+        self.cnpj = None
+        self.raiz_cnpj = None
+        self.codigo_erp = None
+        self.valor_pedido = None
+        self.status = None
+        self.vendedor = None
+        self.escritorio = None
 
     # ================================================== #
 
@@ -91,19 +119,11 @@ class Pedido:
         - Acessa a página do pedido no site.
         
         Parâmetros:
-        - pedido (int)
-        
-        Retorna:
-        - ===
-        
+        - (pedido: int)
+
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
-
-        # ~~ Verifica se há navegador armazenado.
-        if self.navegador == None:
-            raise PedidoNavegadorError()
 
         # ~~ Acessa pedido.
         self.navegador.driver.get(f"https://www.revendedorpositivo.com.br/admin/orders/edit/id/{pedido}")
@@ -131,7 +151,6 @@ class Pedido:
         - (data: str)
 
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -162,10 +181,9 @@ class Pedido:
         - (pedido: int)
         
         Retorna:
-        - condicao_pagamento (str)
+        - (condicao_pagamento: str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -199,10 +217,9 @@ class Pedido:
         - (pedido: int)
         
         Retorna:
-        - forma_pagamento (str)
+        - (forma_pagamento: str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -239,7 +256,6 @@ class Pedido:
         - (cnpj: str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -273,7 +289,6 @@ class Pedido:
         - (valor_pedido: str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -305,15 +320,14 @@ class Pedido:
         - (pedido: int)
         
         Retorna:
-        - (status_pedido: str):
-            - "CANCELADO"
-            - "FATURADO"
-            - "RECUSADO"
-            - "LIBERADO"
-            - "RECEBIDO"
+        - (status_pedido):
+            - ("CANCELADO": str)
+            - OU ("FATURADO": str)
+            - OU ("RECUSADO": str)
+            - OU ("LIBERADO": str)
+            - OU ("RECEBIDO": str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -367,7 +381,6 @@ class Pedido:
         - (razao_social: str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -402,12 +415,11 @@ class Pedido:
         - (pedido: int)
         
         Retorna:
-        - (codigo_erp: str):
-            - "{codigo_erp}"
-            - "-"
+        - (codigo_erp):
+            - (codigo_erp: str)
+            - OU ("-": str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -443,12 +455,11 @@ class Pedido:
         - (pedido: int)
         
         Retorna:
-        - (vendedor: str):
-            - "{vendedor}"
-            - "-"
+        - (vendedor):
+            - (vendedor: str)
+            - OU ("-": str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -560,9 +571,9 @@ class Pedido:
         - (vendedor: str)
 
         Retorna:
-        - (escritorio: str):
-            - "{escritorio}"
-            - "-"
+        - (escritorio):
+            - (escritorio: str)
+            - OU ("-": str)
         """
 
         # ~~ Coleta escritório do banco de dados.
@@ -594,20 +605,19 @@ class Pedido:
         - (condição_pagamento: str)
         - (razão_social: str)
         - (cnpj: str)
-        - (codigo_erp: str):
-            - "{codigo_erp}"
-            - "-"
+        - (codigo_erp):
+            - (codigo_erp: str)
+            - OU ("-": str)
         - (valor_pedido: str)
         - (status: str)
-        - (vendedor: str):
-            - "{vendedor}"
-            - "-"
-        - (escritorio: str):
-            - "{escritorio}"
-            - "-"
+        - (vendedor):
+            - (vendedor: str)
+            - OU ("-": str)
+        - (escritorio):
+            - (escritorio: str)
+            - OU ("-": str)
         
         Exceções:
-        - (PedidoNavegadorError): Quando não há navegador armazenado.
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
         """
 
@@ -621,7 +631,7 @@ class Pedido:
         self.condicao_pagamento = self.coletar_condicao_pagamento(pedido)
         self.razao_social = self.coletar_razao_social(pedido)
         self.cnpj = self.coletar_cnpj(pedido)
-        self.raiz_cnpj = self.dados_pedido["cnpj"][:8]
+        self.raiz_cnpj = self.cnpj[:8]
         self.codigo_erp = self.coletar_codigo_erp(pedido)
         self.valor_pedido = self.coletar_valor(pedido)
         self.status = self.coletar_status(pedido)
@@ -631,36 +641,43 @@ class Pedido:
     # ================================================== #
 
     # ~~ Faz análise de crédito do pedido.
-    def analise_credito(printar_dados: bool = False, log_path: str = None) -> None:
+    def analise_credito(self, printar_dados: bool = False, log_path: str = None, liberar_tela: bool = False) -> None:
 
         """
         Resumo:
         - Faz análise de crédito do pedido.
         
         Parâmetros:
-        - (printar_dados: bool | opcional): Padrão é False.
-        - (log_path: str | opcional): Padrão é None.
-        
+        - (printar_dados): 
+            - (False: bool): Padrão.
+            - OU (True: bool): Printa dados.
+        - (log_path: str): Caso passado um diretório, transfere texto printado para um arquivo ".txt". O parâmetro "printar_dados" deve ser True.
+        - (liberar_tela):
+            - (False: bool): Padrão. 
+            - (True: bool): Libera tela do SAP.
+
         Atributos:
         - (retorno_analise: str)
-        - (status_analise: str):
-            - "LIBERADO"
-            - "NÃO LIBERADO"
-        
+        - (status_analise):
+            - ("LIBERADO": str)
+            - ("NÃO LIBERADO": str)
+
         Exceções:
-        - ("Não foi encontrado tela SAP disponível para conexão.")
+        - (PedidoDadosNaoColetadosError): Quando dados do pedido não foram coletados para analisar.
         """
+
+        # ~~ Verifica se há dados coletados.
+        if self.valor_pedido == None:
+            raise PedidoDadosNaoColetadosError()
 
         # ~~ Cria dicionário para os dados da análise.
         resposta_análise = {}
 
         # ~~ Coleta dados financeiros do cliente.
-        sessao_sap = sap.instanciar()
-        dados_financeiros = sap.coletar_dados_financeiros_cliente(sap=sessao_sap, raiz_cnpj=dados_pedido["raiz_cnpj"], printar_dados=printar_dados, log_path=log_path)
-        sap.ir_tela_inicial(sessao_sap)
+        dados_financeiros = self.financeiro.coletar_dados_financeiros_cliente(raiz_cnpj=self.raiz_cnpj, printar_dados=printar_dados, log_path=log_path, liberar_tela=liberar_tela)
 
         # ~~ Acessa database para verificar se há valores de pedidos pendentes.
-        valores_pendentes = PedidosPendentes.objects.filter(raiz_cnpj=dados_pedido["raiz_cnpj"]).values_list("valor", flat=True)
+        valores_pendentes = PedidosPendentes.objects.filter(raiz_cnpj=self.raiz_cnpj).values_list("valor", flat=True)
 
         # ~~ Atualiza valor da margem de acordo com os valores pendentes.
         if dados_financeiros["margem"] != "Sem margem disponível.":
@@ -682,7 +699,7 @@ class Pedido:
             vencimento = datetime.strftime(dados_financeiros["vencimento"], "%d/%m/%Y")
 
         # ~~ Importa dados no database.
-        cliente = DadosFinaceirosClientes.objects.filter(raiz_cnpj=dados_pedido["raiz_cnpj"]).first()
+        cliente = DadosFinaceirosClientes.objects.filter(raiz_cnpj=self.raiz_cnpj).first()
         if cliente:
             cliente.vencimento_limite = vencimento
             cliente.valor_limite = str(dados_financeiros["limite"])
@@ -692,7 +709,7 @@ class Pedido:
             cliente.save()
         else:
             novo_cliente = DadosFinaceirosClientes(
-                raiz_cnpj=str(dados_pedido["raiz_cnpj"]),
+                raiz_cnpj=str(self.raiz_cnpj),
                 vencimento_limite=vencimento,
                 valor_limite=str(dados_financeiros["limite"]),
                 valor_em_aberto=str(dados_financeiros["em_aberto"]),
@@ -720,8 +737,8 @@ class Pedido:
 
         # ~~ Verifica se pedido está dentro da margem.
         if limite_ativo == True:
-            if margem < dados_pedido["valor_pedido"]:
-                motivos += f"\n- Valor do pedido excede a margem disponível. Valor do pedido: {f"R$ {dados_pedido["valor_pedido"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")} / margem livre: {f"R$ {margem:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}."
+            if margem < self.valor_pedido:
+                motivos += f"\n- Valor do pedido excede a margem disponível. Valor do pedido: {f"R$ {self.valor_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")} / margem livre: {f"R$ {margem:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}."
                 status = "NÃO LIBERADO"
 
         # ~~ Verifica se possui notas vencidas.
@@ -731,26 +748,26 @@ class Pedido:
 
         # ~~ Verifica se pode ser liberado. Se puder, importa seu valor como pendente no database e atualiza margem do cliente.
         if status == "LIBERADO":
-            resposta_análise["mensagem"] = f"Pedido {dados_pedido["pedido"]} liberado."
+            resposta_análise["mensagem"] = f"Pedido {self.pedido} liberado."
             resposta_análise["status"] = "LIBERADO"
-            pedido_liberado = PedidosPendentes.objects.filter(pedido=dados_pedido["pedido"]).first()
+            pedido_liberado = PedidosPendentes.objects.filter(pedido=self.pedido).first()
             if not pedido_liberado:
                 valor_pendente_novo = PedidosPendentes(
-                    raiz_cnpj=dados_pedido["raiz_cnpj"],
-                    pedido=dados_pedido["pedido"],
-                    valor=dados_pedido["valor_pedido"]
+                    raiz_cnpj=self.raiz_cnpj,
+                    pedido=self.pedido,
+                    valor=self.valor_pedido
                 )
                 valor_pendente_novo.save()
-            margem_atualizada = margem - dados_pedido["valor_pedido"]
+            margem_atualizada = margem - self.valor_pedido
             cliente.margem = str(margem_atualizada)
             cliente.save()
         else:
-            resposta_análise["mensagem"] = f"Pedido {dados_pedido["pedido"]} recusado:{motivos}"
+            resposta_análise["mensagem"] = f"Pedido {self.pedido} recusado:{motivos}"
             resposta_análise["status"] = "NÃO LIBERADO"
 
         # ~~ Printa dados.
         if printar_dados == True:
-            utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {dados_pedido["valor_pedido"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+            utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {self.valor_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
             utilitarios.printar_mensagem(mensagem=resposta_análise["mensagem"], char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
 
         # ~~ Retorna com dados de liberação.
@@ -766,13 +783,10 @@ class Pedido:
         - Remove do database o valor de pedido pendente.
         
         Parâmetros:
-        - (pedido: str):
-        
-        Retorna:
-        - ===
-        
-        Exceções:
-        - ===
+        - (numero_pedido: str):
+        - (adicionar_ao_em_aberto):
+            - (False: bool): Apenas remove valor pendente.
+            - (True: bool): Remove valor e soma ele com o que possui em aberto.
         """
 
         # ~~ Coleta pedido pendente.
@@ -802,3 +816,14 @@ class Pedido:
     # ================================================== #
 
 # ================================================== #
+
+from scripts.camada_0.utilitarios import Utilitarios
+from scripts.camada_0.sap import Sap
+utilitarios = Utilitarios()
+sap = Sap()
+navegador = Navegador(utilitarios)
+navegador.acessar_godeep()
+financeiro = Financeiro(sap, utilitarios)
+pedido = Pedido(navegador, financeiro)
+pedido.coletar_dados_completos(13494)
+pedido.analise_credito(True, None, True)

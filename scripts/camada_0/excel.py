@@ -3,13 +3,14 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
 # ~~ Imports.
 import xlwings as xw
 import time
+import pandas
 from scripts.erros import *
 
 # ================================================== #
@@ -24,25 +25,30 @@ class Excel:
     Atributos:
     - (planilha: dict):
         - (BOOK: xw.Book): Chave referenciando diretamente à planilha.
-        - ({aba}: xw.sheets): Cada aba passada como parâmetro é uma chave.
+        - (aba: xw.sheets): Cada aba é uma chave.
 
     Métodos:
-    - (referenciar): Cria atributo "planilha", fazendo referência à uma planilha Excel.
+    - (__init__): Cria atributo "planilha", fazendo referência à uma planilha Excel.
     - (inserir_dado): Insere dado em células da planilha.
     - (coletar_dado): Coleta dado de célula da planilha.
     - (salvar): Salva planilha.
     - (ultima_linha_preenchida): Retorna com o número da última linha preenchida na coluna específicada.
+    - (localizar_index): Utiliza pandas para ler planilha e localizar o index de um dado.
+    - (criar_df): Faz leitura de aba da planilha e salva como DataFrame.
+
+    Exceções:
+    - (ExcelError): Classe base.
+    - (ExcelArquivoNaoEncontradoError): Quando arquivo do Excel não for encontrado.
+    - (ExcelAbaNaoEncontradaError): Quando uma aba especificada não existe na planilha.
+    - (ExcelColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
+    - (ExcelSalvarPlanilhaError): Quando não é possível salvar planilha.
+    - (ExcelLocalizarDadoError): Quando dado para localizar não foi encontrado.
     """
 
     # ================================================== #
 
-    # ~~ Atributos.
-    planilha = None
-
-    # ================================================== #
-
     # ~~ Cria referência à uma planilha do Excel.
-    def referenciar(self, diretorio_planilha: str, abas: list) -> None:
+    def __init__(self, diretorio_planilha: str, abas: list) -> None:
 
         """
         Resumo:
@@ -55,14 +61,11 @@ class Excel:
         Atributos:
         - (planilha dict):
             - (BOOK: xw.Book): Chave referenciando diretamente à planilha.
-            - ({aba}: xw.sheets): Cada aba passada como parâmetro é uma chave.
-        
-        Retorna:
-        - ===
+            - (aba: xw.sheets): Cada aba é uma chave.
 
         Exceções:
-        - (ArquivoNaoEncontradoError): Quando arquivo do Excel não for encontrado.
-        - (AbaNaoEncontradaError): Quando uma aba especificada não existe na planilha.
+        - (ExcelArquivoNaoEncontradoError): Quando arquivo do Excel não for encontrado.
+        - (ExcelAbaNaoEncontradaError): Quando uma aba especificada não existe na planilha.
         """
 
         # ~~ Dicionário para armazenar planilha e abas.
@@ -72,14 +75,14 @@ class Excel:
         try:
             planilha["BOOK"] = xw.Book(diretorio_planilha)
         except:
-            raise ArquivoNaoEncontradoError(diretorio_planilha)
+            raise ExcelArquivoNaoEncontradoError(diretorio_planilha)
 
         # ~~ Armazena abas.
         try:
             for aba in abas:
                 planilha[aba] = planilha["BOOK"].sheets[aba]
         except:
-            raise AbaNaoEncontradaError(aba, planilha["BOOK"].name)
+            raise ExcelAbaNaoEncontradaError(aba, planilha["BOOK"].name)
 
         # ~~ Cria atributo com planilha e abas.
         self.planilha = planilha
@@ -100,20 +103,9 @@ class Excel:
         - (linha: int): Número da linha que será incluído o dado.
         - (dado: any): Dado que será inserido na célula.
         
-        Atributos:
-        - ===
-
-        Retorna:
-        - ===
-        
         Exceções:
-        - (ColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
-        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
+        - (ExcelColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
         """
-
-        # ~~ Se não tiver planilha referenciada.
-        if self.planilha == None:
-            raise PlanilhaReferenciadaError()
 
         # ~~ Cria lista de colunas de A à Z e depois concatena com outra lista de AA à AZ.
         letras = [chr(65 + i) for i in range(26)] + [f"A{chr(65 + i)}" for i in range(26)]
@@ -126,7 +118,7 @@ class Excel:
         # ~~ Coleta indice da coluna passado como parâmetro.
         coluna_a_ser_usada = colunas.get(coluna_nome)
         if not coluna_a_ser_usada:
-            raise ColunaNaoEncontradaError(coluna_nome, aba_nome)
+            raise ExcelColunaNaoEncontradaError(coluna_nome, aba_nome)
 
         # ~~ Insere dado.
         self.planilha[aba_nome].range(f"{coluna_a_ser_usada}{linha}").value = dado
@@ -146,20 +138,12 @@ class Excel:
         - (linha_cabecalho: int): Número da linha que está o cabeçalho (nome das colunas).
         - (linha: int): Número da linha que será coletado o dado.
         
-        Atributos:
-        - ===
-        
         Retorna:
         - (dado: any): Pode ser str, int, float, datetime, etc.
 
         Exceções:
-        - (ColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
-        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
+        - (ExcelColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
         """
-
-        # ~~ Se não tiver planilha referenciada.
-        if self.planilha == None:
-            raise PlanilhaReferenciadaError()
 
         # ~~ Cria lista de colunas de A à Z e depois concatena com outra lista de AA à AZ.
         letras = [chr(65 + i) for i in range(26)] + [f"A{chr(65 + i)}" for i in range(26)]
@@ -172,7 +156,7 @@ class Excel:
         # ~~ Coleta indice da coluna passado como parâmetro.
         coluna_a_ser_usada = colunas.get(coluna_nome)
         if not coluna_a_ser_usada:
-            raise ColunaNaoEncontradaError(coluna_nome, aba_nome)
+            raise ExcelColunaNaoEncontradaError(coluna_nome, aba_nome)
 
         # ~~ Coleta dado.
         dado = self.planilha[aba_nome].range(f"{coluna_a_ser_usada}{linha}").value
@@ -188,24 +172,10 @@ class Excel:
         """
         Resumo:
         - Salva a planilha.
-        
-        Parâmetros:
-        - ===
 
-        Atributos:
-        - ===
-        
-        Retorna:
-        - ===
-        
         Exceções:
-        - (SalvarPlanilhaError): Quando não é possível salvar planilha.
-        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
+        - (ExcelSalvarPlanilhaError): Quando não é possível salvar planilha.
         """
-
-        # ~~ Se não tiver planilha referenciada.
-        if self.planilha == None:
-            raise PlanilhaReferenciadaError()
 
         # ~~ Tenta salvar até 10x.
         tentativa = 0
@@ -219,7 +189,7 @@ class Excel:
         
         # ~~ Se chegou ao limite de tentativas, exibe erro.
         if tentativa == 10:
-            raise SalvarPlanilhaError(self.planilha["BOOK"].name)
+            raise ExcelSalvarPlanilhaError(self.planilha["BOOK"].name)
 
     # ================================================== #
 
@@ -233,35 +203,89 @@ class Excel:
         Parâmetros:
         - (aba: str): Nome da aba.
         - (coluna: str): "A", "B", "C", etc.
-        
-        Atributos:
-        - ===
 
         Retorna:
         - (ultima_linha: int)
 
         Exceções:
-        - (AbaNaoEncontradaError): Quando uma aba especificada não existe na planilha.
-        - (ColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
-        - (PlanilhaReferenciadaError): Quando não há planilha referenciada.
+        - (ExcelAbaNaoEncontradaError): Quando uma aba especificada não existe na planilha.
+        - (ExcelColunaNaoEncontradaError): Quando uma coluna especificada não existe na aba.
         """
-
-        # ~~ Se não tiver planilha referenciada.
-        if self.planilha == None:
-            raise PlanilhaReferenciadaError()
 
         # ~~ Coleta última linha.
         try:
             aba_object = self.planilha[aba]
         except:
-            raise AbaNaoEncontradaError(aba, self.planilha["BOOK"].name)
+            raise ExcelAbaNaoEncontradaError(aba, self.planilha["BOOK"].name)
         try:
             ultima_linha = aba_object.range(coluna + str("99999")).end("up").row
         except:
-            raise ColunaNaoEncontradaError(coluna, aba)
+            raise ExcelColunaNaoEncontradaError(coluna, aba)
 
         # ~~ Retorna.
         return ultima_linha
+
+    # ================================================== #
+
+    # ~~ Utiliza pandas para ler planilha e localizar o index de um dado.
+    def localizar_index(self, aba: str, coluna_nome: str, localizar: str, linha_cabecalho: int) -> list:
+
+        """
+        Resumo:
+        - Utiliza pandas para ler planilha e localizar o index de um dado.
+
+        Parâmetros:
+        - (aba: str): Nome da aba.
+        - (coluna_nome: str): Nome da coluna onde irá ser procurado o dado.
+        - (localizar: str): Dado que será localizado.
+        - (linha_cabecalho: int): Linha que contém o cabeçalho na aba (nome das colunas).
+        
+        Retorna:
+        - (linhas: list): Números das linhas onde o dado foi localizado. Podendo ser uma ou mais.
+
+        Exceções:
+        - (ExcelLocalizarDadoError): Quando dado para localizar não foi encontrado.
+        """
+
+        # ~~ Cria df.
+        df = self.criar_df(aba=aba, linha_cabecalho=linha_cabecalho)
+
+        # ~~ Localiza dado.
+        linhas = df.index[df[coluna_nome] == str(localizar)].tolist()
+
+        # ~~ Se não localizar dado, retorna erro.
+        if not linhas:
+            raise ExcelLocalizarDadoError()
+        
+        # ~~ Itera linhas do dataframe para corresponder as linhas da planilha.
+        linhas = [linha + 1 + linha_cabecalho for linha in linhas]
+
+        # ~~ Retorna números das linhas.
+        return linhas
+
+    # ================================================== #
+
+    # ~~ Faz leitura de aba da planilha e salva como DataFrame.
+    def criar_df(self, aba: str, linha_cabecalho: int, colunas_nomes: list = None) -> pandas.DataFrame:
+
+        """
+        Resumo:
+        - Faz leitura de aba da planilha e salva como DataFrame.
+
+        Parâmetros:
+        - (aba: str): Nome da aba para ser transformada em DataFrame.
+        - (linha_cabecalho: int): Linha que contém o cabeçalho na aba (nome das colunas).
+        - (colunas_nomes: list): Se passado lista com nomes de colunas específicas, cria DataFrame apenas delas.
+        
+        Retorna:
+        - (df: DataFrame)
+        """
+
+        # ~~ Lê planilha e cria DataFrame.
+        df = pandas.read_excel(io=self.planilha["BOOK"].fullname, sheet_name=aba, dtype=str, skiprows=linha_cabecalho-1, usecols=colunas_nomes)
+
+        # ~~ Retorna DataFrame.
+        return df
 
     # ================================================== #
 

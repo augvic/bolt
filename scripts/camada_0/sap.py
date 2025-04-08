@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
@@ -24,22 +24,22 @@ class Sap:
     - (session: object): Vínculo com tela SAP.
 
     Métodos:
-    - (instanciar): Cria atributo "session", fazendo referência ao SAP acessando a SAPScriptingEngine.
+    - (__init__): Cria atributo "session", fazendo referência ao SAP acessando a SAPScriptingEngine.
     - (abrir_transacao): Abre transação do SAP.
     - (coletar_cnpj_xd03): Coleta CNPJ do cliente da transação XD03 e retorna.
     - (coletar_codigo_erp_xd03): Coleta o código ERP do cliente no SAP.
     - (ir_tela_inicial): Volta à tela inicial do SAP.
+
+    Exceções:
+    - (SapError): Classe base.
+    - (SapTelaError): Quando não há tela disponível para conexão.
+    - (SapTransacaoError): Quando não há acesso à transação.
     """
 
     # ================================================== #
 
-    # ~~ Atributos.
-    session = None
-
-    # ================================================== #
-
     # ~~ Cria instância do SAP.
-    def instanciar(self) -> None:
+    def __init__(self) -> None:
 
         """
         Resumo:
@@ -61,6 +61,7 @@ class Sap:
                 session = con.Children(id)
                 if session.ActiveWindow.Text == "SAP Easy Access":
                     self.session = session
+                    return
                 else:
                     continue
 
@@ -85,13 +86,8 @@ class Sap:
         - (transacao: str)
         
         Exceções:
-        - (SapVinculoError): Quando não há vínculo com SAP criado.
         - (SapTransacaoError): Quando não há acesso à transação.
         """
-
-        # ~~ Verifica se há vínculo com SAP.
-        if self.session == None:
-            raise SapVinculoError()
 
         # ~~ Acessa transação.
         self.session.findById("wnd[0]/tbar[0]/okcd").text = "/N" + transacao
@@ -112,19 +108,16 @@ class Sap:
         
         Parâmetros:
         - (codigo_erp: str)
-        - (liberar_tela: bool | opcional): Padrão é False. Passar True para liberar tela do SAP.
+        - (liberar_tela):
+            - (False: bool): Padrão. 
+            - (True: bool): Libera tela do SAP.
         
         Retorna:
         - (cnpj: str)
         
         Exceções:
-        - (SapVinculoError): Quando não há vínculo com SAP criado.
         - (SapTransacaoError): Quando não há acesso à transação.
         """
-
-        # ~~ Verifica se há vínculo com SAP.
-        if self.session == None:
-            raise SapVinculoError()
 
         # ~~ Abre transação XD03.
         self.abrir_transacao("XD03")
@@ -161,21 +154,18 @@ class Sap:
         
         Parâmetros:
         - (cnpj: str)
-        - (liberar_tela: bool | opcional): Padrão é False. Passar True para liberar tela do SAP.
+        - (liberar_tela):
+            - (False: bool): Padrão. 
+            - OU (True: bool): Libera tela do SAP.
         
         Retorna:
-        - (codigo_erp: str):
-            - "{codigo_erp}"
-            - "-"
+        - (codigo_erp):
+            - (codigo_erp: str)
+            - OU ("-": str)
         
         Exceções:
-        - (SapVinculoError): Quando não há vínculo com SAP criado.
         - (SapTransacaoError): Quando não há acesso à transação.
         """
-
-        # ~~ Verifica se há vínculo com SAP.
-        if self.session == None:
-            raise SapVinculoError()
 
         # ~~ Acessa XD03.
         self.abrir_transacao("XD03")

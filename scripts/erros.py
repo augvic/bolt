@@ -10,21 +10,6 @@ class BasesHandlerError(Exception):
 
 # ================================================== #
 
-# ~~ Classe de erro quando não há instância do navegador armazenada.
-class BasesHandlerNavegadorError(BasesHandlerError):
-
-    """Subclasse para erros relacionados ao "BasesHandler"."""
-
-    # ~~ Erro.
-    def __init__(self, *args):
-
-        """Quando não há navegador armazenado."""
-
-        # ~~ Erro.
-        super().__init__("Não há navegador armazenado.")
-
-# ================================================== #
-
 # ~~ Classe base de erros relacionados ao Excel.
 class ExcelError(Exception):
     
@@ -36,7 +21,7 @@ class ExcelError(Exception):
 # ================================================== #
 
 # ~~ Classe de erro para arquivo não encontrado.
-class ArquivoNaoEncontradoError(ExcelError):
+class ExcelArquivoNaoEncontradoError(ExcelError):
 
     """Subclasse para erros do Excel."""
 
@@ -51,7 +36,7 @@ class ArquivoNaoEncontradoError(ExcelError):
 # ================================================== #
 
 # ~~ Classe de erro para aba não encontrada.
-class AbaNaoEncontradaError(ExcelError):
+class ExcelAbaNaoEncontradaError(ExcelError):
 
     """Subclasse para erros do Excel."""
 
@@ -66,7 +51,7 @@ class AbaNaoEncontradaError(ExcelError):
 # ================================================== #
 
 # ~~ Classe de erro para coluna não encontrada.
-class ColunaNaoEncontradaError(ExcelError):
+class ExcelColunaNaoEncontradaError(ExcelError):
 
     """Subclasse para erros do Excel."""
 
@@ -81,7 +66,7 @@ class ColunaNaoEncontradaError(ExcelError):
 # ================================================== #
 
 # ~~ Classe de erro ao salvar planilha.
-class SalvarPlanilhaError(ExcelError):
+class ExcelSalvarPlanilhaError(ExcelError):
 
     """Subclasse para erros do Excel."""
 
@@ -95,18 +80,18 @@ class SalvarPlanilhaError(ExcelError):
 
 # ================================================== #
 
-# ~~ Classe de erro quando não há planilha referenciada.
-class PlanilhaReferenciadaError(ExcelError):
+# ~~ Classe de erro quando dado para localizar não foi encontrado.
+class ExcelLocalizarDadoError(ExcelError):
 
     """Subclasse para erros do Excel."""
 
     # ~~ Erro.
-    def __init__(self, *args):
+    def __init__(self, dado):
 
-        """Quando não há planilha referenciada."""
+        """Quando dado para localizar não foi encontrado."""
 
         # ~~ Raise.
-        super().__init__(f"Sem planilha referenciada.")
+        super().__init__(f"Dado '{dado}' não foi localizado.")
 
 # ================================================== #
 
@@ -120,61 +105,6 @@ class NavegadorError(Exception):
 
 # ================================================== #
 
-# ~~ Classe de erro para objeto não instanciado.
-class NavegadorInstanciaError(NavegadorError):
-
-    """Subclasse de erros do Navegador."""
-
-    # ~~ Erro.
-    def __init__(self, *args):
-
-        """Quando objeto não foi instanciado."""
-
-        # ~~ Raise.
-        super().__init__("Navegador não instanciado.")
-
-# ================================================== #
-
-# ~~ Classe base para erros relacionados ao PandasTools.
-class PandasToolsError(Exception):
-
-    """Clase base para erros do PandasTools."""
-
-    # ~~ Pass.
-    pass
-
-# ================================================== #
-
-# ~~ Classe para erro de planilha não encontrada.
-class PandasToolsPlanilhaError(PandasToolsError):
-
-    """Subclasse para erros do PandasTools."""
-
-    # ~~ Erro.
-    def __init__(self, *args):
-
-        """Quando diretório da planilha não foi encontrado."""
-
-        # ~~ Raise.
-        super().__init__("Planilha não encontrada.")
-
-# ================================================== #
-
-# ~~ Classe para erro de dado não encontrado.
-class PandasToolsDadoError(PandasToolsError):
-
-    """Subclasse para erros do PandasTools."""
-
-    # ~~ Erro.
-    def __init__(self, *args):
-
-        """Quando dado não foi encontrado."""
-
-        # ~~ Raise.
-        super().__init__("Dado não encontrado.")
-
-# ================================================== #
-
 # ~~ Classe base para erros relacionados ao "Pedido".
 class PedidoError(Exception):
 
@@ -182,21 +112,6 @@ class PedidoError(Exception):
 
     # ~~ Pass.
     pass
-
-# ================================================== #
-
-# ~~ Classe de erro quando não há instância do navegador armazenada.
-class PedidoNavegadorError(PedidoError):
-
-    """Subclasse para erros relacionados ao "Pedido"."""
-
-    # ~~ Erro.
-    def __init__(self, *args):
-
-        """Quando não há navegador armazenado."""
-
-        # ~~ Erro.
-        super().__init__("Não há navegador armazenado.")
 
 # ================================================== #
 
@@ -212,6 +127,21 @@ class PedidoNaoInseridoError(PedidoError):
 
         # ~~ Erro.
         super().__init__(f"Pedido {pedido} não foi inserido no site ainda.")
+
+# ================================================== #
+
+# ~~ Classe de erro quando dados do pedido não foram coletados para analisar.
+class PedidoDadosNaoColetadosError(PedidoError):
+
+    """Subclasse para erros relacionados ao "Pedido"."""
+
+    # ~~ Erro.
+    def __init__(self, *args):
+
+        """Quando dados do pedido não foram coletados para analisar."""
+
+        # ~~ Erro.
+        super().__init__("Não há dados coletados para analisar.")
 
 # ================================================== #
 
@@ -240,21 +170,6 @@ class SapTelaError(SapError):
 
 # ================================================== #
 
-# ~~ Classe de erro quando não há vínculo com SAP criado.
-class SapVinculoError(SapError):
-
-    """Subclasse para erros relacionados ao "Sap"."""
-
-    # ~~ Erro.
-    def __init__(self, *args):
-
-        """Quando não há vínculo com SAP criado."""
-
-        # ~~ Erro.
-        super().__init__("Não há vínculo com SAP criado.")
-
-# ================================================== #
-
 # ~~ Classe de erro quando não há acesso à transação.
 class SapTransacaoError(SapError):
 
@@ -267,5 +182,45 @@ class SapTransacaoError(SapError):
 
         # ~~ Erro.
         super().__init__(f"Sem acesso à transação {transacao}")
+
+# ================================================== #
+
+# ~~ Classe base para erros relacionados ao "Utilitarios".
+class UtilitariosError(Exception):
+
+    """Classe base para erros relacionados ao "Utilitarios"."""
+
+    # ~~ Pass.
+    pass
+
+# ================================================== #
+
+# ~~ Classe de erro quando há erro ao fazer requisição à API.
+class UtilitariosFazerRequisicaoError(UtilitariosError):
+
+    """Subclasse para erros relacionados ao "Utilitarios"."""
+
+    # ~~ Erro.
+    def __init__(self, erro):
+
+        """Quando há erro ao fazer requisição à API."""
+
+        # ~~ Erro.
+        super().__init__(f"Erro ao fazer requisição: {erro}.")
+
+# ================================================== #
+
+# ~~ Classe de erro quando há erro no retorno da requisição à API.
+class UtilitariosRetornoRequisicaoError(UtilitariosError):
+
+    """Subclasse para erros relacionados ao "Utilitarios"."""
+
+    # ~~ Erro.
+    def __init__(self, resposta):
+
+        """Quando há erro no retorno da requisição à API."""
+
+        # ~~ Erro.
+        super().__init__(f"Erro na resposta da requisição: {resposta.status_code} - {resposta.text}.")
 
 # ================================================== #

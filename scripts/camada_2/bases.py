@@ -3,13 +3,14 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
 # ~~ Imports.
 import time
-from scripts.navegador import Navegador
+from scripts.camada_1.navegador import Navegador
+from scripts.camada_0.excel import Excel
 from scripts.erros import *
 
 # ================================================== #
@@ -23,34 +24,45 @@ class BasesHandler:
 
     Atributos:
     - (navegador: Navegador): Instância da classe "Navegador".
-        - (driver: Chrome): Instância do navegador.
-        - (by: By)
-        - (keys: Keys)
+    - (base: Excel): Instância da classe "Excel".
 
     Métodos:
-    - (armazenar_navegador): Cria atributo "navegador", armazenando instância da classe "Navegador".
+    - (__init__): Cria atributos.
     - (coletar_status_assinatura): Coleta status de assinatura de documento no site.
     """
 
     # ================================================== #
 
-    # ~~ Atributos.
-    navegador = None
-
-    # ================================================== #
-
     # ~~ Armazena instância "Navegador".
-    def armazenar_navegador(self, navegador: Navegador) -> None:
+    def __init__(self, navegador: Navegador, base: Excel) -> None:
 
         """
         Resumo:
-        - Armazena instância "Navegador".
+        - Cria atributos.
+
+        Parâmetros:
+        - (navegador: Navegador): Instância da classe "Navegador".
+        - (base: Excel): Instância da classe "Excel". Sendo a base de revendas ou de cadastros.
 
         Atributos:
-        - (navegador: Navegador)
+        - (navegador: Navegador): Instância da classe "Navegador".
+        - (base: Excel): Instância da classe "Excel".
         """
 
-        # ~~ Faz composição.
+        # ~~ Armazena qual base será atualizada.
+        if base.planilha["BOOK"].name == "Base Consolidada de REVENDAS.xlsx":
+            self.aba_leitura = "Consolidado"
+            self.linha_cabecalho = 3
+            self.coluna = "CNPJ Cliente.1"
+            self.coluna_importar = "STATUS DOC"
+        else:
+            self.aba_leitura = "BASE CADASTRO"
+            self.linha_cabecalho = 1
+            self.coluna = "CNPJ"
+            self.coluna_importar = "STATUS"
+
+        # ~~ Atributos.
+        self.base = base
         self.navegador = navegador
 
     # ================================================== #
@@ -66,20 +78,13 @@ class BasesHandler:
         - (cnpj: str)
 
         Retorna:
-        - (status: str):
-            - Sem Cadastro
-            - Atualizar Cadastro
-            - Cadastro Concluído
-            - Assinatura Incompleta
-            - Aguardando Assinatura
-        
-        Exceções:
-        - (BasesHandlerNavegadorError): Quando não há navegador armazenado.
+        - (status):
+            - ("Sem Cadastro": str)
+            - OU("Atualizar Cadastro": str)
+            - OU("Cadastro Concluído": str)
+            - OU("Assinatura Incompleta": str)
+            - OU("Aguardando Assinatura": str)
         """
-
-        # ~~ Verifica se há navegador armazenado.
-        if self.navegador == None:
-            raise BasesHandlerNavegadorError()
 
         # ~~ Valor padrão.
         status = ""
@@ -121,6 +126,28 @@ class BasesHandler:
 
         # ~~ Retorna status.
         return status
+
+    # ================================================== #
+
+    # ~~ Importa status de assinaturas nas bases (Base Cadastros / Base Revendas).
+    def importar_status_assinatura_base(self, cnpj: str, status: str) -> None:
+
+        """
+        Resumo:
+        - Importa status de assinaturas nas bases (Base Cadastros / Base Revendas).
+
+        Parâmetros:
+        - (cnpj: str)
+        - (status: str)
+        """
+
+        # ~~ Salva planilha.
+        self.base.salvar()
+
+        # ~~ Insere status na planilha, usando o data frame para localizar a linha correspondente.
+        linhas = self.base.localizar_index(aba=self.aba_leitura, coluna_nome=self.coluna, localizar=cnpj, linha_cabecalho=self.linha_cabecalho)
+        for linha in linhas:
+            self.base.inserir_dado(dado=status, aba_nome=self.aba_leitura, coluna_nome=self.coluna_importar, linha=linha, linha_cabecalho=self.linha_cabecalho)
 
     # ================================================== #
 

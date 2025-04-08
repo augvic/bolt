@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
@@ -16,8 +16,9 @@ django.setup()
 
 # ~~ Imports.
 import pandas
-from datetime import datetime
-from scripts.sap import Sap
+from datetime import datetime, timedelta
+from scripts.camada_0.sap import Sap
+from scripts.camada_0.utilitarios import Utilitarios
 
 # ================================================== #
 
@@ -30,33 +31,40 @@ class Financeiro:
 
     Atributos:
     - (sap: Sap): Instância da classe "Sap".
+    - (utilitarios: Utilitarios): Instância da classe "Utilitarios" com funções auxiliares.
+
+    Métodos:
+    - (__init__): Cria atributos.
+    - (coletar_dados_financeiros_cliente): Coleta dados financeiros do cliente: notas vencidas, valor em aberto, limite, vencimento e margem.
+    - (verificar_vencimento_boleto): Verifica se data de vencimento do boleto está vencida ou não.
     """
 
     # ================================================== #
 
-    # ~~ Atributos.
-    sap = None
-
-    # ================================================== #
-
     # ~~ Armazena instância "Sap".
-    def armazenar_sap(self, sap: Sap) -> None:
+    def __init__(self, sap: Sap, utilitarios: Utilitarios) -> None:
 
         """
         Resumo:
-        - Armazena instância "Sap".
+        - Cria atributos.
+
+        Parâmetros:
+        - (sap: Sap): Instância da classe "Sap".
+        - (utilitarios: Utilitarios): Instância da classe "Utilitarios" com funções auxiliares.
 
         Atributos:
         - (sap: Sap)
+        - (utilitarios: Utilitarios)
         """
 
         # ~~ Faz composição.
         self.sap = sap
+        self.utilitarios = utilitarios
 
     # ================================================== #
 
     # ~~ Coleta dados financeiros do cliente.
-    def coletar_dados_financeiros_cliente(self, raiz_cnpj: str, printar_dados: str = False, log_path: str = None) -> dict:
+    def coletar_dados_financeiros_cliente(self, raiz_cnpj: str, printar_dados: str = False, log_path: str = None, liberar_tela: bool = False) -> dict:
 
         """
         Resumo:
@@ -64,32 +72,36 @@ class Financeiro:
         
         Parâmetros:
         - (raiz_cnpj: str)
-        - (printar_dados: bool | Opcional): Padrão é False. Passar True para printar dados.
-        - (log_path (str | opcional): Caso passado um diretório, transfere texto printado para um arquivo ".txt".
+        - (printar_dados): 
+            - (False: bool): Padrão.
+            - OU (True: bool): Printa dados.
+        - (log_path: str): Caso passado um diretório, transfere texto printado para um arquivo ".txt". O parâmetro "printar_dados" deve ser True.
+        - (liberar_tela):
+            - (False: bool): Padrão.
+            - (True: bool): Volta à tela inicial do SAP.
         
         Retorna:
         - (dados: dict):
             - (nfs_vencidas):
                 - (nfs_vencidas: str)
-                - ("Sem vencidos.": str)
+                - OU ("Sem vencidos.": str)
             - (em_aberto)
                 - (em_aberto: float)
-                - ("Sem valores em aberto.": str)
+                - OU ("Sem valores em aberto.": str)
             - (limite):
                 - (limite: float)
-                - ("Sem limite ativo.": str)
+                - OU ("Sem limite ativo.": str)
             - (margem):
                 - (margem: float)
-                - ("Sem margem disponível.": str)
+                - OU ("Sem margem disponível.": str)
             - (vencimento):
                 - (vencimento: datetime)
-                - ("Sem limite ativo.": str)
+                - OU ("Sem limite ativo.": str)
             - (tabela_fbl5n):
                 - (tabela_fbl5n: DataFrame)
-                - ("Sem tabela FBL5N.": str)
+                - OU ("Sem tabela FBL5N.": str)
         
         Exceções:
-        - (SapVinculoError): Quando não há vínculo com SAP criado.
         - (SapTransacaoError): Quando não há acesso à transação.
         """
 
@@ -133,7 +145,7 @@ class Financeiro:
             vencimento = "Sem limite ativo."
 
         # ~~ Acessa transação FBL5N.
-        abrir_transacao(self.sap.session=self.sap.session, transacao="FBL5N")
+        self.sap.abrir_transacao("FBL5N")
 
         # ~~ Preenche dados.
         self.sap.session.findById("wnd[0]/tbar[1]/btn[17]").press()
@@ -222,7 +234,7 @@ class Financeiro:
 
                             # ~~ Verifica se há data de vencimento prorrogada no campo atribuição.
                             data_vencimento = self.sap.session.findById(f"wnd[0]/usr/lbl[9,{linha}]").text
-                            data_vencimento = utilitarios.extrair_data_da_string(data_vencimento)
+                            data_vencimento = self.utilitarios.extrair_data_da_string(data_vencimento)
 
                             # ~~ Tenta converter para objeto datetime. Em caso de sucesso, é porque é uma data de prorrogação. 
                             try:
@@ -234,7 +246,7 @@ class Financeiro:
                                 data_vencimento = str(data_vencimento).replace(".", "/")
                             
                             # ~~ Após verificar se há prorrogação ou não, verifica se data de vencimento está dentro da margem de 2 dias.
-                            resultado = utilitarios.verificar_vencimento_boleto(data_vencimento)
+                            resultado = self.verificar_vencimento_boleto(data_vencimento)
                             if resultado == "Vencido":
                                 situação = "Vencido"
                             else:
@@ -359,29 +371,78 @@ class Financeiro:
             pandas.set_option("display.max_rows", None)
 
             # ~~ Printa dados.
-            utilitarios.printar_mensagem(mostrar_data_hora="Only", log_path=log_path)
+            self.utilitarios.printar_mensagem(mostrar_data_hora="Only", log_path=log_path)
             if isinstance(dados["tabela_fbl5n"], pandas.DataFrame):
-                utilitarios.printar_dataframe(df=dados["tabela_fbl5n"], log_path=log_path)
-                utilitarios.printar_mensagem(char_type="=", char_qtd=50, log_path=log_path)
-                utilitarios.printar_mensagem(mostrar_data_hora="Only", log_path=log_path)
+                self.utilitarios.printar_dataframe(df=dados["tabela_fbl5n"], log_path=log_path)
+                self.utilitarios.printar_mensagem(char_type="=", char_qtd=50, log_path=log_path)
+                self.utilitarios.printar_mensagem(mostrar_data_hora="Only", log_path=log_path)
             if "Sem limite ativo." in [dados["limite"], dados["vencimento"]]:
-                utilitarios.printar_mensagem(mensagem="Sem limite ativo. Margem indisponível.", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem="Sem limite ativo. Margem indisponível.", mostrar_data_hora="False", log_path=log_path)
             else:
-                utilitarios.printar_mensagem(mensagem=f"Vencimento do limite: {datetime.strftime(dados["vencimento"], "%d/%m/%Y")}", mostrar_data_hora="False", log_path=log_path)
-                utilitarios.printar_mensagem(mensagem=f"Limite: {f"R$ {dados["limite"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem=f"Vencimento do limite: {datetime.strftime(dados["vencimento"], "%d/%m/%Y")}", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem=f"Limite: {f"R$ {dados["limite"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", mostrar_data_hora="False", log_path=log_path)
             if dados["em_aberto"] == "Sem valores em aberto.":
-                utilitarios.printar_mensagem(mensagem="Sem valores em aberto.", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem="Sem valores em aberto.", mostrar_data_hora="False", log_path=log_path)
             else:
-                utilitarios.printar_mensagem(mensagem=f"Valor total em aberto: {f"R$ {dados["em_aberto"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem=f"Valor total em aberto: {f"R$ {dados["em_aberto"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", mostrar_data_hora="False", log_path=log_path)
             if dados["margem"] != "Sem margem disponível.":
-                utilitarios.printar_mensagem(mensagem=f"Margem: {f"R$ {dados["margem"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem=f"Margem: {f"R$ {dados["margem"]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", mostrar_data_hora="False", log_path=log_path)
             if dados["nfs_vencidas"] == "Sem vencidos.":
-                utilitarios.printar_mensagem(mensagem="Sem vencidos.", char_type="=", char_qtd=50, char_side="bot", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem="Sem vencidos.", char_type="=", char_qtd=50, char_side="bot", mostrar_data_hora="False", log_path=log_path)
             else:
-                utilitarios.printar_mensagem(mensagem=f"Notas vencidas: {dados["nfs_vencidas"]}", char_type="=", char_qtd=50, char_side="bot", mostrar_data_hora="False", log_path=log_path)
+                self.utilitarios.printar_mensagem(mensagem=f"Notas vencidas: {dados["nfs_vencidas"]}", char_type="=", char_qtd=50, char_side="bot", mostrar_data_hora="False", log_path=log_path)
+
+        # ~~ Liberar tela?
+        if liberar_tela == True:
+            self.sap.ir_tela_inicial()
 
         # ~~ Retorna.
         return dados
+
+    # ================================================== #
+
+    # ~~ Verifica se data de boleto está vencido.
+    def verificar_vencimento_boleto(self, data_boleto: str) -> str:
+
+        """
+        Resumo:
+        - Verifica se data de vencimento do boleto está vencida ou não.
+        
+        Parâmetros:
+        - (data: str): Data para verificar se está vencida.
+        
+        Retorna:
+        - (resultado):
+            - ("Vencido": str)
+            - OU ("Não vencido" str)
+        """
+
+        # ~~ Converte data do boleto passada como parâmetro de "str" para "datetime".
+        data_boleto = datetime.strptime(data_boleto, "%d/%m/%Y").date()
+
+        # ~~ Coleta data atual.
+        data_atual = datetime.now().date()
+
+        # ~~ Verifica se data do boleto é menor que data atual. Se for menor, é vencido. Se for maior, não é.
+        if data_boleto < data_atual:
+
+            # ~~ Incrementa 1 dia a mais na "data_boleto" até ele chegar na data atual, ignorando sábados e domingos, contando há quantos dias está vencido.
+            dias_vencidos = 0
+            data_boleto = data_boleto + timedelta(days=1)
+            while data_boleto < data_atual:
+                if data_boleto.weekday() < 5:
+                    dias_vencidos += 1
+                data_boleto = data_boleto + timedelta(days=1)
+
+            # ~~ Se os dias vencidos forem iguais ou maior a 2, então o boleto está vencido de fato. Caso não, não é considerado vencido.
+            if dias_vencidos >= 2:
+                return "Vencido"
+            else:
+                return "Não vencido"
+            
+        # ~~ Caso a data do boleto seja maior que a data atual, não é vencido.
+        else:
+            return "Não vencido"
 
     # ================================================== #
 

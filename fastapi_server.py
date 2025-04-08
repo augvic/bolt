@@ -4,7 +4,7 @@
 import threading
 import time
 from fastapi import FastAPI
-from scripts.navegador import Navegador
+from scripts.camada_1.navegador import Navegador
 
 # ================================================== #
 
@@ -23,9 +23,6 @@ class FastApiServer:
     - (monitorar_navegador): Verifica se navegador é fechado e abre ele novamente.
     - (criar_app): Retorna instância do app FastAPI.
     """
-
-    # ~~ Atributos.
-    navegador = None
 
     # ================================================== #
 
