@@ -3,14 +3,14 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ================================================== #
 
 # ~~ Imports.
 import time
-from scripts.camada_1.navegador import Navegador
-from scripts.camada_0.excel import Excel
+from scripts.navegador import Navegador
+from scripts.excel import Excel
 from scripts.erros import *
 
 # ================================================== #

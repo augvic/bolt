@@ -41,7 +41,7 @@ class PedidoDados(models.Model):
 
     # ~~ Atributos.
     status = models.CharField(max_length=200)
-    pedido = models.CharField(max_length=200)
+    pedido = models.CharField(max_length=200, primary_key=True)
     data = models.CharField(max_length=200)
     forma_pagamento = models.CharField(max_length=200)
     condicao_pagamento = models.CharField(max_length=200)
@@ -146,6 +146,6 @@ class PedidosPendentes(models.Model):
 
     # ~~ Retorno no admin.
     def __str__(self):
-        return self.raiz_cnpj
+        return self.pedido
 
 # ================================================== #

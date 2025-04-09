@@ -33,7 +33,7 @@ class DatabaseAuthAdmin(admin.ModelAdmin):
 class PedidoDadosAdmin(admin.ModelAdmin):
 
     # ~~ Colunas que irão aparecer no admin.
-    list_display = (["pedido"])
+    list_display = (["pedido", "status", "forma_pagamento", "vendedor", "escritorio", "revenda", "cliente", "cnpj_cpf", "codigo_erp", "valor_total", "centros", "ordem"])
 
     # ~~ Filtros laterais.
     list_filter = ("status", "forma_pagamento", "condicao_pagamento", "vendedor", "escritorio")
@@ -105,7 +105,7 @@ class DadosFinaceirosClientesAdmin(admin.ModelAdmin):
 class PedidosPendentesAdmin(admin.ModelAdmin):
 
     # ~~ Colunas que irão aparecer no admin.
-    list_display = ("raiz_cnpj", "pedido", "valor")
+    list_display = ("pedido", "valor", "raiz_cnpj")
 
     # ~~ Campo de busca.
     search_fields = ("raiz_cnpj", "pedido")

@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ================================================== #
 
@@ -16,14 +16,15 @@ django.setup()
 
 # ~~ Bibliotecas.
 import time
-from scripts.camada_1.navegador import Navegador
-from scripts.camada_1.financeiro import Financeiro
+from scripts.navegador import Navegador
+from scripts.financeiro import Financeiro
+from scripts.utilitarios import Utilitarios
 from scripts.erros import *
 from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from app.models import Comercial, PedidosPendentes, DadosFinaceirosClientes
+from app.models import Comercial, PedidosPendentes, DadosFinaceirosClientes, PedidoDados
 from django.shortcuts import get_object_or_404
 
 # ================================================== #
@@ -38,19 +39,26 @@ class Pedido:
     Atributos:
     - (navegador: Navegador): Instância do "Navegador".
     - (financeiro: Financeiro): Instância da classe "Financeiro".
+    - (utilitarios: Utilitarios): Instância da classe "Utilitarios".
     - (pedido: str)
     - (data: str)
     - (forma_pagamento: str) 
     - (condicao_pagamento: str)
-    - (razao_social: str)
-    - (cnpj: str)
+    - (cliente: str)
+    - (revenda: str)
+    - (cnpj_cpf: str)
     - (raiz_cnpj: str)
     - (codigo_erp: str)
     - (valor_pedido: str)
     - (status: str)
     - (vendedor: str)
     - (escritorio: str)
+    - (observacao: str)
+    - (centros: str)
     - (retorno_analise: str)
+    - (ordem: str)
+    - (over: str)
+    - (porcentagem_comissao: str)
     - (status_analise):
         - ("LIBERADO": str)
         - OU ("NÃO LIBERADO")
@@ -64,7 +72,7 @@ class Pedido:
     - (coletar_cnpj): Coleta o CNPJ do cliente no site.
     - (coletar_valor): Coleta o valor do pedido no site.
     - (coletar_status): Coleta o status do pedido no site.
-    - (coletar_razao_social): Coleta a razão social do pedido no site.
+    - (coletar_cliente): Coleta a razão social do pedido no site.
     - (coletar_codigo_erp): Coleta código ERP do pedido no site.
     - (coletar_vendedor): Coleta vendedor do pedido.
     - (coletar_escritório): Retorna escritório do vendedor.
@@ -76,7 +84,7 @@ class Pedido:
     # ================================================== #
 
     # ~~ Armazena instância "Navegador".
-    def __init__(self, navegador: Navegador, financeiro: Financeiro) -> None:
+    def __init__(self, navegador: Navegador, financeiro: Financeiro, utilitarios: Utilitarios) -> None:
 
         """
         Resumo:
@@ -94,20 +102,25 @@ class Pedido:
         # ~~ Armazena instância.
         self.navegador = navegador
         self.financeiro = financeiro
+        self.utilitarios = utilitarios
 
         # ~~ Cria restante como None.
         self.pedido = None
         self.data = None
         self.forma_pagamento = None
         self.condicao_pagamento = None
-        self.razao_social = None
-        self.cnpj = None
+        self.cliente = None
+        self.revenda = None
+        self.cnpj_cpf = None
         self.raiz_cnpj = None
         self.codigo_erp = None
         self.valor_pedido = None
         self.status = None
         self.vendedor = None
         self.escritorio = None
+
+        # ~~ Status de dados coletados.
+        self.dados_coletados = False
 
     # ================================================== #
 
@@ -268,7 +281,7 @@ class Pedido:
         # ~~ Usa recursão.
         except:
             self.acessar(pedido)
-            self.coletar_cnpj(pedido)
+            cnpj = self.coletar_cnpj(pedido)
 
         # ~~ Retorna CNPJ.
         return cnpj
@@ -302,7 +315,7 @@ class Pedido:
         # ~~ Usa recursão.
         except:
             self.acessar(pedido)
-            self.coletar_valor(pedido)
+            valor_pedido = self.coletar_valor(pedido)
 
         # ~~ Retorna valor do pedido.
         return valor_pedido
@@ -360,7 +373,7 @@ class Pedido:
         # ~~ Usa recursão.
         except:
             self.acessar(pedido)
-            self.coletar_status(pedido)
+            status = self.coletar_status(pedido)
 
         # ~~ Retorna status.
         return status_pedido
@@ -368,7 +381,7 @@ class Pedido:
     # ================================================== #
 
     # ~~ Coleta razão social do pedido.
-    def coletar_razao_social(self, pedido: int) -> str:
+    def coletar_cliente(self, pedido: int) -> str:
 
         """
         Resumo:
@@ -397,10 +410,53 @@ class Pedido:
         # ~~ Usa recursão.
         except:
             self.acessar(pedido)
-            self.coletar_razao_social(pedido)
+            razao_social = self.coletar_cliente(pedido)
 
         # ~~ Retorna.
         return razao_social
+
+    # ================================================== #
+
+    # ~~ Coleta revenda do pedido.
+    def coletar_revenda(self, pedido: int) -> str:
+
+        """
+        Resumo:
+        - Coleta a revenda do pedido no site.
+        
+        Parâmetros:
+        - (pedido: int)
+        
+        Retorna:
+        - (revenda)
+            - (revenda: str)
+            - OU ("-": str)
+        
+        Exceções:
+        - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
+        """
+
+        # ~~ Para capturar caso página não esteja aberta.
+        try:
+
+            # ~~ Coleta revenda.
+            try:
+                revenda = self.navegador.driver.find_element(By.XPATH, value="//label[@for='resale_name_corporate']/following-sibling::div[@class='col-md-12']").text
+            except:
+                revenda = "-"
+                return revenda
+            try:
+                revenda = str(revenda).split(" (")[0]
+            except:
+                pass
+
+        # ~~ Usa recursão.
+        except:
+            self.acessar(pedido)
+            revenda = self.coletar_revenda(pedido)
+
+        # ~~ Retorna.
+        return revenda
 
     # ================================================== #
 
@@ -437,7 +493,7 @@ class Pedido:
         # ~~ Usa recursão.
         except:
             self.acessar(pedido)
-            self.coletar_codigo_erp(pedido)
+            codigo_erp = self.coletar_codigo_erp(pedido)
 
         # ~~ Retorna.
         return codigo_erp
@@ -553,7 +609,7 @@ class Pedido:
         # ~~ Usa recursão.
         except:
             self.acessar(pedido)
-            self.coletar_vendedor(pedido)
+            vendedor = self.coletar_vendedor(pedido)
         
         # ~~ Retorna.
         return vendedor
@@ -589,6 +645,251 @@ class Pedido:
 
     # ================================================== #
 
+    # ~~ Coleta centro(s) do pedido.
+    def coletar_centros(self, pedido: int) -> str:
+
+        """
+        Resumo:
+        - Coleta centros do pedido no site.
+
+        Parametros:
+        - (pedido: int)
+        
+        Retorna:
+        - (centros: str)
+
+        Exceções:
+        - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
+        """
+
+        # ~~ Para capturar caso página não esteja aberta.
+        try:
+
+            # ~~ Coleta centro.
+            centro_1 = self.navegador.driver.find_element(By.XPATH, value="(//div[@class='panel distribution-center']/div[@class='panel-heading'])[1]").text 
+            try:
+                centro_2 = self.navegador.driver.find_element(By.XPATH, value="(//div[@class='panel distribution-center']/div[@class='panel-heading'])[2]").text
+                centro = centro_1 + " - " + centro_2
+            except:
+                centro = centro_1
+        
+        # ~~ Usa recursão.
+        except:
+            self.acessar(pedido)
+            centro = self.coletar_centros(pedido)
+
+        # ~~ Retorna.
+        return centro
+
+    # ================================================== #
+
+    # ~~ Coleta observação do pedido.
+    def coletar_observacao(self, pedido) -> str:
+
+        """
+        Resumo:
+        - Coleta a observação do pedido no site.
+
+        Parâmetros:
+        - (pedido: int)
+
+        Retorna:
+        - (observacao_pedido)
+            - (observacao_pedido: str)
+            - OU ("-": str)
+
+        Exceções:
+        - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
+        """
+
+        # ~~ Para capturar caso página não esteja aberta.
+        try:
+
+            # ~~ Coleta observação.
+            observacao_pedido = self.navegador.driver.find_element(By.XPATH, value="//label[@for='client_comment']/following-sibling::div[@class='col-md-12']").text 
+            if observacao_pedido == "":
+                observacao_pedido = "-"
+        
+        # ~~ Usa recursão.
+        except:
+            self.acessar(pedido)
+            observacao_pedido = self.coletar_observacao(pedido)
+        
+        # ~~ Retorna.
+        return observacao_pedido
+
+    # ================================================== #
+
+    # ~~ Coleta ordem do pedido.
+    def coletar_ordem(self, pedido: int) -> int:
+
+        """
+        Resumo:
+        - Coleta a ordem do pedido no site.
+
+        Parâmetros:
+        - (pedido: int)
+
+        Retorna:
+        - (ordem)
+            - (ordem: str)
+            - OU ("-": str)
+
+        Exceções:
+        - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
+        """
+
+        # ~~ Para capturar caso página não esteja aberta.
+        try:
+
+            # ~~ Coleta ordem.
+            try:
+                ordem = self.navegador.driver.find_element(By.ID, value="distribution_centers-3-external_id")
+            except:
+                try:
+                    ordem = self.navegador.driver.find_element(By.ID, value="distribution_centers-2-external_id")
+                except:
+                    ordem = self.navegador.driver.find_element(By.ID, value="distribution_centers-1-external_id")
+            ordem = ordem.get_attribute("value")
+            if ordem == "":
+                ordem = "-"
+
+        # ~~ Usa recursão.
+        except:
+            self.acessar(pedido)
+            ordem = self.coletar_ordem(pedido)
+
+        # ~~ Retorna.
+        return ordem
+
+    # ================================================== #
+
+    # ~~ Coleta comissão over do pedido.
+    def coletar_over(self, pedido: int) -> str:
+
+        """
+        Resumo:
+        - Coleta o over do pedido no site.
+
+        Parâmetros:
+        - (pedido: int)
+
+        Retorna:
+        - (comissao_over):
+            - ("SIM": str)
+            - ("NÃO": str)
+
+        Exceções:
+        - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
+        """
+
+        # ~~ Para capturar caso página não esteja aberta.
+        try:
+
+            # ~~ Coleta comissão over.
+            comissao_over = self.navegador.driver.find_element(By.XPATH, value="//div[@class='panel distribution-center']").text 
+            if "Comissão total (comissão unitários)" in comissao_over:
+                comissao_over = "SIM"
+            else: 
+                comissao_over = "NÃO"
+
+        # ~~ Usa recursão.
+        except:
+            self.acessar(pedido)
+            comissao_over = self.coletar_over(pedido)
+
+        # ~~ Retorna.
+        return comissao_over
+
+    # ================================================== #
+
+    # ~~ Retorna porcentagem Z6.
+    def porcentagem_z6(self, escritorio: str) -> str:
+
+        """
+        Resumo:
+        - Retorna porcentagem Z6.
+
+        Parâmetros:
+        - (escritorio: str)
+
+        Retorna:
+        - (porcentagem):
+            - ("0,50": str)
+            - ("2,50": str)
+
+        Exceções:
+        - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
+        """
+
+        # ~~ Retorna porcentagem com base no escritorio.
+        if escritorio == "1105":
+            return "0,50"
+        else:
+            return "2,50"
+
+    # ================================================== #
+
+    # ~~ Importa dados no database.
+    def importar_dados_database(self) -> None:
+
+        """
+        Resumo:
+        - Importa dados coletados do pedido no database.
+
+        Exceções:
+        - (PedidoDadosNaoColetadosError): Quando dados do pedido não foram coletados para analisar.
+        """
+
+        # ~~ Verifica se existem dados coletados.
+        if self.dados_coletados == False:
+            raise PedidoDadosNaoColetadosError()
+
+        # ~~ Verifica se pedido já existe.
+        pedido = PedidoDados.objects.filter(pedido=self.pedido).first()
+        if pedido:
+            pedido.status = self.status
+            pedido.pedido = self.pedido
+            pedido.data = self.data
+            pedido.forma_pagamento = self.forma_pagamento
+            pedido.condicao_pagamento = self.condicao_pagamento
+            pedido.vendedor = self.vendedor
+            pedido.escritorio = self.escritorio
+            pedido.revenda = self.revenda
+            pedido.cliente = self.cliente
+            pedido.cnpj_cpf = self.cnpj_cpf
+            pedido.codigo_erp = self.codigo_erp
+            pedido.comissao_over = self.over
+            pedido.porcentagem_z6 = self.porcentagem_comissao
+            pedido.valor_total = self.valor_pedido
+            pedido.observacao = self.observacao
+            pedido.centros = self.centros
+            pedido.ordem = self.ordem
+            pedido.save()
+        else:
+            pedido_novo = PedidoDados(
+                status=self.status,
+                pedido=self.pedido,
+                data=self.data,
+                forma_pagamento=self.forma_pagamento,
+                condicao_pagamento=self.condicao_pagamento,
+                vendedor=self.vendedor,
+                escritorio=self.escritorio,
+                revenda=self.revenda,
+                cliente=self.cliente,
+                cnpj_cpf=self.cnpj_cpf,
+                codigo_erp=self.codigo_erp,
+                comissao_over=self.over,
+                porcentagem_z6=self.porcentagem_comissao,
+                valor_total=self.valor_pedido,
+                observacao=self.observacao,
+                centros=self.centros,
+                ordem=self.ordem
+            )
+            pedido_novo.save()
+
+    # ================================================== #
+
     # ~~ Coleta dados do pedido no site.
     def coletar_dados_completos(self, pedido: int) -> None:
 
@@ -602,9 +903,13 @@ class Pedido:
         Atributos:
         - (pedido: str)
         - (data: str)
-        - (condição_pagamento: str)
-        - (razão_social: str)
+        - (forma_pagamento: str)
+        - (condicao_pagamento: str)
+        - (cliente: str)
+        - (revenda: str)
+        - (razao_social: str)
         - (cnpj: str)
+        - (raiz_cnpj: str)
         - (codigo_erp):
             - (codigo_erp: str)
             - OU ("-": str)
@@ -616,6 +921,11 @@ class Pedido:
         - (escritorio):
             - (escritorio: str)
             - OU ("-": str)
+        - (centros: str)
+        - (observacao: str)
+        - (ordem: str)
+        - (over: str)
+        - (porcentagem_comissao: str)
         
         Exceções:
         - (PedidoNaoInseridoError): Quando pedido não foi inserido no site ainda.
@@ -629,14 +939,23 @@ class Pedido:
         self.data = self.coletar_data(pedido)
         self.forma_pagamento = self.coletar_forma_pagamento(pedido)
         self.condicao_pagamento = self.coletar_condicao_pagamento(pedido)
-        self.razao_social = self.coletar_razao_social(pedido)
-        self.cnpj = self.coletar_cnpj(pedido)
-        self.raiz_cnpj = self.cnpj[:8]
+        self.cliente = self.coletar_cliente(pedido)
+        self.revenda = self.coletar_revenda(pedido)
+        self.cnpj_cpf = self.coletar_cnpj(pedido)
+        self.raiz_cnpj = self.cnpj_cpf[:8]
         self.codigo_erp = self.coletar_codigo_erp(pedido)
         self.valor_pedido = self.coletar_valor(pedido)
         self.status = self.coletar_status(pedido)
+        self.centros = self.coletar_centros(pedido)
+        self.observacao = self.coletar_observacao(pedido)
+        self.ordem = self.coletar_ordem(pedido)
+        self.over = self.coletar_over(pedido)
         self.vendedor = self.coletar_vendedor(pedido)
         self.escritorio = self.coletar_escritório(self.vendedor)
+        self.porcentagem_comissao = self.porcentagem_z6(self.escritorio)
+
+        # ~~ Altera status para True.
+        self.dados_coletados = True
 
     # ================================================== #
 
@@ -667,7 +986,7 @@ class Pedido:
         """
 
         # ~~ Verifica se há dados coletados.
-        if self.valor_pedido == None:
+        if self.dados_coletados == False:
             raise PedidoDadosNaoColetadosError()
 
         # ~~ Cria dicionário para os dados da análise.
@@ -717,6 +1036,7 @@ class Pedido:
                 nfs_vencidas=str(dados_financeiros["nfs_vencidas"])
             )
             novo_cliente.save()
+            cliente = novo_cliente
 
         # ~~ Inicia análise definindo valores padrão.
         limite_ativo = True
@@ -737,8 +1057,8 @@ class Pedido:
 
         # ~~ Verifica se pedido está dentro da margem.
         if limite_ativo == True:
-            if margem < self.valor_pedido:
-                motivos += f"\n- Valor do pedido excede a margem disponível. Valor do pedido: {f"R$ {self.valor_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")} / margem livre: {f"R$ {margem:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}."
+            if margem < float(self.valor_pedido):
+                motivos += f"\n- Valor do pedido excede a margem disponível. Valor do pedido: {f"R$ {float(self.valor_pedido):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")} / Margem livre: {f"R$ {margem:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}."
                 status = "NÃO LIBERADO"
 
         # ~~ Verifica se possui notas vencidas.
@@ -758,17 +1078,17 @@ class Pedido:
                     valor=self.valor_pedido
                 )
                 valor_pendente_novo.save()
-            margem_atualizada = margem - self.valor_pedido
-            cliente.margem = str(margem_atualizada)
-            cliente.save()
+                margem_atualizada = margem - float(self.valor_pedido)
+                cliente.margem = str(margem_atualizada)
+                cliente.save()
         else:
             resposta_análise["mensagem"] = f"Pedido {self.pedido} recusado:{motivos}"
             resposta_análise["status"] = "NÃO LIBERADO"
 
         # ~~ Printa dados.
         if printar_dados == True:
-            utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {self.valor_pedido:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
-            utilitarios.printar_mensagem(mensagem=resposta_análise["mensagem"], char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+            self.utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {float(self.valor_pedido):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+            self.utilitarios.printar_mensagem(mensagem=resposta_análise["mensagem"], char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
 
         # ~~ Retorna com dados de liberação.
         return resposta_análise
@@ -816,14 +1136,3 @@ class Pedido:
     # ================================================== #
 
 # ================================================== #
-
-from scripts.camada_0.utilitarios import Utilitarios
-from scripts.camada_0.sap import Sap
-utilitarios = Utilitarios()
-sap = Sap()
-navegador = Navegador(utilitarios)
-navegador.acessar_godeep()
-financeiro = Financeiro(sap, utilitarios)
-pedido = Pedido(navegador, financeiro)
-pedido.coletar_dados_completos(13494)
-pedido.analise_credito(True, None, True)

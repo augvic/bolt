@@ -5,6 +5,7 @@ import threading
 import time
 from fastapi import FastAPI
 from scripts.camada_1.navegador import Navegador
+from scripts.camada_0.utilitarios import Utilitarios
 
 # ================================================== #
 
@@ -17,6 +18,7 @@ class FastApiServer:
 
     Atributos:
     - (navegador: Navegador): Instância do "Navegador".
+    - (utilitarios: Utilitarios): Instância do "Utilitarios".
 
     Métodos:
     - (instanciar_navegador): Cria atributo "navegador".
@@ -34,12 +36,13 @@ class FastApiServer:
         - Cria instância do "Navegador".
 
         Atributos:
-        - (navegador: Navegador)
+        - (navegador: Navegador): Instância do "Navegador".
+        - (utilitarios: Utilitarios): Instância do "Utilitarios".
         """
 
         # ~~ Cria instância.
-        self.navegador = Navegador()
-        self.navegador.instanciar_webdriver()
+        self.utilitarios = Utilitarios()
+        self.navegador = Navegador(self.utilitarios)
         time.sleep(3)
         
     # ================================================== #
