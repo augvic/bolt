@@ -56,6 +56,9 @@ class FastApiServer:
         for modulo in modulos_disponiveis:
             self.navegador.driver.execute_script(f"window.open('http://127.0.0.1:8000/{modulo}');")
 
+        abas = self.navegador.driver.window_handles
+        self.navegador.driver.switch_to.window(abas[0])
+
     # ================================================== #
 
     # ~~ Monitora se navegador foi fechado e abre novamente.

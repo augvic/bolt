@@ -63,14 +63,6 @@ class Navegador:
 
         # ~~ Criando instância.
         driver = webdriver.Chrome(options=options)
-        abas_abertas = driver.window_handles
-        if len(abas_abertas) > 1:
-            driver.switch_to.window(abas_abertas[0])
-            driver.close()
-        try:
-            driver.switch_to.window(abas_abertas[0])
-        except:
-            driver.switch_to.window(abas_abertas[1])
 
         # ~~ Atributos.
         self.driver = driver
