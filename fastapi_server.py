@@ -1,14 +1,12 @@
 # ================================================== #
 
 # ~~ Imports.
-import threading
-import time
+import asyncio
 from fastapi import FastAPI
 from scripts.instancias.navegador import Navegador
 from scripts.auxiliar.utilitarios import Utilitarios
 from scripts.auxiliar.database import Database
 from app.models import *
-import asyncio
 
 # ================================================== #
 
@@ -61,7 +59,7 @@ class FastApiServer:
     # ================================================== #
 
     # ~~ Monitora se navegador foi fechado e abre novamente.
-    def monitorar_navegador(self) -> None:
+    async def monitorar_navegador(self) -> None:
 
         """
         Resumo:
@@ -77,8 +75,8 @@ class FastApiServer:
                     self.navegador.driver.quit()
                 except:
                     pass
-                asyncio.run(self.iniciar()) 
-            time.sleep(5)
+                await self.iniciar()
+            await asyncio.sleep(5)
 
     # ================================================== #
 
@@ -103,8 +101,8 @@ class FastApiServer:
             # ~~ Inicia.
             await fastapi_server.iniciar()
 
-            # ~~ Aloca thread para monitorar fechamento do navegador.
-            threading.Thread(target=fastapi_server.monitorar_navegador, daemon=True).start()
+            # ~~ Monitora fechamento do navegador de forma assíncrona.
+            asyncio.create_task(self.monitorar_navegador())
 
         # ~~ Retorna app.
         return app
