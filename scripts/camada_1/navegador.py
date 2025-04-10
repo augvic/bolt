@@ -3,15 +3,15 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
 # ~~ Imports.
 import time
 from selenium import webdriver
-from scripts.erros import *
-from scripts.utilitarios import Utilitarios
+from scripts.camada_1.erros.navegador_erros import *
+from scripts.camada_0.utilitarios import Utilitarios
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
@@ -71,9 +71,6 @@ class Navegador:
             driver.switch_to.window(abas_abertas[0])
         except:
             driver.switch_to.window(abas_abertas[1])
-
-        # ~~ Acessa rota principal do server Django.
-        #driver.get("http://127.0.0.1:8000")
 
         # ~~ Atributos.
         self.driver = driver

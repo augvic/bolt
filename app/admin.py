@@ -8,6 +8,17 @@ from .models import *
 # ================================================== #
 
 # ~~ Filtros da tabela DatabaseAuthAdmin.
+class ModulesAuthAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("usuario", "modulo")
+
+    # ~~ Filtros laterais.
+    list_filter = ("usuario", "modulo")
+
+# ================================================== #
+
+# ~~ Filtros da tabela DatabaseAuthAdmin.
 class ComercialAdmin(admin.ModelAdmin):
 
     # ~~ Colunas que irão aparecer no admin.
@@ -113,6 +124,7 @@ class PedidosPendentesAdmin(admin.ModelAdmin):
 # ================================================== #
 
 # ~~ Tabelas para aparecer no admin.
+admin.site.register(ModulesAuth, ModulesAuthAdmin)
 admin.site.register(Comercial, ComercialAdmin)
 admin.site.register(DatabaseAuth, DatabaseAuthAdmin)
 admin.site.register(PedidoDados, PedidoDadosAdmin)

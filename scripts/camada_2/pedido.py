@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
@@ -16,10 +16,10 @@ django.setup()
 
 # ~~ Bibliotecas.
 import time
-from scripts.navegador import Navegador
-from scripts.financeiro import Financeiro
-from scripts.utilitarios import Utilitarios
-from scripts.erros import *
+from scripts.camada_1.navegador import Navegador
+from scripts.camada_1.financeiro import Financeiro
+from scripts.camada_0.utilitarios import Utilitarios
+from scripts.camada_2.erros.pedido_erros import *
 from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys

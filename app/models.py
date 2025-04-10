@@ -5,6 +5,19 @@ from django.db import models
 
 # ================================================== #
 
+# ~~ Modelo contendo as permissões de acesso aos módulos de cada usuário.
+class ModulesAuth(models.Model):
+
+    # ~~ Atributos.
+    usuario = models.CharField(max_length=200)
+    modulo = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.usuario
+
+# ================================================== #
+
 # ~~ Modelo contendo os dados de cada assistente comercial.
 class Comercial(models.Model):
 

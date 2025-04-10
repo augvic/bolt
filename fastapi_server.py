@@ -3,9 +3,19 @@
 # ~~ Imports.
 import threading
 import time
+import os
+import getpass
 from fastapi import FastAPI
 from scripts.camada_1.navegador import Navegador
 from scripts.camada_0.utilitarios import Utilitarios
+from app.models import *
+
+# ================================================== #
+
+# ~~ Inicia setup Django.
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
+django.setup()
 
 # ================================================== #
 
@@ -44,6 +54,15 @@ class FastApiServer:
         self.utilitarios = Utilitarios()
         self.navegador = Navegador(self.utilitarios)
         time.sleep(3)
+
+        # ~~ Acessa página principal.
+        self.navegador.driver.get("https://127.0.0.1:8000")
+
+        # ~~ Abre as abas que o usuário possui acesso.
+        matricula = getpass.getuser()
+        modulos_acessiveis = ModulesAuth.objects.filter(usuario=matricula).values_list("modulos", flat=True)
+        for modulo in modulos_acessiveis:
+
         
     # ================================================== #
 

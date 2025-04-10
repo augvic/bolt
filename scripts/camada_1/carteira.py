@@ -3,13 +3,13 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
 # ~~ Imports.
-from scripts.utilitarios import Utilitarios
-from scripts.excel import Excel
+from scripts.camada_0.utilitarios import Utilitarios
+from scripts.camada_0.excel import Excel
 
 # ================================================== #
 

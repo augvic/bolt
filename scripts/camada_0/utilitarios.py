@@ -3,7 +3,7 @@
 # ~~ Adiciona raiz ao path.
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 # ================================================== #
 
@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from rich.console import Console
 from rich.table import Table
-from scripts.erros import *
+from scripts.camada_0.erros.utilitarios_erros import *
 from django.db import connection
 
 # ================================================== #
