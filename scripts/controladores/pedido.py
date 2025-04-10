@@ -16,10 +16,10 @@ django.setup()
 
 # ~~ Bibliotecas.
 import time
-from scripts.camada_1.navegador import Navegador
-from scripts.camada_1.financeiro import Financeiro
-from scripts.camada_0.utilitarios import Utilitarios
-from scripts.camada_2.erros.pedido_erros import *
+from scripts.instancias.navegador import Navegador
+from scripts.controladores.financeiro import Financeiro
+from scripts.auxiliar.utilitarios import Utilitarios
+from scripts.controladores.erros.pedido_erros import *
 from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys

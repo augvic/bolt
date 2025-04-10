@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 # ~~ Bibliotecas.
 import win32com.client
-from scripts.camada_0.erros.sap_erros import *
+from scripts.instancias.erros.sap_erros import *
 
 # ================================================== #
 

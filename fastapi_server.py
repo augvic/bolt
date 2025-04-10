@@ -3,19 +3,12 @@
 # ~~ Imports.
 import threading
 import time
-import os
-import getpass
 from fastapi import FastAPI
-from scripts.camada_1.navegador import Navegador
-from scripts.camada_0.utilitarios import Utilitarios
+from scripts.instancias.navegador import Navegador
+from scripts.auxiliar.utilitarios import Utilitarios
+from scripts.auxiliar.database import Database
 from app.models import *
-
-# ================================================== #
-
-# ~~ Inicia setup Django.
-import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
-django.setup()
+import asyncio
 
 # ================================================== #
 
@@ -29,9 +22,10 @@ class FastApiServer:
     Atributos:
     - (navegador: Navegador): Instância do "Navegador".
     - (utilitarios: Utilitarios): Instância do "Utilitarios".
+    - (database: Database): Instância do "Database".
 
     Métodos:
-    - (instanciar_navegador): Cria atributo "navegador".
+    - (iniciar): Cria atributos e instâncias.
     - (monitorar_navegador): Verifica se navegador é fechado e abre ele novamente.
     - (criar_app): Retorna instância do app FastAPI.
     """
@@ -39,31 +33,31 @@ class FastApiServer:
     # ================================================== #
 
     # ~~ Cria instância do "Navegador".
-    def instanciar_navegador(self) -> None:
+    async def iniciar(self) -> None:
 
         """
         Resumo:
-        - Cria instância do "Navegador".
+        - Cria atributos e instâncias.
 
         Atributos:
         - (navegador: Navegador): Instância do "Navegador".
         - (utilitarios: Utilitarios): Instância do "Utilitarios".
+        - (database: Database): Instância do "Database".
         """
 
-        # ~~ Cria instância.
+        # ~~ Cria instâncias.
         self.utilitarios = Utilitarios()
         self.navegador = Navegador(self.utilitarios)
-        time.sleep(3)
+        self.database = Database()
 
         # ~~ Acessa página principal.
-        self.navegador.driver.get("https://127.0.0.1:8000")
+        self.navegador.driver.get("http://127.0.0.1:8000")
 
         # ~~ Abre as abas que o usuário possui acesso.
-        matricula = getpass.getuser()
-        modulos_acessiveis = ModulesAuth.objects.filter(usuario=matricula).values_list("modulos", flat=True)
-        for modulo in modulos_acessiveis:
+        modulos_disponiveis = await self.database.modulos_disponiveis()
+        for modulo in modulos_disponiveis:
+            self.navegador.driver.execute_script(f"window.open('http://127.0.0.1:8000/{modulo}');")
 
-        
     # ================================================== #
 
     # ~~ Monitora se navegador foi fechado e abre novamente.
@@ -74,13 +68,16 @@ class FastApiServer:
         - Monitora se navegador foi fechado e abre novamente.
         """
 
+        # ~~ Fica em loop.
         while True:
             try:
-                self.navegador.driver.title
+                _ = self.navegador.driver.title
             except:
-                self.navegador.driver.quit()
-                self.navegador.instanciar_webdriver()
-                self.navegador.driver.get("http://127.0.0.1:8000")
+                try:
+                    self.navegador.driver.quit()
+                except:
+                    pass
+                asyncio.run(self.iniciar()) 
             time.sleep(5)
 
     # ================================================== #
@@ -96,8 +93,21 @@ class FastApiServer:
         - (app: FastAPI)
         """
 
+        # ~~ Cria app.
+        app = FastAPI()
+
+        # ~~ Inicia FastAPI Server.
+        @app.on_event("startup")
+        async def iniciar():
+
+            # ~~ Inicia.
+            await fastapi_server.iniciar()
+
+            # ~~ Aloca thread para monitorar fechamento do navegador.
+            threading.Thread(target=fastapi_server.monitorar_navegador, daemon=True).start()
+
         # ~~ Retorna app.
-        return FastAPI()
+        return app
     
     # ================================================== #
 
@@ -106,13 +116,7 @@ class FastApiServer:
 # ~~ Cria instância do FastApiServer.
 fastapi_server = FastApiServer()
 
-# ~~ Inicia app.
+# ~~ Cria app.
 app = fastapi_server.criar_app()
-
-# ~~ Cria instância do navegador.
-fastapi_server.instanciar_navegador()
-
-# ~~ Aloca thread para monitorar fechamento do navegador.
-threading.Thread(target=fastapi_server.monitorar_navegador, daemon=True).start()
 
 # ================================================== #

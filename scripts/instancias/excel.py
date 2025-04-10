@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 import xlwings as xw
 import time
 import pandas
-from scripts.camada_0.erros.excel_erros import *
+from scripts.instancias.erros.excel_erros import *
 
 # ================================================== #
 

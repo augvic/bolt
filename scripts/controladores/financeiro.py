@@ -17,8 +17,8 @@ django.setup()
 # ~~ Imports.
 import pandas
 from datetime import datetime, timedelta
-from scripts.camada_0.sap import Sap
-from scripts.camada_0.utilitarios import Utilitarios
+from scripts.instancias.sap import Sap
+from scripts.auxiliar.utilitarios import Utilitarios
 
 # ================================================== #
 

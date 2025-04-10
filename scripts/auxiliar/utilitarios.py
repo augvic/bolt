@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from rich.console import Console
 from rich.table import Table
-from scripts.camada_0.erros.utilitarios_erros import *
+from scripts.instancias.erros.utilitarios_erros import *
 from django.db import connection
 
 # ================================================== #

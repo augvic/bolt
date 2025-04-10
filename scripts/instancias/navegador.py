@@ -10,8 +10,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 # ~~ Imports.
 import time
 from selenium import webdriver
-from scripts.camada_1.erros.navegador_erros import *
-from scripts.camada_0.utilitarios import Utilitarios
+from scripts.instancias.erros.navegador_erros import *
+from scripts.auxiliar.utilitarios import Utilitarios
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
