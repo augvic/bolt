@@ -102,7 +102,7 @@ class FastApiServer:
             await fastapi_server.iniciar()
 
             # ~~ Monitora fechamento do navegador de forma assíncrona.
-            asyncio.create_task(self.monitorar_navegador())
+            await self.monitorar_navegador()
 
         # ~~ Retorna app.
         return app
