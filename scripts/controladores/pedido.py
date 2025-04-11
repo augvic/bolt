@@ -7,25 +7,17 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 # ================================================== #
 
-# ~~ Inicia setup Django.
-import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
-django.setup()
-
-# ================================================== #
-
 # ~~ Bibliotecas.
 import time
 from scripts.instancias.navegador import Navegador
 from scripts.controladores.financeiro import Financeiro
 from scripts.auxiliar.utilitarios import Utilitarios
 from scripts.controladores.erros.pedido_erros import *
+from scripts.auxiliar.database import Database
 from datetime import datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from app.models import Comercial, PedidosPendentes, DadosFinaceirosClientes, PedidoDados
-from django.shortcuts import get_object_or_404
 
 # ================================================== #
 
@@ -40,6 +32,7 @@ class Pedido:
     - (navegador: Navegador): Instância do "Navegador".
     - (financeiro: Financeiro): Instância da classe "Financeiro".
     - (utilitarios: Utilitarios): Instância da classe "Utilitarios".
+    - (database: Database): Instância da classe "Database".
     - (pedido: str)
     - (data: str)
     - (forma_pagamento: str) 
@@ -55,13 +48,13 @@ class Pedido:
     - (escritorio: str)
     - (observacao: str)
     - (centros: str)
-    - (retorno_analise: str)
+    - (analise_credito_mensagem: str)
+    - (analise_credito_status):
+        - ("LIBERADO": str)
+        - ("NÃO LIBERADO": str)
     - (ordem: str)
     - (over: str)
     - (porcentagem_comissao: str)
-    - (status_analise):
-        - ("LIBERADO": str)
-        - OU ("NÃO LIBERADO")
 
     Métodos:
     - (__init__): Cria atributos.
@@ -84,7 +77,7 @@ class Pedido:
     # ================================================== #
 
     # ~~ Armazena instância "Navegador".
-    def __init__(self, navegador: Navegador, financeiro: Financeiro, utilitarios: Utilitarios) -> None:
+    def __init__(self, navegador: Navegador, financeiro: Financeiro, utilitarios: Utilitarios, database: Database) -> None:
 
         """
         Resumo:
@@ -93,16 +86,22 @@ class Pedido:
         Parâmetros:
         - (navegador: Navegador): Instância da classe "Navegador".
         - (financeiro: Financeiro): Instância da classe "Financeiro".
+        - (utilitarios: Utilitarios): Instância da classe "Utilitarios".
+        - (database: Database): Instância da classe "Database".
 
         Atributos:
         - (navegador: Navegador): Instância da classe "Navegador".
         - (financeiro: Financeiro): Instância da classe "Financeiro".
+        - (utilitarios: Utilitarios): Instância da classe "Utilitarios".
+        - (database: Database): Instância da classe "Database".
+        - Atributos para cada dado do pedido.
         """
 
         # ~~ Armazena instância.
         self.navegador = navegador
         self.financeiro = financeiro
         self.utilitarios = utilitarios
+        self.database = database
 
         # ~~ Cria restante como None.
         self.pedido = None
@@ -118,6 +117,13 @@ class Pedido:
         self.status = None
         self.vendedor = None
         self.escritorio = None
+        self.observacao = None
+        self.centros = None
+        self.analise_credito_mensagem = None
+        self.analise_credito_status = None
+        self.ordem = None
+        self.over = None
+        self.porcentagem_comissao = None
 
         # ~~ Status de dados coletados.
         self.dados_coletados = False
@@ -633,7 +639,7 @@ class Pedido:
         """
 
         # ~~ Coleta escritório do banco de dados.
-        escritorio_query = Comercial.objects.filter(nome=vendedor).values_list("escritorio", flat=True)
+        escritorio_query = self.database.coletar_escritorio(vendedor)
         if not escritorio_query:
             escritorio = "-"
         else:
@@ -830,66 +836,6 @@ class Pedido:
 
     # ================================================== #
 
-    # ~~ Importa dados no database.
-    def importar_dados_database(self) -> None:
-
-        """
-        Resumo:
-        - Importa dados coletados do pedido no database.
-
-        Exceções:
-        - (PedidoDadosNaoColetadosError): Quando dados do pedido não foram coletados para analisar.
-        """
-
-        # ~~ Verifica se existem dados coletados.
-        if self.dados_coletados == False:
-            raise PedidoDadosNaoColetadosError()
-
-        # ~~ Verifica se pedido já existe.
-        pedido = PedidoDados.objects.filter(pedido=self.pedido).first()
-        if pedido:
-            pedido.status = self.status
-            pedido.pedido = self.pedido
-            pedido.data = self.data
-            pedido.forma_pagamento = self.forma_pagamento
-            pedido.condicao_pagamento = self.condicao_pagamento
-            pedido.vendedor = self.vendedor
-            pedido.escritorio = self.escritorio
-            pedido.revenda = self.revenda
-            pedido.cliente = self.cliente
-            pedido.cnpj_cpf = self.cnpj_cpf
-            pedido.codigo_erp = self.codigo_erp
-            pedido.comissao_over = self.over
-            pedido.porcentagem_z6 = self.porcentagem_comissao
-            pedido.valor_total = self.valor_pedido
-            pedido.observacao = self.observacao
-            pedido.centros = self.centros
-            pedido.ordem = self.ordem
-            pedido.save()
-        else:
-            pedido_novo = PedidoDados(
-                status=self.status,
-                pedido=self.pedido,
-                data=self.data,
-                forma_pagamento=self.forma_pagamento,
-                condicao_pagamento=self.condicao_pagamento,
-                vendedor=self.vendedor,
-                escritorio=self.escritorio,
-                revenda=self.revenda,
-                cliente=self.cliente,
-                cnpj_cpf=self.cnpj_cpf,
-                codigo_erp=self.codigo_erp,
-                comissao_over=self.over,
-                porcentagem_z6=self.porcentagem_comissao,
-                valor_total=self.valor_pedido,
-                observacao=self.observacao,
-                centros=self.centros,
-                ordem=self.ordem
-            )
-            pedido_novo.save()
-
-    # ================================================== #
-
     # ~~ Coleta dados do pedido no site.
     def coletar_dados_completos(self, pedido: int) -> None:
 
@@ -957,6 +903,9 @@ class Pedido:
         # ~~ Altera status para True.
         self.dados_coletados = True
 
+        # ~~ Importa dados no database.
+        self.database.importar_pedido_database(self)
+
     # ================================================== #
 
     # ~~ Faz análise de crédito do pedido.
@@ -976,8 +925,8 @@ class Pedido:
             - (True: bool): Libera tela do SAP.
 
         Atributos:
-        - (retorno_analise: str)
-        - (status_analise):
+        - (analise_credito_mensagem: str)
+        - (analise_credito_status):
             - ("LIBERADO": str)
             - ("NÃO LIBERADO": str)
 
@@ -996,7 +945,7 @@ class Pedido:
         dados_financeiros = self.financeiro.coletar_dados_financeiros_cliente(raiz_cnpj=self.raiz_cnpj, printar_dados=printar_dados, log_path=log_path, liberar_tela=liberar_tela)
 
         # ~~ Acessa database para verificar se há valores de pedidos pendentes.
-        valores_pendentes = PedidosPendentes.objects.filter(raiz_cnpj=self.raiz_cnpj).values_list("valor", flat=True)
+        valores_pendentes = self.database.coletar_pedidos_pendentes(self.raiz_cnpj)
 
         # ~~ Atualiza valor da margem de acordo com os valores pendentes.
         if dados_financeiros["margem"] != "Sem margem disponível.":
@@ -1013,30 +962,12 @@ class Pedido:
 
         # ~~ Verifica se vencimento é data ou não e converte ele caso seja.
         if dados_financeiros["vencimento"] == "Sem limite ativo.":
-            vencimento = "Sem limite ativo."
+            vencimento_str = "Sem limite ativo."
         else:
-            vencimento = datetime.strftime(dados_financeiros["vencimento"], "%d/%m/%Y")
+            vencimento_str = datetime.strftime(dados_financeiros["vencimento"], "%d/%m/%Y")
 
         # ~~ Importa dados no database.
-        cliente = DadosFinaceirosClientes.objects.filter(raiz_cnpj=self.raiz_cnpj).first()
-        if cliente:
-            cliente.vencimento_limite = vencimento
-            cliente.valor_limite = str(dados_financeiros["limite"])
-            cliente.valor_em_aberto = str(dados_financeiros["em_aberto"])
-            cliente.margem = str(margem)
-            cliente.nfs_vencidas = str(dados_financeiros["nfs_vencidas"])
-            cliente.save()
-        else:
-            novo_cliente = DadosFinaceirosClientes(
-                raiz_cnpj=str(self.raiz_cnpj),
-                vencimento_limite=vencimento,
-                valor_limite=str(dados_financeiros["limite"]),
-                valor_em_aberto=str(dados_financeiros["em_aberto"]),
-                margem=str(margem),
-                nfs_vencidas=str(dados_financeiros["nfs_vencidas"])
-            )
-            novo_cliente.save()
-            cliente = novo_cliente
+        self.database.importar_dados_financeiros_cliente(str(self.raiz_cnpj), str(vencimento_str), str(dados_financeiros["limite"]), str(dados_financeiros["em_aberto"]), str(margem), str(dados_financeiros["nfs_vencidas"]))
 
         # ~~ Inicia análise definindo valores padrão.
         limite_ativo = True
@@ -1068,70 +999,27 @@ class Pedido:
 
         # ~~ Verifica se pode ser liberado. Se puder, importa seu valor como pendente no database e atualiza margem do cliente.
         if status == "LIBERADO":
-            resposta_análise["mensagem"] = f"Pedido {self.pedido} liberado."
-            resposta_análise["status"] = "LIBERADO"
-            pedido_liberado = PedidosPendentes.objects.filter(pedido=self.pedido).first()
-            if not pedido_liberado:
-                valor_pendente_novo = PedidosPendentes(
-                    raiz_cnpj=self.raiz_cnpj,
-                    pedido=self.pedido,
-                    valor=self.valor_pedido
-                )
-                valor_pendente_novo.save()
-                margem_atualizada = margem - float(self.valor_pedido)
-                cliente.margem = str(margem_atualizada)
-                cliente.save()
+
+            # ~~ Salva retorno.
+            self.analise_credito_mensagem = f"Pedido {self.pedido} liberado."
+            self.analise_credito_status = "LIBERADO"
+
+            # ~~ Importa pedido pendente.
+            self.database.importar_pedido_pendente(self.raiz_cnpj, self.pedido, self.valor_pedido)
+
+            # ~~ Atualiza margem do cliente.
+            margem_atualizada = margem - float(self.valor_pedido)
+            self.database.importar_dados_financeiros_cliente(raiz_cnpj=self.raiz_cnpj, margem=margem_atualizada)
+        
+        # ~~ Se não for liberado.
         else:
-            resposta_análise["mensagem"] = f"Pedido {self.pedido} recusado:{motivos}"
-            resposta_análise["status"] = "NÃO LIBERADO"
+            self.analise_credito_mensagem = f"Pedido {self.pedido} recusado:{motivos}"
+            self.analise_credito_status = "NÃO LIBERADO"
 
         # ~~ Printa dados.
         if printar_dados == True:
             self.utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {float(self.valor_pedido):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
             self.utilitarios.printar_mensagem(mensagem=resposta_análise["mensagem"], char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
-
-        # ~~ Retorna com dados de liberação.
-        return resposta_análise
-
-    # ================================================== #
-
-    # ~~ Remove do database o valor de pedido pendente.
-    def remover_pendente(numero_pedido: str, adicionar_ao_em_aberto: bool) -> dict:
-
-        """
-        Resumo:
-        - Remove do database o valor de pedido pendente.
-        
-        Parâmetros:
-        - (numero_pedido: str):
-        - (adicionar_ao_em_aberto):
-            - (False: bool): Apenas remove valor pendente.
-            - (True: bool): Remove valor e soma ele com o que possui em aberto.
-        """
-
-        # ~~ Coleta pedido pendente.
-        pedido = get_object_or_404(PedidosPendentes, pedido=numero_pedido)
-
-        # ~~ Coleta cliente.
-        cliente = get_object_or_404(DadosFinaceirosClientes, raiz_cnpj=pedido.raiz_cnpj)
-
-        # ~~ Coleta valores.
-        margem = float(cliente.margem)
-        valor_pedido = float(pedido.valor)
-        if cliente.valor_em_aberto != "Sem valores em aberto.":
-            em_aberto = float(cliente.valor_em_aberto)
-        else:
-            em_aberto = 0
-
-        # ~~ Se for para adicionar o valor ao "em aberto".
-        if adicionar_ao_em_aberto == True:
-            cliente.valor_em_aberto = em_aberto + valor_pedido
-        else:
-            cliente.margem = margem + valor_pedido
-        cliente.save()
-
-        # ~~ Deleta pedido.
-        pedido.delete()
 
     # ================================================== #
 
