@@ -9,10 +9,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 # ~~ Bibliotecas.
 import time
-from scripts.instancias.navegador import Navegador
-from scripts.controladores.financeiro import Financeiro
+from scripts.instancias_primarias.navegador import Navegador
+from scripts.instancias_secundarias.financeiro import Financeiro
 from scripts.auxiliar.utilitarios import Utilitarios
-from scripts.controladores.erros.pedido_erros import *
+from scripts.instancias_secundarias.erros.pedido_erros import *
 from scripts.auxiliar.database import Database
 from datetime import datetime
 from selenium.webdriver.common.by import By
@@ -941,6 +941,9 @@ class Pedido:
         if self.dados_coletados == False:
             raise PedidoDadosNaoColetadosError()
 
+        # ~~ Mensagem.
+        self.utilitarios.printar_mensagem(mensagem=f"Iniciando análise do pedido: {self.pedido}.", char_type="=", char_qtd=50, char_side="bot")
+
         # ~~ Coleta dados financeiros do cliente.
         dados_financeiros = self.financeiro.coletar_dados_financeiros_cliente(raiz_cnpj=self.raiz_cnpj, printar_dados=printar_dados, log_path=log_path, liberar_tela=liberar_tela)
 
@@ -1024,15 +1027,3 @@ class Pedido:
     # ================================================== #
 
 # ================================================== #
-
-from scripts.instancias.sap import Sap
-sap = Sap()
-database = Database()
-utilitarios = Utilitarios()
-navegador = Navegador(utilitarios)
-financeiro = Financeiro(sap, utilitarios)
-pedido = Pedido(navegador, financeiro, utilitarios, database)
-
-navegador.acessar_godeep()
-pedido.coletar_dados_completos(13583)
-pedido.analise_credito(True, None, True)

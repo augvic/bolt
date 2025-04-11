@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 # ~~ Imports.
 import time
 from selenium import webdriver
-from scripts.instancias.erros.navegador_erros import *
+from scripts.instancias_primarias.erros.navegador_erros import *
 from scripts.auxiliar.utilitarios import Utilitarios
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -86,18 +86,26 @@ class Navegador:
         try:
             microsoft_login_botao = self.driver.find_element(By.ID, value="login-ms-azure-ad")
             microsoft_login_botao.click()
-            time.sleep(5)
+            time.sleep(3)
             body = self.driver.find_element(By.TAG_NAME, value="body").text
             if any(login_string in body for login_string in ["Because you're accessing sensitive info, you need to verify your password.", "Sign in", "Pick an account", "Entrar"]):
-                self.utilitarios.printar_mensagem(mostrar_data_hora="Only")
-                input("Necessário logar conta Microsoft. Aperte ENTER aqui depois para continuar.")
-                self.utilitarios.printar_mensagem(char_type="=", char_qtd=50)
+                self.utilitarios.printar_mensagem(mensagem="Necessário logar conta Microsoft.", char_type="=", char_qtd=50, char_side="bot")
+                while True:
+                    body = self.driver.find_element(By.TAG_NAME, value="body").text
+                    if "DASHBOARD" in body:
+                        break
+                    else:
+                        time.sleep(3)
             if "Approve sign in request" in body:
                 time.sleep(3)
                 codigo = self.driver.find_element(By.ID, value="idRichContext_DisplaySign").text
-                self.utilitarios.printar_mensagem(mostrar_data_hora="Only")
-                input(f"Necessário authenticator Microsoft para continuar: {codigo}. Aperte ENTER aqui depois para continuar.")
-                self.utilitarios.printar_mensagem(char_type="=", char_qtd=50)
+                self.utilitarios.printar_mensagem(mensagem=f"Necessário authenticator Microsoft para continuar: {codigo}.", char_type="=", char_qtd=50, char_side="bot")
+                while True:
+                    body = self.driver.find_element(By.TAG_NAME, value="body").text
+                    if "DASHBOARD" in body:
+                        break
+                    else:
+                        time.sleep(3)
         except:
             self.driver.get(f"https://www.revendedorpositivo.com.br/admin/index/")
 

@@ -17,7 +17,7 @@ django.setup()
 # ~~ Imports.
 import pandas
 from datetime import datetime, timedelta
-from scripts.instancias.sap import Sap
+from scripts.instancias_primarias.sap import Sap
 from scripts.auxiliar.utilitarios import Utilitarios
 
 # ================================================== #

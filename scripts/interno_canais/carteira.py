@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 # ~~ Imports.
 from scripts.auxiliar.utilitarios import Utilitarios
-from scripts.instancias.excel import Excel
+from scripts.instancias_primarias.excel import Excel
 
 # ================================================== #
 

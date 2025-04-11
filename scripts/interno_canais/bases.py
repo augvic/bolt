@@ -9,9 +9,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # ~~ Imports.
 import time
-from scripts.instancias.navegador import Navegador
-from scripts.instancias.excel import Excel
-from scripts.interno.erros.bases_erros import *
+from scripts.instancias_primarias.navegador import Navegador
+from scripts.instancias_primarias.excel import Excel
+from scripts.interno_canais.erros.bases_erros import *
 
 # ================================================== #
 

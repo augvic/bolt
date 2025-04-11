@@ -55,7 +55,7 @@ class Database:
     # ================================================== #
 
     # ~~ Remove do database o valor de pedido pendente.
-    def remover_pedido_pendente(numero_pedido: str, adicionar_ao_em_aberto: bool) -> dict:
+    def remover_pedido_pendente(self, numero_pedido: str, adicionar_ao_em_aberto: bool) -> None:
 
         """
         Resumo:

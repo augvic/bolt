@@ -3,7 +3,7 @@
 # ~~ Imports.
 import asyncio
 from fastapi import FastAPI
-from scripts.instancias.navegador import Navegador
+from scripts.instancias_primarias.navegador import Navegador
 from scripts.auxiliar.utilitarios import Utilitarios
 from scripts.auxiliar.database import Database
 from app.models import *
