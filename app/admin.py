@@ -101,6 +101,20 @@ class PedidoLogsAdmin(admin.ModelAdmin):
 
 # ================================================== #
 
+# ~~ Filtros da tabela PedidoItens.
+class PedidoItensAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = (["pedido", "centro", "sku", "valor"])
+
+    # ~~ Campo de busca.
+    search_fields = (["pedido"])
+
+    # ~~ Filtros laterais.
+    list_filter = (["pedido", "centro", "sku"])
+
+# ================================================== #
+
 # ~~ Filtros da tabela DadosFinaceirosClientesAdmin.
 class DadosFinaceirosClientesAdmin(admin.ModelAdmin):
 
@@ -135,6 +149,7 @@ admin.site.register(PedidoRemessas, PedidoRemessasAdmin)
 admin.site.register(PedidoDts, PedidoDtsAdmin)
 admin.site.register(PedidoNfs, PedidoNfsAdmin)
 admin.site.register(PedidoLogs, PedidoLogsAdmin)
+admin.site.register(PedidoItens, PedidoItensAdmin)
 admin.site.register(DadosFinaceirosClientes, DadosFinaceirosClientesAdmin)
 admin.site.register(PedidosPendentes, PedidosPendentesAdmin)
 

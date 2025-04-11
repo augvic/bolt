@@ -281,4 +281,28 @@ class Database:
 
     # ================================================== #
 
+    # ~~ Importa itens do pedido.
+    def importar_itens_pedido(self, pedido: str, itens: list) -> None:
+
+        """
+        Resumo:
+        - Importa itens do pedido.
+
+        Parâmetros:
+        - (pedido: str)
+        - (itens: list)
+        """
+
+        # ~~ Importa somente se itens não estiverem no database.
+        itens_database = PedidoItens.objects.filter(pedido=pedido).first()
+        if not itens_database:
+            for item in itens:
+                item_novo = PedidoItens(
+                    pedido=pedido,
+                    centro=item["centro"],
+                    sku=item["sku"],
+                    valor=item["valor"]
+                )
+                item_novo.save()
+
 # ================================================== #

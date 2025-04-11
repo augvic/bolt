@@ -132,6 +132,21 @@ class PedidoLogs(models.Model):
 
 # ================================================== #
 
+# ~~ Modelo contendo os itens do pedido.
+class PedidoItens(models.Model):
+
+    # ~~ Atributos.
+    pedido = models.CharField(max_length=200)
+    centro = models.CharField(max_length=200)
+    sku = models.CharField(max_length=200)
+    valor = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.pedido
+
+# ================================================== #
+
 # ~~ Modelo contendo os dados financeiros de clientes.
 class DadosFinaceirosClientes(models.Model):
 

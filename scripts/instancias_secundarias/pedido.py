@@ -897,17 +897,21 @@ class Pedido:
         self.vendedor = self.coletar_vendedor(pedido)
         self.escritorio = self.coletar_escritório(self.vendedor)
         self.porcentagem_comissao = self.coletar_porcentagem_comissao(self.escritorio)
+        self.itens = self.coletar_itens(pedido)
 
         # ~~ Altera status para True.
         self.dados_coletados = True
 
-        # ~~ Importa dados no database.
+        # ~~ Importa dados do pedido no database.
         self.database.importar_pedido_database(
             self.pedido, self.status, self.data, self.forma_pagamento, self.condicao_pagamento,
             self.vendedor, self.escritorio, self.revenda, self.cliente, self.cnpj_cpf,
             self.codigo_erp, self.over, self.porcentagem_comissao, self.valor_total, self.observacao,
             self.centros, self.ordem
         )
+
+        # ~~ Importa itens.
+        self.database.importar_itens_pedido(self.pedido, self.itens)
 
     # ================================================== #
 
@@ -1023,6 +1027,92 @@ class Pedido:
         if printar_dados == True:
             self.utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {float(self.valor_total):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
             self.utilitarios.printar_mensagem(mensagem=self.analise_credito_mensagem, char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+
+    # ================================================== #
+
+    # ~~ Altera pedido no site.
+    def alterar_pedido_site(self, pedido: int, alterar_status: str = None, observacao_interna: str = None) -> None:
+
+        """
+        Resumo:
+        - Altera pedido no site. Podendo alterar o status e inserir observação interna.
+
+        Parâmetros:
+        - (pedido: int)
+        - (alterar_status: str): Se passado algum status, altera para ele no site.
+        - (observaca_interna: str): Se passado alguma observação, insere ela nas observações do pedido.
+        """ 
+
+        # ~~ Acessa página.
+        self.acessar(pedido)
+
+        # ~~ Se for para alterar o status.
+        if alterar_status:
+
+            # ~~ Encontra paineis e altera status em cada um.
+            for i in range(1, 4):
+                try: 
+                    status_pedido = self.navegador.driver.find_element(By.NAME, value = f"distribution_centers[{i}][status]")
+                    status_pedido = Select(status_pedido)
+                    status_pedido.select_by_visible_text(alterar_status)
+                except:
+                    continue
+        
+        # ~~ Se for para inserir observação interna.
+        if observacao_interna:
+            campo_observacao = self.navegador.driver.find_element(By.ID, value = "comment")
+            campo_observacao.clear()
+            campo_observacao.send_keys(observacao_interna)
+
+        # ~~ Salva.
+        botao_salvar = self.navegador.driver.find_element(By.ID, value="save")
+        botao_salvar.click()
+
+    # ================================================== #
+
+    # ~~ Coleta itens do pedido.
+    def coletar_itens(self, pedido: int) -> list:
+
+        """
+        Resumo:
+        - Coleta os itens do pedido no site.
+
+        Parâmetros:
+        - (pedido: int)
+
+        Retorna:
+        - (itens: list)
+        """
+
+        # ~~ Se página não estiver aberta, abre.
+        body = self.navegador.driver.find_element(By.TAG_NAME, value="body").text
+        if not str(pedido) in body:
+            self.acessar(pedido)
+
+        # ~~ Coleta itens.
+        self.navegador.driver.execute_script("document.body.style.zoom='75%'")
+        itens = []
+        tabelas = self.navegador.driver.find_elements(By.XPATH, value="//div[@class='panel distribution-center']")
+        for tabela in tabelas:
+            if "Ilhéus" in tabela.text:
+                centro = "3010"
+            elif "Manaus" in tabela.text:
+                centro = "1910"
+            else:
+                centro = "1099"
+            footer = tabela.find_element(By.XPATH, value="./div[@class='panel-footer']/table[@class='table table-striped']")
+            itens_footer = footer.find_elements(By.XPATH, value=".//tbody/tr")
+            for item in itens_footer:
+                dados = {}
+                dados["centro"] = centro
+                dados["sku"] = item.find_elements(By.XPATH, value=".//td")[2].text
+                dados["sku"] = dados["sku"].lstrip("0")
+                dados["valor"] = item.find_elements(By.XPATH, value=".//td")[17].text
+                dados["valor"] = dados["valor"].replace("R$", "").replace(".", "").replace(",", ".").strip()
+                itens.append(dados)
+
+        # ~~ Retorna.
+        return itens
 
     # ================================================== #
 
