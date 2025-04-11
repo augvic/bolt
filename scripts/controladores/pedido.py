@@ -70,8 +70,6 @@ class Pedido:
     - (coletar_vendedor): Coleta vendedor do pedido.
     - (coletar_escritório): Retorna escritório do vendedor.
     - (coletar_dados_completos): Coleta dados do pedido no site.
-    - (analise_credito): Faz análise de crédito do pedido.
-    - (remover_pendente): Remove do database o valor de pedido pendente.
     """
 
     # ================================================== #
@@ -113,7 +111,7 @@ class Pedido:
         self.cnpj_cpf = None
         self.raiz_cnpj = None
         self.codigo_erp = None
-        self.valor_pedido = None
+        self.valor_total = None
         self.status = None
         self.vendedor = None
         self.escritorio = None
@@ -810,11 +808,11 @@ class Pedido:
     # ================================================== #
 
     # ~~ Retorna porcentagem Z6.
-    def porcentagem_z6(self, escritorio: str) -> str:
+    def coletar_porcentagem_comissao(self, escritorio: str) -> str:
 
         """
         Resumo:
-        - Retorna porcentagem Z6.
+        - Retorna porcentagem de comissão.
 
         Parâmetros:
         - (escritorio: str)
@@ -841,7 +839,7 @@ class Pedido:
 
         """
         Resumo:
-        - Coleta dados do pedido no site.
+        - Coleta dados do pedido no site e importa no database.
         
         Parâmetros:
         - (pedido: int)
@@ -890,7 +888,7 @@ class Pedido:
         self.cnpj_cpf = self.coletar_cnpj(pedido)
         self.raiz_cnpj = self.cnpj_cpf[:8]
         self.codigo_erp = self.coletar_codigo_erp(pedido)
-        self.valor_pedido = self.coletar_valor(pedido)
+        self.valor_total = self.coletar_valor(pedido)
         self.status = self.coletar_status(pedido)
         self.centros = self.coletar_centros(pedido)
         self.observacao = self.coletar_observacao(pedido)
@@ -898,13 +896,18 @@ class Pedido:
         self.over = self.coletar_over(pedido)
         self.vendedor = self.coletar_vendedor(pedido)
         self.escritorio = self.coletar_escritório(self.vendedor)
-        self.porcentagem_comissao = self.porcentagem_z6(self.escritorio)
+        self.porcentagem_comissao = self.coletar_porcentagem_comissao(self.escritorio)
 
         # ~~ Altera status para True.
         self.dados_coletados = True
 
         # ~~ Importa dados no database.
-        self.database.importar_pedido_database(self)
+        self.database.importar_pedido_database(
+            self.pedido, self.status, self.data, self.forma_pagamento, self.condicao_pagamento,
+            self.vendedor, self.escritorio, self.revenda, self.cliente, self.cnpj_cpf,
+            self.codigo_erp, self.over, self.porcentagem_comissao, self.valor_total, self.observacao,
+            self.centros, self.ordem
+        )
 
     # ================================================== #
 
@@ -937,9 +940,6 @@ class Pedido:
         # ~~ Verifica se há dados coletados.
         if self.dados_coletados == False:
             raise PedidoDadosNaoColetadosError()
-
-        # ~~ Cria dicionário para os dados da análise.
-        resposta_análise = {}
 
         # ~~ Coleta dados financeiros do cliente.
         dados_financeiros = self.financeiro.coletar_dados_financeiros_cliente(raiz_cnpj=self.raiz_cnpj, printar_dados=printar_dados, log_path=log_path, liberar_tela=liberar_tela)
@@ -988,8 +988,8 @@ class Pedido:
 
         # ~~ Verifica se pedido está dentro da margem.
         if limite_ativo == True:
-            if margem < float(self.valor_pedido):
-                motivos += f"\n- Valor do pedido excede a margem disponível. Valor do pedido: {f"R$ {float(self.valor_pedido):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")} / Margem livre: {f"R$ {margem:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}."
+            if margem < float(self.valor_total):
+                motivos += f"\n- Valor do pedido excede a margem disponível. Valor do pedido: {f"R$ {float(self.valor_total):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")} / Margem livre: {f"R$ {margem:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}."
                 status = "NÃO LIBERADO"
 
         # ~~ Verifica se possui notas vencidas.
@@ -1005,10 +1005,10 @@ class Pedido:
             self.analise_credito_status = "LIBERADO"
 
             # ~~ Importa pedido pendente.
-            self.database.importar_pedido_pendente(self.raiz_cnpj, self.pedido, self.valor_pedido)
+            self.database.importar_pedido_pendente(self.raiz_cnpj, self.pedido, self.valor_total)
 
             # ~~ Atualiza margem do cliente.
-            margem_atualizada = margem - float(self.valor_pedido)
+            margem_atualizada = margem - float(self.valor_total)
             self.database.importar_dados_financeiros_cliente(raiz_cnpj=self.raiz_cnpj, margem=margem_atualizada)
         
         # ~~ Se não for liberado.
@@ -1018,9 +1018,21 @@ class Pedido:
 
         # ~~ Printa dados.
         if printar_dados == True:
-            self.utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {float(self.valor_pedido):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
-            self.utilitarios.printar_mensagem(mensagem=resposta_análise["mensagem"], char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+            self.utilitarios.printar_mensagem(mensagem=f"Valor do pedido: {f"R$ {float(self.valor_total):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")}", char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
+            self.utilitarios.printar_mensagem(mensagem=self.analise_credito_mensagem, char_type="=", char_qtd=50, char_side="bot", log_path=log_path)
 
     # ================================================== #
 
 # ================================================== #
+
+from scripts.instancias.sap import Sap
+sap = Sap()
+database = Database()
+utilitarios = Utilitarios()
+navegador = Navegador(utilitarios)
+financeiro = Financeiro(sap, utilitarios)
+pedido = Pedido(navegador, financeiro, utilitarios, database)
+
+navegador.acessar_godeep()
+pedido.coletar_dados_completos(13583)
+pedido.analise_credito(True, None, True)

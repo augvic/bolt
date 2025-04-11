@@ -121,6 +121,9 @@ class PedidosPendentesAdmin(admin.ModelAdmin):
     # ~~ Campo de busca.
     search_fields = ("raiz_cnpj", "pedido")
 
+    # ~~ Filtros laterais.
+    list_filter = (["raiz_cnpj"])
+
 # ================================================== #
 
 # ~~ Tabelas para aparecer no admin.

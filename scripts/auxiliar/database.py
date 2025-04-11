@@ -19,7 +19,6 @@ import getpass
 from app.models import *
 from asgiref.sync import sync_to_async
 from django.shortcuts import get_object_or_404
-from scripts.controladores.pedido import Pedido
 
 # ================================================== #
 
@@ -96,7 +95,13 @@ class Database:
     # ================================================== #
 
     # ~~ Importa dados no database.
-    def importar_pedido_database(self, pedido: Pedido) -> None:
+    def importar_pedido_database(self,
+        pedido: str, status: str = None, data: str = None, forma_pagamento: str = None,
+        condicao_pagamento: str = None, vendedor: str = None, escritorio: str = None,
+        revenda: str = None, cliente: str = None, cnpj_cpf: str = None, codigo_erp: str = None,
+        over: str = None, porcentagem_comissao: str = None, valor_total: str = None, observacao: str = None,
+        centros: str = None, ordem: str = None
+    ) -> None:
 
         """
         Resumo:
@@ -107,45 +112,62 @@ class Database:
         """
 
         # ~~ Verifica se pedido já existe.
-        pedido = PedidoDados.objects.filter(pedido=self.pedido).first()
-        if pedido:
-            pedido.status = self.status
-            pedido.pedido = self.pedido
-            pedido.data = self.data
-            pedido.forma_pagamento = self.forma_pagamento
-            pedido.condicao_pagamento = self.condicao_pagamento
-            pedido.vendedor = self.vendedor
-            pedido.escritorio = self.escritorio
-            pedido.revenda = self.revenda
-            pedido.cliente = self.cliente
-            pedido.cnpj_cpf = self.cnpj_cpf
-            pedido.codigo_erp = self.codigo_erp
-            pedido.comissao_over = self.over
-            pedido.porcentagem_z6 = self.porcentagem_comissao
-            pedido.valor_total = self.valor_pedido
-            pedido.observacao = self.observacao
-            pedido.centros = self.centros
-            pedido.ordem = self.ordem
-            pedido.save()
+        pedido_object = PedidoDados.objects.filter(pedido=pedido).first()
+        if pedido_object:
+            if status:
+                pedido_object.status = status
+            if pedido:
+                pedido_object.pedido = pedido
+            if data:
+                pedido_object.data = data
+            if forma_pagamento:
+                pedido_object.forma_pagamento = forma_pagamento
+            if condicao_pagamento:
+                pedido_object.condicao_pagamento = condicao_pagamento
+            if vendedor:
+                pedido_object.vendedor = vendedor
+            if escritorio:
+                pedido_object.escritorio = escritorio
+            if revenda:
+                pedido_object.revenda = revenda
+            if cliente:
+                pedido_object.cliente = cliente
+            if cnpj_cpf:
+                pedido_object.cnpj_cpf = cnpj_cpf
+            if codigo_erp:
+                pedido_object.codigo_erp = codigo_erp
+            if over:
+                pedido_object.over = over
+            if porcentagem_comissao:
+                pedido_object.porcentagem_comissao = porcentagem_comissao
+            if valor_total:
+                pedido_object.valor_total = valor_total
+            if observacao:
+                pedido_object.observacao = observacao
+            if centros:
+                pedido_object.centros = centros
+            if ordem:
+                pedido_object.ordem = ordem
+            pedido_object.save()
         else:
             pedido_novo = PedidoDados(
-                status=self.status,
-                pedido=self.pedido,
-                data=self.data,
-                forma_pagamento=self.forma_pagamento,
-                condicao_pagamento=self.condicao_pagamento,
-                vendedor=self.vendedor,
-                escritorio=self.escritorio,
-                revenda=self.revenda,
-                cliente=self.cliente,
-                cnpj_cpf=self.cnpj_cpf,
-                codigo_erp=self.codigo_erp,
-                comissao_over=self.over,
-                porcentagem_z6=self.porcentagem_comissao,
-                valor_total=self.valor_pedido,
-                observacao=self.observacao,
-                centros=self.centros,
-                ordem=self.ordem
+                status=status,
+                pedido=pedido,
+                data=data,
+                forma_pagamento=forma_pagamento,
+                condicao_pagamento=condicao_pagamento,
+                vendedor=vendedor,
+                escritorio=escritorio,
+                revenda=revenda,
+                cliente=cliente,
+                cnpj_cpf=cnpj_cpf,
+                codigo_erp=codigo_erp,
+                over=over,
+                porcentagem_comissao=porcentagem_comissao,
+                valor_total=valor_total,
+                observacao=observacao,
+                centros=centros,
+                ordem=ordem
             )
             pedido_novo.save()
 
@@ -229,7 +251,7 @@ class Database:
         """
 
         # ~~ Importa somente se pedido não estiver no database.
-        pedido_liberado = PedidosPendentes.objects.filter(pedido=self.pedido).first()
+        pedido_liberado = PedidosPendentes.objects.filter(pedido=pedido).first()
         if not pedido_liberado:
             valor_pendente_novo = PedidosPendentes(
                 raiz_cnpj=raiz_cnpj,
