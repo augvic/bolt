@@ -7,13 +7,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 # ================================================== #
 
-# ~~ Inicia setup Django.
-import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
-django.setup()
-
-# ================================================== #
-
 # ~~ Imports.
 import pandas
 from datetime import datetime, timedelta

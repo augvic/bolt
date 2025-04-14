@@ -19,6 +19,7 @@ import getpass
 from app.models import *
 from asgiref.sync import sync_to_async
 from django.shortcuts import get_object_or_404
+from django.db import connection
 
 # ================================================== #
 
@@ -29,6 +30,24 @@ class Database:
     Resumo:
     - Classe que controla interações com o database.
     """
+
+    # ================================================== #
+
+    # ~~ Função para excluir tabelas do sqlite3.
+    def drop_table(table_name: str):
+
+        """
+        Resumo:
+        - Função para excluir tabelas do sqlite3.
+
+        Parâmetros:
+        - (table_name: str): Nome da tabela.
+        """
+
+        # ~~ Exclui tabela.
+        with connection.cursor() as cursor:
+            cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+            print(f"Tabela {table_name} removida.")
 
     # ================================================== #
 

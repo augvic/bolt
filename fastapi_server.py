@@ -99,7 +99,7 @@ class FastApiServer:
 
         # ~~ Inicia FastAPI Server.
         @app.on_event("startup")
-        async def iniciar():
+        async def startup():
 
             # ~~ Inicia.
             await fastapi_server.iniciar()

@@ -7,13 +7,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 
 # ================================================== #
 
-# ~~ Inicia setup Django.
-import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
-django.setup()
-
-# ================================================== #
-
 # ~~ Bibliotecas.
 import pandas
 import os
@@ -30,7 +23,6 @@ from datetime import datetime
 from rich.console import Console
 from rich.table import Table
 from scripts.instancias_primarias.erros.utilitarios_erros import *
-from django.db import connection
 
 # ================================================== #
 
@@ -47,7 +39,6 @@ class Utilitarios:
     - Controla funções utilitarias.
 
     Métodos:
-    - (drop_table): Função para excluir tabelas do sqlite3.
     - (consultar_receita_federal): Consulta a API da Receita Federal e obtém dados de um CNPJ.
     - (diretorios): Retorna diretorio do arquivo escolhido.
     - (printar_mensagem): Printa mensagem ou caractere especial no terminal.
@@ -63,24 +54,6 @@ class Utilitarios:
     - (UtilitariosFazerRequisicaoError): Quando há erro ao fazer requisição à API.
     - (UtilitariosRetornoRequisicaoError): Quando há erro no retorno da requisição à API.
     """
-
-    # ================================================== #
-
-    # ~~ Função para excluir tabelas do sqlite3.
-    def drop_table(table_name: str):
-
-        """
-        Resumo:
-        - Função para excluir tabelas do sqlite3.
-
-        Parâmetros:
-        - (table_name: str): Nome da tabela.
-        """
-
-        # ~~ Exclui tabela.
-        with connection.cursor() as cursor:
-            cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
-            print(f"Tabela {table_name} removida.")
 
     # ================================================== #
 
