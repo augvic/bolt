@@ -36,19 +36,6 @@ class Comercial(models.Model):
 
 # ================================================== #
 
-# ~~ Modelo contendo as permissões de acesso ao database de cada usuário.
-class DatabaseAuth(models.Model):
-
-    # ~~ Atributos.
-    usuario = models.CharField(max_length=200)
-    tabela = models.CharField(max_length=200)
-
-    # ~~ Retorno no admin.
-    def __str__(self):
-        return self.usuario
-
-# ================================================== #
-
 # ~~ Modelo contendo os dados de pedidos.
 class PedidoDados(models.Model):
 

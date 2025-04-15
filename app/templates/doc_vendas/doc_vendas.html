@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Documento de Venda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <div class="max-w-5xl mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
+        <h1 class="text-2xl font-bold mb-6 text-center" style="cursor: default;">Criar Documento de Venda</h1>
+
+        <form action="" method="POST">
+            {% csrf_token %}
+
+            <!-- Dados organizacionais. -->
+            <div>
+                <label class="block font-medium">Dados organizacionais:</label>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block font-small text-center">Tipo de Documento</label>
+                        <input type="text" list="docs" class="p-2 border rounded w-full">
+                        <datalist id="docs">
+                            <option value="ZCOT"></option>
+                            <option value="ZV11"></option>
+                        </datalist>
+                    </div>
+
+                    <div>
+                        <label class="block font-small text-center">Organização</label>
+                        <input type="text" list="organizacoes" class="p-2 border rounded w-full">
+                        <datalist id="organizacoes">
+                            <option value="1100"></option>
+                            <option value="3100"></option>
+                            <option value="1600"></option>
+                    </div>
+
+                    <div>
+                        <label class="block font-small text-center">Canal</label>
+                        <input type="text" list="canais" class="p-2 border rounded w-full">
+                        <datalist id="canais">
+                            <option value="10"></option>
+                            <option value="15"></option>
+                            <option value="40"></option>
+                    </div>
+
+                    <div>
+                        <label class="block font-small text-center">Escritório</label>
+                        <input type="text" list="escritorios" class="p-2 border rounded w-full">
+                        <datalist id="escritorios">
+                            <option value="1105"></option>
+                            <option value="1101"></option>
+                            <option value="1136"></option>
+                    </div>
+
+                    <div>
+                        <label class="block font-small text-center">Equipe</label>
+                        <input type="text" list="equipes" class="p-2 border rounded w-full">
+                        <datalist id="equipes">
+                            <option value="058"></option>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separador. -->
+            <div class="border-t border-gray-300 my-6"></div>
+
+            <!-- Dados do pedido. -->
+            <div>
+                <label class="block font-medium">Dados do pedido:</label>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block font-small text-center">Pedido</label>
+                        <input type="text" class="p-2 border rounded w-full">
+                    </div>
+
+                    <div>
+                        <label class="block font-small text-center">Emissor</label>
+                        <input type="text" class="p-2 border rounded w-full">
+                    </div>
+
+                    <div>
+                        <label class="block font-small text-center">Recebedor</label>
+                        <input type="text" class="p-2 border rounded w-full">
+                    </div>
+
+                    <div>
+                        <label class="block font-small text-center">Condição de pagamento</label>
+                        <input type="text" list="conds_pgto" class="p-2 border rounded w-full">
+                        <datalist id="conds_pgto">
+                            <option value="À vista"></option>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Separador. -->
+            <div class="border-t border-gray-300 my-6"></div>
+
+            <!-- Itens (recomendo JS dinâmico aqui depois, mas por enquanto estático) -->
+            <div>
+                <div class="mt-6">
+                    <label class="block font-medium">Itens:</label>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                            <div>
+                                <label class="block font-small text-center">SKU</label>
+                                <input type="number" placeholder="SKU" class="p-2 border rounded w-full">
+                            </div>
+                            <div>
+                                <label class="block font-small text-center">Quantidade</label>
+                                <input type="number" placeholder="Quantidade" class="p-2 border rounded w-full">
+                            </div>
+                            <input type="number" placeholder="Valor" class="p-2 border rounded w-full">
+                            <input type="number" list="centros" placeholder="Centro" class="p-2 border rounded w-full">
+                            <datalist id="centros">
+                                <option value="1010"></option>
+                                <option value="1099"></option>
+                                <option value="3010"></option>
+                                <option value="1910"></option>
+                            </datalist>
+                            <input type="number" list="depositos" placeholder="Depósito" class="p-2 border rounded w-full">
+                            <datalist id="depositos">
+                                <option value="0175"></option>
+                                <option value="0140"></option>
+                            </datalist>
+                            <input type="number" placeholder="Over" class="p-2 border rounded w-full">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão de adicionar na fila. -->
+            <button type="submit" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Adicionar na fila
+            </button>
+        </form>
+    </div>
+</body>
+</html>

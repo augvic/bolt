@@ -2,7 +2,6 @@
 
 # ~~ Imports.
 from django.contrib import admin
-from django.utils.timezone import localtime
 from .models import *
 
 # ================================================== #
@@ -26,17 +25,6 @@ class ComercialAdmin(admin.ModelAdmin):
 
     # ~~ Filtros laterais.
     list_filter = (["escritorio"])
-
-# ================================================== #
-
-# ~~ Filtros da tabela DatabaseAuthAdmin.
-class DatabaseAuthAdmin(admin.ModelAdmin):
-
-    # ~~ Colunas que irão aparecer no admin.
-    list_display = ("usuario", "tabela")
-
-    # ~~ Filtros laterais.
-    list_filter = ("usuario", "tabela")
 
 # ================================================== #
 
@@ -140,10 +128,14 @@ class PedidosPendentesAdmin(admin.ModelAdmin):
 
 # ================================================== #
 
+# ~~ Descrição que consta no admin.
+admin.site.index_title = "Banco de dados:"
+
+# ================================================== #
+
 # ~~ Tabelas para aparecer no admin.
 admin.site.register(ModulesAuth, ModulesAuthAdmin)
 admin.site.register(Comercial, ComercialAdmin)
-admin.site.register(DatabaseAuth, DatabaseAuthAdmin)
 admin.site.register(PedidoDados, PedidoDadosAdmin)
 admin.site.register(PedidoRemessas, PedidoRemessasAdmin)
 admin.site.register(PedidoDts, PedidoDtsAdmin)
