@@ -52,6 +52,15 @@ class DocVendas:
     def main(self, request):
 
         # ~~ Renderiza página.
+        tipo_docs = None
+        organizacoes = None
+        canais = None
+        escritorios = None
+        equipes = None
+        formas_pagamento = None
+        condicoes_pagamento = None
+        incoterms = None
+        tabelas_preco = None
         return render(request, "doc_vendas/doc_vendas.html")
 
     # ================================================== #

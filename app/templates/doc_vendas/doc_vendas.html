@@ -1,4 +1,11 @@
+<!-- ================================================== -->
+
+<!-- Carrega arquivos estáticos. -->
 {% load static %}
+
+<!-- ================================================== -->
+
+<!-- Head. -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -6,135 +13,204 @@
     <title>Criar Documento de Venda</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-900">
 
+<!-- ================================================== -->
+
+<!-- Body. -->
+<body class="bg-gray-300 text-gray-900">
+
+    <!-- Container contendo formulário. -->
     <div class="max-w-5xl mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
-        <h1 class="text-2xl font-bold mb-6 text-center" style="cursor: default;">Criar Documento de Venda</h1>
 
-        <form action="" method="POST">
+        <!-- Formulário para adicionar documento de venda. -->
+        <form id="add_doc" action="" method="POST">
             {% csrf_token %}
 
             <!-- Dados organizacionais. -->
-            <div>
-                <label class="block font-medium">Dados organizacionais:</label>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <div>
-                        <label class="block font-small text-center">Tipo de Documento</label>
-                        <input type="text" list="docs" class="p-2 border rounded w-full">
-                        <datalist id="docs">
-                            <option value="ZCOT"></option>
-                            <option value="ZV11"></option>
+            <label class="block text-xl text-center font-bold">Dados da Organização</label>
+            <br>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                    <label class="block font-small text-center">Tipo de Documento</label>
+                    <input type="text" list="docs" class="p-2 border rounded w-full text-center">
+                    <datalist id="docs">
+                        <option value="ZCOT"></option>
+                        <option value="ZV11"></option>
+                    </datalist>
+                </div>
+                <div>
+                    <label class="block font-small text-center">Organização</label>
+                    <input type="text" list="organizacoes" class="p-2 border rounded w-full text-center">
+                    <datalist id="organizacoes">
+                        <option value="1100"></option>
+                        <option value="3100"></option>
+                        <option value="1600"></option>
+                </div>
+                <div>
+                    <label class="block font-small text-center">Canal</label>
+                    <input type="text" list="canais" class="p-2 border rounded w-full text-center">
+                    <datalist id="canais">
+                        <option value="10"></option>
+                        <option value="15"></option>
+                        <option value="40"></option>
+                        <option value="35"></option>
+                </div>
+                <div>
+                    <label class="block font-small text-center">Escritório</label>
+                    <input type="text" list="escritorios" class="p-2 border rounded w-full text-center">
+                    <datalist id="escritorios">
+                        <option value="1105"></option>
+                        <option value="1101"></option>
+                        <option value="1136"></option>
+                </div>
+                <div>
+                    <label class="block font-small text-center">Equipe</label>
+                    <input type="text" list="equipes" class="p-2 border rounded w-full text-center">
+                    <datalist id="equipes">
+                        <option value="058"></option>
+                </div>
+            </div>
+
+            <!-- Separador. -->
+            <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- Dados da venda. -->
+            <label class="block text-xl text-center font-bold">Dados da Venda</label>
+            <br>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                    <label class="block font-small text-center">Pedido</label>
+                    <input type="text" class="p-2 border rounded w-full text-center">
+                </div>
+                <div>
+                    <label class="block font-small text-center">Emissor</label>
+                    <input type="text" class="p-2 border rounded w-full text-center">
+                </div>
+                <div>
+                    <label class="block font-small text-center">Recebedor</label>
+                    <input type="text" class="p-2 border rounded w-full text-center">
+                </div>
+                <div>
+                    <label class="block font-small text-center">Forma de Pagamento</label>
+                    <input type="text" list="formas_pgto" class="p-2 border rounded w-full text-center">
+                    <datalist id="formas_pgto">
+                        <option value="E">Boleto</option>
+                        <option value="C">Depósito</option>
+                        <option value="V">Cartão Visa</option>
+                        <option value="*">Supplier</option>
+                </div>
+                <div>
+                    <label class="block font-small text-center">Condição de Pagamento</label>
+                    <input type="text" list="conds_pgto" class="p-2 border rounded w-full text-center">
+                    <datalist id="conds_pgto">
+                        <option value="0001">À Vista</option>
+                </div>
+                <div class="md:col-span-5 flex justify-center gap-4 w-full">
+                    <div class="w-full md:w-1/5">
+                        <label class="block font-small text-center">Incoterms</label>
+                        <input type="text" list="incorterms" class="p-2 border rounded w-full text-center">
+                        <datalist id="incorterms">
+                            <option value="CIF">Custo do Remetente</option>
+                            <option value="FOB">Custo do Destinatário</option>
                         </datalist>
                     </div>
-
-                    <div>
-                        <label class="block font-small text-center">Organização</label>
-                        <input type="text" list="organizacoes" class="p-2 border rounded w-full">
-                        <datalist id="organizacoes">
-                            <option value="1100"></option>
-                            <option value="3100"></option>
-                            <option value="1600"></option>
+                    <div class="w-full md:w-1/5">
+                        <label class="block font-small text-center">Motivo</label>
+                        <input type="text" list="motivos" class="p-2 border rounded w-full text-center">
+                        <datalist id="motivos">
+                            <option value="900">Não se Aplica</option>
+                            <option value="600">Revenda</option>
+                            <option value="601">Consumo</option>
+                        </datalist>
                     </div>
-
-                    <div>
-                        <label class="block font-small text-center">Canal</label>
-                        <input type="text" list="canais" class="p-2 border rounded w-full">
-                        <datalist id="canais">
-                            <option value="10"></option>
-                            <option value="15"></option>
-                            <option value="40"></option>
-                    </div>
-
-                    <div>
-                        <label class="block font-small text-center">Escritório</label>
-                        <input type="text" list="escritorios" class="p-2 border rounded w-full">
-                        <datalist id="escritorios">
-                            <option value="1105"></option>
-                            <option value="1101"></option>
-                            <option value="1136"></option>
-                    </div>
-
-                    <div>
-                        <label class="block font-small text-center">Equipe</label>
-                        <input type="text" list="equipes" class="p-2 border rounded w-full">
-                        <datalist id="equipes">
-                            <option value="058"></option>
+                    <div class="w-full md:w-1/5">
+                        <label class="block font-small text-center">Tipo de Expedição</label>
+                        <input type="text" list="expedicoes" class="p-2 border rounded w-full text-center">
+                        <datalist id="expedicoes">
+                            <option value="01">Rodoviário</option>
+                            <option value="02">Aéreo Convencional</option>
+                            <option value="14">Rodo Aéreo</option>
+                        </datalist>
                     </div>
                 </div>
             </div>
 
             <!-- Separador. -->
-            <div class="border-t border-gray-300 my-6"></div>
+            <div class="border-t border-gray-400 my-6"></div>
 
-            <!-- Dados do pedido. -->
-            <div>
-                <label class="block font-medium">Dados do pedido:</label>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <div>
-                        <label class="block font-small text-center">Pedido</label>
-                        <input type="text" class="p-2 border rounded w-full">
+            <!-- Opcionais. -->
+            <label class="block text-xl text-center font-bold">Dados Opcionais</label>
+            <br>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <label class="block font-small text-center">Dados Adicionais NF</label>
+                    <input type="text" class="p-2 border rounded w-full text-center">
+                </div>
+                <div>
+                    <label class="block font-small text-center">Tabela de Preço</label>
+                    <input type="text" list="tabelas_preco" class="p-2 border rounded w-full text-center">
+                    <datalist id="tabelas_preco">
+                        <option value="21">Não se Aplica</option>
+                        <option value="15">Revenda</option>
+                        <option value="20">Consumo</option>
+                    </datalist>
+                </div>
+                <div>
+                    <div class="flex w-full gap-1 items-center justify-center">
+                        <label class="block font-small text-center">Parceiros</label>
+                        <input style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
                     </div>
-
-                    <div>
-                        <label class="block font-small text-center">Emissor</label>
-                        <input type="text" class="p-2 border rounded w-full">
-                    </div>
-
-                    <div>
-                        <label class="block font-small text-center">Recebedor</label>
-                        <input type="text" class="p-2 border rounded w-full">
-                    </div>
-
-                    <div>
-                        <label class="block font-small text-center">Condição de pagamento</label>
-                        <input type="text" list="conds_pgto" class="p-2 border rounded w-full">
-                        <datalist id="conds_pgto">
-                            <option value="À vista"></option>
-                    </div>
+                    <input type="text" class="p-2 border rounded w-full text-center">
                 </div>
             </div>
 
             <!-- Separador. -->
-            <div class="border-t border-gray-300 my-6"></div>
+            <div class="border-t border-gray-400 my-6"></div>
 
-            <!-- Itens (recomendo JS dinâmico aqui depois, mas por enquanto estático) -->
-            <div>
-                <div class="mt-6">
-                    <label class="block font-medium">Itens:</label>
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-                            <div>
-                                <label class="block font-small text-center">SKU</label>
-                                <input type="number" placeholder="SKU" class="p-2 border rounded w-full">
-                            </div>
-                            <div>
-                                <label class="block font-small text-center">Quantidade</label>
-                                <input type="number" placeholder="Quantidade" class="p-2 border rounded w-full">
-                            </div>
-                            <input type="number" placeholder="Valor" class="p-2 border rounded w-full">
-                            <input type="number" list="centros" placeholder="Centro" class="p-2 border rounded w-full">
-                            <datalist id="centros">
-                                <option value="1010"></option>
-                                <option value="1099"></option>
-                                <option value="3010"></option>
-                                <option value="1910"></option>
-                            </datalist>
-                            <input type="number" list="depositos" placeholder="Depósito" class="p-2 border rounded w-full">
-                            <datalist id="depositos">
-                                <option value="0175"></option>
-                                <option value="0140"></option>
-                            </datalist>
-                            <input type="number" placeholder="Over" class="p-2 border rounded w-full">
-                        </div>
-                    </div>
-                </div>
+            <!-- Itens. -->
+            <div class="flex w-full gap-1 items-center justify-center">
+                <label class="block text-xl text-center font-bold">Itens</label>
+                <input id="add_item" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
+            <br>
+            <div id="items_div" class="flex flex-col">
+                <!-- Itens vão aqui. -->
+            </div>
+            <datalist id="centros">
+                <option value="1010">Curitiba</option>
+                <option value="1099">Curitiba Operadores</option>
+                <option value="3010">Ilhéus</option>
+                <option value="1910">Manaus</option>
+            </datalist>
+            <datalist id="depositos">
+                <option value="0175"></option>
+                <option value="0140"></option>
+            </datalist>
+
+            <!-- Separador. -->
+            <div class="border-t border-gray-400 my-6"></div>
 
             <!-- Botão de adicionar na fila. -->
-            <button type="submit" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Adicionar na fila
+            <button type="submit" class="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Adicionar na Fila
             </button>
+
+            <!-- Botão de limpar formulário. -->
+            <input id="clear_form" style="cursor: pointer;" type="button" value="Limpar Formulário" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+
+        <!-- Fecha formulário. -->
         </form>
+    
+    <!-- Fecha container do formulário. -->
     </div>
+
 </body>
+
+<!-- ================================================== -->
+
+<!-- Script. -->
+<script src="{% static 'doc_vendas/limpar_form.js' %}"></script>
+<script src="{% static 'doc_vendas/add_item.js' %}"></script>
 </html>
+
+<!-- ================================================== -->
