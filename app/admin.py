@@ -128,6 +128,149 @@ class PedidosPendentesAdmin(admin.ModelAdmin):
 
 # ================================================== #
 
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminDocumento(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminOrganizacao(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminCanal(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminEscritorio(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminEquipe(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminFormaPagamento(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminCondicaoPagamento(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminIncoterm(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminMotivo(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminExpedicao(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminTabela(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminCentro(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminDeposito(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao")
+
+# ================================================== #
+
 # ~~ Descrição que consta no admin.
 admin.site.index_title = "Banco de dados:"
 
@@ -144,5 +287,18 @@ admin.site.register(PedidoLogs, PedidoLogsAdmin)
 admin.site.register(PedidoItens, PedidoItensAdmin)
 admin.site.register(DadosFinaceirosClientes, DadosFinaceirosClientesAdmin)
 admin.site.register(PedidosPendentes, PedidosPendentesAdmin)
+admin.site.register(TiposDocumento, TiposAdminDocumento)
+admin.site.register(TiposOrganizacao, TiposAdminOrganizacao)
+admin.site.register(TiposCanal, TiposAdminCanal)
+admin.site.register(TiposEscritorio, TiposAdminEscritorio)
+admin.site.register(TiposEquipe, TiposAdminEquipe)
+admin.site.register(TiposFormaPagamento, TiposAdminFormaPagamento)
+admin.site.register(TiposCondicaoPagamento, TiposAdminCondicaoPagamento)
+admin.site.register(TiposIncoterm, TiposAdminIncoterm)
+admin.site.register(TiposMotivo, TiposAdminMotivo)
+admin.site.register(TiposExpedicao, TiposAdminExpedicao)
+admin.site.register(TiposTabela, TiposAdminTabela)
+admin.site.register(TiposCentro, TiposAdminCentro)
+admin.site.register(TiposDeposito, TiposAdminDeposito)
 
 # ================================================== #

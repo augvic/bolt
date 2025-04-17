@@ -27,8 +27,7 @@
             {% csrf_token %}
 
             <!-- Dados organizacionais. -->
-            <label class="block text-xl text-center font-bold">Dados da Organização</label>
-            <br>
+            <label class="block text-xl text-center font-bold my-3">Dados da Organização</label>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                     <label class="block font-small text-center">Tipo de Documento</label>
@@ -75,8 +74,7 @@
             <div class="border-t border-gray-400 my-6"></div>
 
             <!-- Dados da venda. -->
-            <label class="block text-xl text-center font-bold">Dados da Venda</label>
-            <br>
+            <label class="block text-xl text-center font-bold my-3">Dados da Venda</label>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                     <label class="block font-small text-center">Pedido</label>
@@ -140,13 +138,12 @@
 
             <!-- Opcionais. -->
             <label class="block text-xl text-center font-bold">Dados Opcionais</label>
-            <br>
-            <div class="flex flex-col gap-4">
-                <div>
+            <div class="md:col-span-2 flex justify-center gap-4 w-full my-3"">
+                <div class="w-full">
                     <label class="block font-small text-center">Dados Adicionais NF</label>
                     <input type="text" class="p-2 border rounded w-full text-center">
                 </div>
-                <div>
+                <div class="w-full">
                     <label class="block font-small text-center">Tabela de Preço</label>
                     <input type="text" list="tabelas_preco" class="p-2 border rounded w-full text-center">
                     <datalist id="tabelas_preco">
@@ -155,13 +152,18 @@
                         <option value="20">Consumo</option>
                     </datalist>
                 </div>
-                <div>
-                    <div class="flex w-full gap-1 items-center justify-center">
-                        <label class="block font-small text-center">Parceiros</label>
-                        <input style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
-                    </div>
-                    <input type="text" class="p-2 border rounded w-full text-center">
-                </div>
+            </div>
+
+            <!-- Separador. -->
+            <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- Parceiros. -->
+            <div class="flex w-full gap-1 items-center justify-center">
+                <label class="block text-xl text-center font-bold">Parceiros</label>
+                <input id="add_parceiro" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
+            </div>
+            <div id="parceiros_div" class="flex flex-col">
+                <!-- Parceiros vão aqui. -->
             </div>
 
             <!-- Separador. -->
@@ -172,7 +174,6 @@
                 <label class="block text-xl text-center font-bold">Itens</label>
                 <input id="add_item" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
-            <br>
             <div id="items_div" class="flex flex-col">
                 <!-- Itens vão aqui. -->
             </div>
@@ -209,8 +210,7 @@
 <!-- ================================================== -->
 
 <!-- Script. -->
-<script src="{% static 'doc_vendas/limpar_form.js' %}"></script>
-<script src="{% static 'doc_vendas/add_item.js' %}"></script>
+<script src="{% static 'doc_vendas/page_controller.js' %}"></script>
 </html>
 
 <!-- ================================================== -->

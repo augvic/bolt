@@ -193,7 +193,7 @@ class Database:
     # ================================================== #
 
     # ~~ Coleta pedidos pendentes de um cliente.
-    def coletar_pedidos_pendentes(self, raiz_cnpj: str) -> None:
+    def coletar_pedidos_pendentes(self, raiz_cnpj: str) -> list:
 
         """
         Resumo:
@@ -282,7 +282,7 @@ class Database:
     # ================================================== #
 
     # ~~ Coleta escritório.
-    def coletar_escritorio(self, vendedor: str) -> None:
+    def coletar_escritorio(self, vendedor: str) -> str:
 
         """
         Resumo:
@@ -323,5 +323,14 @@ class Database:
                     valor=item["valor"]
                 )
                 item_novo.save()
+
+    # ================================================== #
+
+    # ~~ Coleta os elementos datalist do formulário de doc. vendas.
+    def coletar_datalist(self, datalist: str) -> list:
+
+        # ~~ Verifica qual datalist é para ser coletado.
+        if datalist == "canal":
+            datalist = TiposCanal
 
 # ================================================== #

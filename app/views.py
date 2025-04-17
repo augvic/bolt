@@ -60,7 +60,11 @@ class DocVendas:
         formas_pagamento = None
         condicoes_pagamento = None
         incoterms = None
+        motivos = None
+        tipos_expedicao = None
         tabelas_preco = None
+        centros = None
+        depositos = None
         return render(request, "doc_vendas/doc_vendas.html")
 
     # ================================================== #

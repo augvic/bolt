@@ -164,3 +164,172 @@ class PedidosPendentes(models.Model):
         return self.pedido
 
 # ================================================== #
+
+# ~~ Modelo contendo tipos de documentos.
+class TiposDocumento(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de organização.
+class TiposOrganizacao(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de canal.
+class TiposCanal(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de escritório.
+class TiposEscritorio(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de equipe.
+class TiposEquipe(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de forma de pagamento.
+class TiposFormaPagamento(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de condição de pagamento.
+class TiposCondicaoPagamento(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de incoterm.
+class TiposIncoterm(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de motivo.
+class TiposMotivo(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de expedição.
+class TiposExpedicao(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de tabela.
+class TiposTabela(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de centros.
+class TiposCentro(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
+
+# ~~ Modelo contendo tipos de depósitos.
+class TiposDeposito(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #
