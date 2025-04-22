@@ -17,145 +17,175 @@
 <!-- ================================================== -->
 
 <!-- Body. -->
-<body class="bg-gray-300 text-gray-900">
+<body>
+
+    <!-- ================================================== -->
 
     <!-- Container contendo formulário. -->
-    <div class="max-w-5xl mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
+    <div class="w-full p-6 bg-white">
+
+        <!-- ================================================== -->
 
         <!-- Formulário para adicionar documento de venda. -->
-        <form id="add_doc" action="" method="POST">
+        <form id="add_doc" action="{% url 'doc_vendas_add_fila' %}" method="POST">
+
+            <!-- Token. -->
             {% csrf_token %}
+
+            <!-- ================================================== -->
 
             <!-- Dados organizacionais. -->
             <label class="block text-xl text-center font-bold my-3">Dados da Organização</label>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                     <label class="block font-small text-center">Tipo de Documento</label>
-                    <input type="text" list="docs" class="p-2 border rounded w-full text-center">
-                    <datalist id="docs">
-                        <option value="ZCOT"></option>
-                        <option value="ZV11"></option>
-                    </datalist>
+                    <input type="text" list="docs" class="p-2 border rounded w-full text-center" name="documento">
+                        <datalist id="docs">
+                            {% for doc in tipo_docs %}
+                                <option value="{{ doc.chave }}">{{ doc.descricao }}</option>
+                            {% endfor %}
+                        </datalist>
                 </div>
                 <div>
                     <label class="block font-small text-center">Organização</label>
-                    <input type="text" list="organizacoes" class="p-2 border rounded w-full text-center">
+                    <input type="text" list="organizacoes" class="p-2 border rounded w-full text-center" name="organizacao">
                     <datalist id="organizacoes">
-                        <option value="1100"></option>
-                        <option value="3100"></option>
-                        <option value="1600"></option>
+                        {% for organizacao in organizacoes %}
+                            <option value="{{ organizacao.chave }}">{{ organizacao.descricao }}</option>
+                        {% endfor %}
+                    </datalist>
                 </div>
                 <div>
                     <label class="block font-small text-center">Canal</label>
-                    <input type="text" list="canais" class="p-2 border rounded w-full text-center">
+                    <input type="text" list="canais" class="p-2 border rounded w-full text-center" name="canal">
                     <datalist id="canais">
-                        <option value="10"></option>
-                        <option value="15"></option>
-                        <option value="40"></option>
-                        <option value="35"></option>
+                        {% for canal in canais %}
+                            <option value="{{ canal.chave }}">{{ canal.descricao }}</option>
+                        {% endfor %}
+                    </datalist>
                 </div>
                 <div>
                     <label class="block font-small text-center">Escritório</label>
-                    <input type="text" list="escritorios" class="p-2 border rounded w-full text-center">
+                    <input type="text" list="escritorios" class="p-2 border rounded w-full text-center" name="escritorio">
                     <datalist id="escritorios">
-                        <option value="1105"></option>
-                        <option value="1101"></option>
-                        <option value="1136"></option>
+                        {% for escritorio in escritorios %}
+                            <option value="{{ escritorio.chave }}">{{ escritorio.descricao }}</option>
+                        {% endfor %}
+                    </datalist>
                 </div>
                 <div>
                     <label class="block font-small text-center">Equipe</label>
-                    <input type="text" list="equipes" class="p-2 border rounded w-full text-center">
+                    <input type="text" list="equipes" class="p-2 border rounded w-full text-center" name="equipe">
                     <datalist id="equipes">
-                        <option value="058"></option>
+                        {% for equipe in equipes %}
+                            <option value="{{ equipe.chave }}">{{ equipe.descricao }}</option>
+                        {% endfor %}
+                    </datalist>
                 </div>
             </div>
 
+            <!-- ================================================== -->
+
             <!-- Separador. -->
             <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- ================================================== -->
 
             <!-- Dados da venda. -->
             <label class="block text-xl text-center font-bold my-3">Dados da Venda</label>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                     <label class="block font-small text-center">Pedido</label>
-                    <input type="text" class="p-2 border rounded w-full text-center">
+                    <input type="text" class="p-2 border rounded w-full text-center" name="pedido">
                 </div>
                 <div>
                     <label class="block font-small text-center">Emissor</label>
-                    <input type="text" class="p-2 border rounded w-full text-center">
+                    <input type="text" class="p-2 border rounded w-full text-center" name="emissor">
                 </div>
                 <div>
                     <label class="block font-small text-center">Recebedor</label>
-                    <input type="text" class="p-2 border rounded w-full text-center">
+                    <input type="text" class="p-2 border rounded w-full text-center" name="recebedor">
                 </div>
                 <div>
                     <label class="block font-small text-center">Forma de Pagamento</label>
-                    <input type="text" list="formas_pgto" class="p-2 border rounded w-full text-center">
+                    <input type="text" list="formas_pgto" class="p-2 border rounded w-full text-center" name="forma_pagamento">
                     <datalist id="formas_pgto">
-                        <option value="E">Boleto</option>
-                        <option value="C">Depósito</option>
-                        <option value="V">Cartão Visa</option>
-                        <option value="*">Supplier</option>
+                        {% for forma_pagamento in formas_pagamento %}
+                            <option value="{{ forma_pagamento.chave }}">{{ forma_pagamento.descricao }}</option>
+                        {% endfor %}
+                    </datalist>
                 </div>
                 <div>
                     <label class="block font-small text-center">Condição de Pagamento</label>
-                    <input type="text" list="conds_pgto" class="p-2 border rounded w-full text-center">
+                    <input type="text" list="conds_pgto" class="p-2 border rounded w-full text-center" name="condicao_pagamento">
                     <datalist id="conds_pgto">
-                        <option value="0001">À Vista</option>
+                        {% for condicao_pagamento in condicoes_pagamento %}
+                            <option value="{{ condicao_pagamento.chave }}">{{ condicao_pagamento.descricao }}</option>
+                        {% endfor %}
+                    </datalist>
                 </div>
                 <div class="md:col-span-5 flex justify-center gap-4 w-full">
                     <div class="w-full md:w-1/5">
                         <label class="block font-small text-center">Incoterms</label>
-                        <input type="text" list="incorterms" class="p-2 border rounded w-full text-center">
+                        <input type="text" list="incorterms" class="p-2 border rounded w-full text-center" name="incoterm">
                         <datalist id="incorterms">
-                            <option value="CIF">Custo do Remetente</option>
-                            <option value="FOB">Custo do Destinatário</option>
+                            {% for incoterm in incoterms %}
+                                <option value="{{ incoterm.chave }}">{{ incoterm.descricao }}</option>
+                            {% endfor %}
                         </datalist>
                     </div>
                     <div class="w-full md:w-1/5">
                         <label class="block font-small text-center">Motivo</label>
-                        <input type="text" list="motivos" class="p-2 border rounded w-full text-center">
+                        <input type="text" list="motivos" class="p-2 border rounded w-full text-center" name="motivo">
                         <datalist id="motivos">
-                            <option value="900">Não se Aplica</option>
-                            <option value="600">Revenda</option>
-                            <option value="601">Consumo</option>
+                            {% for motivo in motivos %}
+                                <option value="{{ motivo.chave }}">{{ motivo.descricao }}</option>
+                            {% endfor %}
                         </datalist>
                     </div>
                     <div class="w-full md:w-1/5">
                         <label class="block font-small text-center">Tipo de Expedição</label>
-                        <input type="text" list="expedicoes" class="p-2 border rounded w-full text-center">
+                        <input type="text" list="expedicoes" class="p-2 border rounded w-full text-center" name="expedicao">
                         <datalist id="expedicoes">
-                            <option value="01">Rodoviário</option>
-                            <option value="02">Aéreo Convencional</option>
-                            <option value="14">Rodo Aéreo</option>
+                            {% for expedicao in tipos_expedicao %}
+                                <option value="{{ expedicao.chave }}">{{ expedicao.descricao }}</option>
+                            {% endfor %}
                         </datalist>
                     </div>
                 </div>
             </div>
 
+            <!-- ================================================== -->
+
             <!-- Separador. -->
             <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- ================================================== -->
 
             <!-- Opcionais. -->
             <label class="block text-xl text-center font-bold">Dados Opcionais</label>
             <div class="md:col-span-2 flex justify-center gap-4 w-full my-3"">
                 <div class="w-full">
                     <label class="block font-small text-center">Dados Adicionais NF</label>
-                    <input type="text" class="p-2 border rounded w-full text-center">
+                    <input type="text" class="p-2 border rounded w-full text-center" name="dados_adicionais">
                 </div>
                 <div class="w-full">
                     <label class="block font-small text-center">Tabela de Preço</label>
-                    <input type="text" list="tabelas_preco" class="p-2 border rounded w-full text-center">
+                    <input type="text" list="tabelas_preco" class="p-2 border rounded w-full text-center" name="tabela_preco">
                     <datalist id="tabelas_preco">
-                        <option value="21">Não se Aplica</option>
-                        <option value="15">Revenda</option>
-                        <option value="20">Consumo</option>
+                        {% for tabela in tabelas_preco %}
+                            <option value="{{ tabela.chave }}">{{ tabela.descricao }}</option>
+                        {% endfor %}
                     </datalist>
                 </div>
             </div>
 
+            <!-- ================================================== -->
+
             <!-- Separador. -->
             <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- ================================================== -->
 
             <!-- Parceiros. -->
             <div class="flex w-full gap-1 items-center justify-center">
@@ -163,11 +193,21 @@
                 <input id="add_parceiro" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
             <div id="parceiros_div" class="flex flex-col">
+
+                <!-- ================================================== -->
+                
                 <!-- Parceiros vão aqui. -->
+
+                <!-- ================================================== -->
+
             </div>
+
+            <!-- ================================================== -->
 
             <!-- Separador. -->
             <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- ================================================== -->
 
             <!-- Itens. -->
             <div class="flex w-full gap-1 items-center justify-center">
@@ -175,42 +215,87 @@
                 <input id="add_item" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
             <div id="items_div" class="flex flex-col">
+
+                <!-- ================================================== -->
+                
                 <!-- Itens vão aqui. -->
+                
+                <!-- ================================================== -->
+
             </div>
             <datalist id="centros">
-                <option value="1010">Curitiba</option>
-                <option value="1099">Curitiba Operadores</option>
-                <option value="3010">Ilhéus</option>
-                <option value="1910">Manaus</option>
+                {% for centro in centros %}
+                    <option value="{{ centro.chave }}">{{ centro.descricao }}</option>
+                {% endfor %}
             </datalist>
             <datalist id="depositos">
-                <option value="0175"></option>
-                <option value="0140"></option>
+                {% for deposito in depositos %}
+                    <option value="{{ deposito.chave }}">{{ deposito.descricao }}</option>
+                {% endfor %}
             </datalist>
+
+            <!-- ================================================== -->
 
             <!-- Separador. -->
             <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- ================================================== -->
+
+            <!-- Comissão. -->
+            <div class="flex w-full gap-1 items-center justify-center">
+                <label class="block text-xl text-center font-bold">Comissão</label>
+                <input id="add_comissao" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
+            </div>
+            <div id="comissao_div" class="flex flex-col">
+
+                <!-- ================================================== -->
+                
+                <!-- Comissão irá aqui. -->
+                
+                <!-- ================================================== -->
+
+            </div>
+
+            <!-- ================================================== -->
+
+            <!-- Separador. -->
+            <div class="border-t border-gray-400 my-6"></div>
+
+            <!-- ================================================== -->
 
             <!-- Botão de adicionar na fila. -->
             <button type="submit" class="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                 Adicionar na Fila
             </button>
 
+            <!-- ================================================== -->
+
             <!-- Botão de limpar formulário. -->
             <input id="clear_form" style="cursor: pointer;" type="button" value="Limpar Formulário" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
 
+            <!-- ================================================== -->
+
         <!-- Fecha formulário. -->
         </form>
-    
+
+        <!-- ================================================== -->
+
     <!-- Fecha container do formulário. -->
     </div>
 
+    <!-- ================================================== -->
+
+<!-- Fecha body. -->
 </body>
 
 <!-- ================================================== -->
 
 <!-- Script. -->
 <script src="{% static 'doc_vendas/page_controller.js' %}"></script>
+
+<!-- ================================================== -->
+
+<!-- Fecha HTML. -->
 </html>
 
 <!-- ================================================== -->

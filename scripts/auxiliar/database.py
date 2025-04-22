@@ -327,10 +327,62 @@ class Database:
     # ================================================== #
 
     # ~~ Coleta os elementos datalist do formulário de doc. vendas.
-    def coletar_datalist(self, datalist: str) -> list:
+    def coletar_datalist(self, datalist_name: str) -> list[dict]:
+
+        """
+        Resumo:
+        - Retorna com datalist da página de criar documentos de vendas.
+
+        - Parâmetros:
+        - (datalist):
+            - (tipo_doc: str)
+            - (organizacao: str)
+            - (canal: str)
+            - (escritorio: str)
+            - (equipe: str)
+            - (forma_pagamento: str)
+            - (condicao_pagamento: str)
+            - (incoterms: str)
+            - (motivo: str)
+            - (expedicao: str)
+            - (tabela: str)
+            - (centro: str)
+            - (deposito: str)
+
+        Retorna:
+        - (datalist: list):
+            - {"chave", "descricao"}
+        """
+
+        # ~~ Cria dicionário para armazenar as chaves e descrições.
+        tabelas = {
+            "tipo_doc": TiposDocumento,
+            "organizacao": TiposOrganizacao,
+            "canal": TiposCanal,
+            "escritorio": TiposEscritorio,
+            "equipe": TiposEquipe,
+            "forma_pagamento": TiposFormaPagamento,
+            "condicao_pagamento": TiposCondicaoPagamento,
+            "incoterms": TiposIncoterm,
+            "motivo": TiposMotivo,
+            "expedicao": TiposExpedicao,
+            "tabela": TiposTabela,
+            "centro": TiposCentro,
+            "deposito": TiposDeposito
+        }
+
+        # ~~ Encontra a tabela na lista de tabelas correspondente.
+        tabela = tabelas[datalist_name]
 
         # ~~ Verifica qual datalist é para ser coletado.
-        if datalist == "canal":
-            datalist = TiposCanal
+        registros = tabela.objects.values_list("chave", "descricao")
+
+        # ~~ Cria lista para armazenar dados.
+        datalist = [{"chave": chave, "descricao": descricao} for chave, descricao in registros]
+
+        # ~~ Retorna datalist.
+        return datalist
+
+    # ================================================== #
 
 # ================================================== #

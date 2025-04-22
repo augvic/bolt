@@ -27,7 +27,8 @@ urlpatterns = [
     path('financeiro/', financeiro.main, name='financeiro'),
 
     # ~~ Doc. Vendas.
-    path('doc-vendas/', doc_vendas.main, name='doc_vendas'),
+    path('doc-vendas/', doc_vendas.main, name='doc_vendas_main'),
+    path('doc-vendas/adicionar-na-fila', doc_vendas.adicionar_na_fila, name='doc_vendas_add_fila'),
 ]
 
 # ================================================== #
