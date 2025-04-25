@@ -7,7 +7,7 @@
 
 <!-- Head. -->
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <title>Criar Documento de Venda</title>
@@ -16,30 +16,58 @@
 
 <!-- ================================================== -->
 
+<!-- Styles. -->
+<style>
+    html::selection {
+        background-color: #00d9ff;
+        color: black;
+    }
+</style>
+
+<!-- ================================================== -->
+
 <!-- Body. -->
 <body>
 
     <!-- ================================================== -->
 
-    <!-- Container contendo formulário. -->
-    <div class="w-full p-6 bg-white">
+    <!-- Formulário para adicionar documento de venda. -->
+    <form id="add_doc" action="{% url 'doc_vendas_add_fila' %}" method="POST">
+
+        <!-- Token. -->
+        {% csrf_token %}
+
+        <!-- Navbar. -->
+        <header class="fixed top-0 w-full bg-white shadow z-50 h-14 flex items-center gap-2 pl-6">
+
+            <!-- Botão de adicionar na fila. -->
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Adicionar na Fila
+            </button>
+
+            <!-- Botão de limpar formulário. -->
+            <input id="clear_form" style="cursor: pointer;" type="button" value="Limpar Formulário" class="bg-[#0097bd] text-white px-4 py-2 rounded hover:bg-[#205067]">
+
+            <!-- Link para o formulário. -->
+            <a class="text-[#0097bd] hover:text-[#8ae8ff]" href="#form">Ir para: Criar Documento</a>
+
+
+        <!-- Fecha header. -->
+        </header>
 
         <!-- ================================================== -->
 
-        <!-- Formulário para adicionar documento de venda. -->
-        <form id="add_doc" action="{% url 'doc_vendas_add_fila' %}" method="POST">
-
-            <!-- Token. -->
-            {% csrf_token %}
+        <!-- Container contendo formulário. -->
+        <div id="form" class="w-full p-6 mt-10 bg-white scroll-mt-10">
 
             <!-- ================================================== -->
 
             <!-- Dados organizacionais. -->
-            <label class="block text-xl text-center font-bold my-3">Dados da Organização</label>
+            <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Dados da Organização</label>  
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                     <label class="block font-small text-center">Tipo de Documento</label>
-                    <input type="text" list="docs" class="p-2 border rounded w-full text-center" name="documento">
+                    <input type="text" list="docs" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="documento">
                         <datalist id="docs">
                             {% for doc in tipo_docs %}
                                 <option value="{{ doc.chave }}">{{ doc.descricao }}</option>
@@ -48,7 +76,7 @@
                 </div>
                 <div>
                     <label class="block font-small text-center">Organização</label>
-                    <input type="text" list="organizacoes" class="p-2 border rounded w-full text-center" name="organizacao">
+                    <input type="text" list="organizacoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="organizacao">
                     <datalist id="organizacoes">
                         {% for organizacao in organizacoes %}
                             <option value="{{ organizacao.chave }}">{{ organizacao.descricao }}</option>
@@ -57,7 +85,7 @@
                 </div>
                 <div>
                     <label class="block font-small text-center">Canal</label>
-                    <input type="text" list="canais" class="p-2 border rounded w-full text-center" name="canal">
+                    <input type="text" list="canais" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="canal">
                     <datalist id="canais">
                         {% for canal in canais %}
                             <option value="{{ canal.chave }}">{{ canal.descricao }}</option>
@@ -66,7 +94,7 @@
                 </div>
                 <div>
                     <label class="block font-small text-center">Escritório</label>
-                    <input type="text" list="escritorios" class="p-2 border rounded w-full text-center" name="escritorio">
+                    <input type="text" list="escritorios" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="escritorio">
                     <datalist id="escritorios">
                         {% for escritorio in escritorios %}
                             <option value="{{ escritorio.chave }}">{{ escritorio.descricao }}</option>
@@ -75,7 +103,7 @@
                 </div>
                 <div>
                     <label class="block font-small text-center">Equipe</label>
-                    <input type="text" list="equipes" class="p-2 border rounded w-full text-center" name="equipe">
+                    <input type="text" list="equipes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="equipe">
                     <datalist id="equipes">
                         {% for equipe in equipes %}
                             <option value="{{ equipe.chave }}">{{ equipe.descricao }}</option>
@@ -87,28 +115,28 @@
             <!-- ================================================== -->
 
             <!-- Separador. -->
-            <div class="border-t border-gray-400 my-6"></div>
+            <div class="border-t border-[#0097bd] my-6"></div>
 
             <!-- ================================================== -->
 
             <!-- Dados da venda. -->
-            <label class="block text-xl text-center font-bold my-3">Dados da Venda</label>
+            <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Dados da Venda</label>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
                     <label class="block font-small text-center">Pedido</label>
-                    <input type="text" class="p-2 border rounded w-full text-center" name="pedido">
+                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="pedido">
                 </div>
                 <div>
                     <label class="block font-small text-center">Emissor</label>
-                    <input type="text" class="p-2 border rounded w-full text-center" name="emissor">
+                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="emissor">
                 </div>
                 <div>
                     <label class="block font-small text-center">Recebedor</label>
-                    <input type="text" class="p-2 border rounded w-full text-center" name="recebedor">
+                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="recebedor">
                 </div>
                 <div>
                     <label class="block font-small text-center">Forma de Pagamento</label>
-                    <input type="text" list="formas_pgto" class="p-2 border rounded w-full text-center" name="forma_pagamento">
+                    <input type="text" list="formas_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="forma_pagamento">
                     <datalist id="formas_pgto">
                         {% for forma_pagamento in formas_pagamento %}
                             <option value="{{ forma_pagamento.chave }}">{{ forma_pagamento.descricao }}</option>
@@ -117,7 +145,7 @@
                 </div>
                 <div>
                     <label class="block font-small text-center">Condição de Pagamento</label>
-                    <input type="text" list="conds_pgto" class="p-2 border rounded w-full text-center" name="condicao_pagamento">
+                    <input type="text" list="conds_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="condicao_pagamento">
                     <datalist id="conds_pgto">
                         {% for condicao_pagamento in condicoes_pagamento %}
                             <option value="{{ condicao_pagamento.chave }}">{{ condicao_pagamento.descricao }}</option>
@@ -127,7 +155,7 @@
                 <div class="md:col-span-5 flex justify-center gap-4 w-full">
                     <div class="w-full md:w-1/5">
                         <label class="block font-small text-center">Incoterms</label>
-                        <input type="text" list="incorterms" class="p-2 border rounded w-full text-center" name="incoterm">
+                        <input type="text" list="incorterms" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="incoterm">
                         <datalist id="incorterms">
                             {% for incoterm in incoterms %}
                                 <option value="{{ incoterm.chave }}">{{ incoterm.descricao }}</option>
@@ -136,7 +164,7 @@
                     </div>
                     <div class="w-full md:w-1/5">
                         <label class="block font-small text-center">Motivo</label>
-                        <input type="text" list="motivos" class="p-2 border rounded w-full text-center" name="motivo">
+                        <input type="text" list="motivos" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="motivo">
                         <datalist id="motivos">
                             {% for motivo in motivos %}
                                 <option value="{{ motivo.chave }}">{{ motivo.descricao }}</option>
@@ -145,7 +173,7 @@
                     </div>
                     <div class="w-full md:w-1/5">
                         <label class="block font-small text-center">Tipo de Expedição</label>
-                        <input type="text" list="expedicoes" class="p-2 border rounded w-full text-center" name="expedicao">
+                        <input type="text" list="expedicoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="expedicao">
                         <datalist id="expedicoes">
                             {% for expedicao in tipos_expedicao %}
                                 <option value="{{ expedicao.chave }}">{{ expedicao.descricao }}</option>
@@ -158,20 +186,20 @@
             <!-- ================================================== -->
 
             <!-- Separador. -->
-            <div class="border-t border-gray-400 my-6"></div>
+            <div class="border-t border-[#0097bd] my-6"></div>
 
             <!-- ================================================== -->
 
             <!-- Opcionais. -->
-            <label class="block text-xl text-center font-bold">Dados Opcionais</label>
+            <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Dados Opcionais</label>
             <div class="md:col-span-2 flex justify-center gap-4 w-full my-3"">
                 <div class="w-full">
                     <label class="block font-small text-center">Dados Adicionais NF</label>
-                    <input type="text" class="p-2 border rounded w-full text-center" name="dados_adicionais">
+                    <textarea rows="1" class="min-h-[2.8rem] p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center resize-y" name="dados_adicionais"></textarea>
                 </div>
                 <div class="w-full">
                     <label class="block font-small text-center">Tabela de Preço</label>
-                    <input type="text" list="tabelas_preco" class="p-2 border rounded w-full text-center" name="tabela_preco">
+                    <input type="text" list="tabelas_preco" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="tabela_preco">
                     <datalist id="tabelas_preco">
                         {% for tabela in tabelas_preco %}
                             <option value="{{ tabela.chave }}">{{ tabela.descricao }}</option>
@@ -183,12 +211,12 @@
             <!-- ================================================== -->
 
             <!-- Separador. -->
-            <div class="border-t border-gray-400 my-6"></div>
+            <div class="border-t border-[#0097bd] my-6"></div>
 
             <!-- ================================================== -->
 
             <!-- Parceiros. -->
-            <div class="flex w-full gap-1 items-center justify-center">
+            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">
                 <label class="block text-xl text-center font-bold">Parceiros</label>
                 <input id="add_parceiro" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
@@ -205,12 +233,12 @@
             <!-- ================================================== -->
 
             <!-- Separador. -->
-            <div class="border-t border-gray-400 my-6"></div>
+            <div class="border-t border-[#0097bd] my-6"></div>
 
             <!-- ================================================== -->
 
             <!-- Itens. -->
-            <div class="flex w-full gap-1 items-center justify-center">
+            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">
                 <label class="block text-xl text-center font-bold">Itens</label>
                 <input id="add_item" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
@@ -237,12 +265,12 @@
             <!-- ================================================== -->
 
             <!-- Separador. -->
-            <div class="border-t border-gray-400 my-6"></div>
+            <div class="border-t border-[#0097bd] my-6"></div>
 
             <!-- ================================================== -->
 
             <!-- Comissão. -->
-            <div class="flex w-full gap-1 items-center justify-center">
+            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">
                 <label class="block text-xl text-center font-bold">Comissão</label>
                 <input id="add_comissao" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
@@ -259,29 +287,17 @@
             <!-- ================================================== -->
 
             <!-- Separador. -->
-            <div class="border-t border-gray-400 my-6"></div>
+            <div class="border-t border-[#0097bd] my-6"></div>
 
             <!-- ================================================== -->
 
-            <!-- Botão de adicionar na fila. -->
-            <button type="submit" class="mt-6 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                Adicionar na Fila
-            </button>
-
-            <!-- ================================================== -->
-
-            <!-- Botão de limpar formulário. -->
-            <input id="clear_form" style="cursor: pointer;" type="button" value="Limpar Formulário" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-
-            <!-- ================================================== -->
-
-        <!-- Fecha formulário. -->
-        </form>
+        <!-- Fecha container do formulário. -->
+        </div>
 
         <!-- ================================================== -->
 
-    <!-- Fecha container do formulário. -->
-    </div>
+    <!-- Fecha formulário. -->
+    </form>
 
     <!-- ================================================== -->
 

@@ -45,13 +45,13 @@ class DocVendasPageController {
 
             // ~~ Cria input de chave.
             const parceiroInputChave = document.createElement("input");
-            parceiroInputChave.className = "p-2 border rounded w-full text-center";
+            parceiroInputChave.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             parceiroInputChave.type = "text";
             parceiroInputChave.name = `parceiro_chave_${this.parceirosIndex}`;
 
             // ~~ Cria input de código.
             const parceiroInputCodigo = document.createElement("input");
-            parceiroInputCodigo.className = "p-2 border rounded w-full text-center";
+            parceiroInputCodigo.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             parceiroInputCodigo.type = "text";
             parceiroInputCodigo.name = `parceiro_codigo_${this.parceirosIndex}`;
 
@@ -120,19 +120,19 @@ class DocVendasPageController {
 
             // ~~ Cria input de chave.
             const comissaoInputChave = document.createElement("input");
-            comissaoInputChave.className = "p-2 border rounded w-full text-center";
+            comissaoInputChave.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             comissaoInputChave.type = "text";
             comissaoInputChave.name = `comissao_chave_${this.comissaoIndex}`;
 
             // ~~ Cria input de código.
             const comissaoInputCodigo = document.createElement("input");
-            comissaoInputCodigo.className = "p-2 border rounded w-full text-center";
+            comissaoInputCodigo.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             comissaoInputCodigo.type = "text";
             comissaoInputCodigo.name = `comissao_codigo_${this.comissaoIndex}`;
 
             // ~~ Cria input de porcentagem.
             const comissaoInputPorcentagem = document.createElement("input");
-            comissaoInputPorcentagem.className = "p-2 border rounded w-full text-center";
+            comissaoInputPorcentagem.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             comissaoInputPorcentagem.type = "text";
             comissaoInputPorcentagem.name = `comissao_porcentagem_${this.comissaoIndex}`;
 
@@ -210,7 +210,7 @@ class DocVendasPageController {
 
                 // ~~ Cria input.
                 const campoInput = document.createElement("input");
-                campoInput.className = "p-2 border rounded w-full text-center";
+                campoInput.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
                 campoInput.type = campo.type;
                 campoInput.name = `${campo.name}_${this.itemsIndex}`;
 
@@ -239,14 +239,14 @@ class DocVendasPageController {
                     teclado.type = "text";
                     teclado.name = `teclado_${this.itemsIndex}`;
                     teclado.placeholder = "Valor";
-                    teclado.className = "p-2 border rounded w-full text-center";
+                    teclado.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
 
                     // ~~ Campo mouse.
                     const mouse = document.createElement("input");
                     mouse.type = "text";
                     mouse.name = `mouse_${this.itemsIndex}`;
                     mouse.placeholder = "Valor";
-                    mouse.className = "p-2 border rounded w-full text-center";
+                    mouse.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
 
                     // ~~ Adiciona campos extras à div.
                     extrasDiv.appendChild(teclado);
