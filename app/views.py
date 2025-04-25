@@ -106,8 +106,8 @@ class DocVendas:
             itens = []
             for i in range(0, 20):
                 sku = dados.get(f"sku_{i}")
-                if sku == None:
-                    pass
+                if sku == None or sku == "":
+                    continue
                 item = {
                     "sku": str(dados.get(f"sku_{i}")).strip(),
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
@@ -120,8 +120,8 @@ class DocVendas:
                 }
                 itens.append(item)
                 acessorio = dados.get(f"teclado_{i}")
-                if acessorio == "":
-                    pass
+                if acessorio == None or acessorio == "":
+                    continue
                 item_teclado = {
                     "sku": None,
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
@@ -149,8 +149,8 @@ class DocVendas:
             parceiros = []
             for i in range(0, 20):
                 parceiro = dados.get(f"parceiro_chave_{i}")
-                if parceiro == "":
-                    pass
+                if parceiro == None or parceiro == "":
+                    continue
                 parceiro_dados = {
                     "chave": str(dados.get(f"parceiro_chave_{i}")).strip(),
                     "codigo": str(dados.get(f"parceiro_codigo_{i}")).strip()
@@ -161,8 +161,8 @@ class DocVendas:
             comissoes = []
             for i in range(0, 20):
                 comissao = dados.get(f"comissao_chave_{i}")
-                if comissao == "":
-                    pass
+                if comissao == None or comissao == "":
+                    continue
                 comissao_dados = {
                     "chave": str(dados.get(f"comissao_chave_{i}")).strip(),
                     "codigo": str(dados.get(f"commissao_codigo_{i}")).strip(),
