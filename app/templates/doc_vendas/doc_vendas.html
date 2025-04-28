@@ -37,6 +37,8 @@
         <!-- Token. -->
         {% csrf_token %}
 
+        <!-- ================================================== -->
+
         <!-- Navbar. -->
         <header class="fixed top-0 w-full bg-white shadow z-50 h-14 flex items-center gap-2 pl-6">
 
@@ -48,9 +50,20 @@
             <!-- Botão de limpar formulário. -->
             <input id="clear_form" style="cursor: pointer;" type="button" value="Limpar Formulário" class="bg-[#0097bd] text-white px-4 py-2 rounded hover:bg-[#205067]">
 
+            <!-- Separador. -->
+            <p style="cursor: default;">|</p>
+        
             <!-- Link para o formulário. -->
-            <a class="text-[#0097bd] hover:text-[#8ae8ff]" href="#form">Ir para: Criar Documento</a>
+            <a class="text-[#0097bd] hover:text-[#8ae8ff]" href="#form">Criação de Documento</a>
 
+            <!-- Separador. -->
+            <p style="cursor: default;">|</p>
+
+            <!-- Link para a fila. -->
+            <a class="text-[#0097bd] hover:text-[#8ae8ff]" href="#fila_docs">Fila de Documentos</a>
+
+            <!-- Separador. -->
+            <p style="cursor: default;">|</p>
 
         <!-- Fecha header. -->
         </header>
@@ -66,8 +79,14 @@
             <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Dados da Organização</label>  
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
-                    <label class="block font-small text-center">Tipo de Documento</label>
-                    <input type="text" list="docs" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="documento">
+                    <label class="block font-small text-center relative group">
+                        Tipo de Documento
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" list="docs" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="documento" required>
                         <datalist id="docs">
                             {% for doc in tipo_docs %}
                                 <option value="{{ doc.chave }}">{{ doc.descricao }}</option>
@@ -75,8 +94,14 @@
                         </datalist>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Organização</label>
-                    <input type="text" list="organizacoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="organizacao">
+                    <label class="block font-small text-center relative group">
+                        Organização
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" list="organizacoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="organizacao" required>
                     <datalist id="organizacoes">
                         {% for organizacao in organizacoes %}
                             <option value="{{ organizacao.chave }}">{{ organizacao.descricao }}</option>
@@ -84,8 +109,14 @@
                     </datalist>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Canal</label>
-                    <input type="text" list="canais" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="canal">
+                    <label class="block font-small text-center relative group">
+                        Canal
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" list="canais" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="canal" required>
                     <datalist id="canais">
                         {% for canal in canais %}
                             <option value="{{ canal.chave }}">{{ canal.descricao }}</option>
@@ -93,8 +124,14 @@
                     </datalist>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Escritório</label>
-                    <input type="text" list="escritorios" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="escritorio">
+                    <label class="block font-small text-center relative group">
+                        Escritório
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" list="escritorios" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="escritorio" required>
                     <datalist id="escritorios">
                         {% for escritorio in escritorios %}
                             <option value="{{ escritorio.chave }}">{{ escritorio.descricao }}</option>
@@ -102,8 +139,14 @@
                     </datalist>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Equipe</label>
-                    <input type="text" list="equipes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="equipe">
+                    <label class="block font-small text-center relative group">
+                        Equipe
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" list="equipes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="equipe" required>
                     <datalist id="equipes">
                         {% for equipe in equipes %}
                             <option value="{{ equipe.chave }}">{{ equipe.descricao }}</option>
@@ -123,20 +166,44 @@
             <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Dados da Venda</label>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
-                    <label class="block font-small text-center">Pedido</label>
-                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="pedido">
+                    <label class="block font-small text-center relative group">
+                        Pedido
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="pedido" required>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Emissor</label>
-                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="emissor">
+                    <label class="block font-small text-center relative group">
+                        Emissor
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="emissor" required>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Recebedor</label>
-                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="recebedor">
+                    <label class="block font-small text-center relative group">
+                        Recebedor
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="recebedor" required>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Forma de Pagamento</label>
-                    <input type="text" list="formas_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="forma_pagamento">
+                    <label class="block font-small text-center relative group">
+                        Forma de Pagamento
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" list="formas_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="forma_pagamento" required>
                     <datalist id="formas_pgto">
                         {% for forma_pagamento in formas_pagamento %}
                             <option value="{{ forma_pagamento.chave }}">{{ forma_pagamento.descricao }}</option>
@@ -144,8 +211,14 @@
                     </datalist>
                 </div>
                 <div>
-                    <label class="block font-small text-center">Condição de Pagamento</label>
-                    <input type="text" list="conds_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="condicao_pagamento">
+                    <label class="block font-small text-center relative group">
+                        Condição de Pagamento
+                        <strong class="text-red-600 ">*</strong>
+                        <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Obrigatório
+                        </span>
+                    </label>
+                    <input type="text" list="conds_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="condicao_pagamento" required>
                     <datalist id="conds_pgto">
                         {% for condicao_pagamento in condicoes_pagamento %}
                             <option value="{{ condicao_pagamento.chave }}">{{ condicao_pagamento.descricao }}</option>
@@ -154,8 +227,14 @@
                 </div>
                 <div class="md:col-span-5 flex justify-center gap-4 w-full">
                     <div class="w-full md:w-1/5">
-                        <label class="block font-small text-center">Incoterms</label>
-                        <input type="text" list="incorterms" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="incoterm">
+                        <label class="block font-small text-center relative group">
+                            Incoterms
+                            <strong class="text-red-600 ">*</strong>
+                            <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                Obrigatório
+                            </span>
+                        </label>
+                        <input type="text" list="incorterms" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="incoterm" required>
                         <datalist id="incorterms">
                             {% for incoterm in incoterms %}
                                 <option value="{{ incoterm.chave }}">{{ incoterm.descricao }}</option>
@@ -163,8 +242,14 @@
                         </datalist>
                     </div>
                     <div class="w-full md:w-1/5">
-                        <label class="block font-small text-center">Motivo</label>
-                        <input type="text" list="motivos" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="motivo">
+                        <label class="block font-small text-center relative group">
+                            Motivo
+                            <strong class="text-red-600 ">*</strong>
+                            <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                Obrigatório
+                            </span>
+                        </label>
+                        <input type="text" list="motivos" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="motivo" required>
                         <datalist id="motivos">
                             {% for motivo in motivos %}
                                 <option value="{{ motivo.chave }}">{{ motivo.descricao }}</option>
@@ -172,8 +257,14 @@
                         </datalist>
                     </div>
                     <div class="w-full md:w-1/5">
-                        <label class="block font-small text-center">Tipo de Expedição</label>
-                        <input type="text" list="expedicoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="expedicao">
+                        <label class="block font-small text-center relative group">
+                            Tipo de Expedição
+                            <strong class="text-red-600 ">*</strong>
+                            <span class="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                Obrigatório
+                            </span>
+                        </label>
+                        <input type="text" list="expedicoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="expedicao" required>
                         <datalist id="expedicoes">
                             {% for expedicao in tipos_expedicao %}
                                 <option value="{{ expedicao.chave }}">{{ expedicao.descricao }}</option>
@@ -190,8 +281,8 @@
 
             <!-- ================================================== -->
 
-            <!-- Opcionais. -->
-            <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Dados Opcionais</label>
+            <!-- Extras. -->
+            <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Dados Extras</label>
             <div class="md:col-span-2 flex justify-center gap-4 w-full my-3"">
                 <div class="w-full">
                     <label class="block font-small text-center">Dados Adicionais NF</label>
@@ -216,7 +307,7 @@
             <!-- ================================================== -->
 
             <!-- Parceiros. -->
-            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">
+            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center -mb-1">
                 <label class="block text-xl text-center font-bold">Parceiros</label>
                 <input id="add_parceiro" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
@@ -238,7 +329,7 @@
             <!-- ================================================== -->
 
             <!-- Itens. -->
-            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">
+            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center -mb-1">
                 <label class="block text-xl text-center font-bold">Itens</label>
                 <input id="add_item" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
@@ -261,6 +352,11 @@
                     <option value="{{ deposito.chave }}">{{ deposito.descricao }}</option>
                 {% endfor %}
             </datalist>
+            <datalist id="garantias">
+                {% for garantia in garantias %}
+                    <option value="{{ garantia.chave }}" custo="{{ garantia.valor }}">{{ garantia.descricao }}</option>
+                {% endfor %}
+            </datalist>
 
             <!-- ================================================== -->
 
@@ -270,7 +366,7 @@
             <!-- ================================================== -->
 
             <!-- Comissão. -->
-            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">
+            <div class="flex gap-1 text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center -mb-1">
                 <label class="block text-xl text-center font-bold">Comissão</label>
                 <input id="add_comissao" style="cursor: pointer;" type="button" value="+" class="bg-green-600 text-white px-1.5 rounded hover:bg-green-700">
             </div>
@@ -298,6 +394,13 @@
 
     <!-- Fecha formulário. -->
     </form>
+
+    <!-- ================================================== -->
+
+    <!-- Fila de documentos. -->
+    <div id="fila_docs" class="w-full pl-6 pr-6 bg-white scroll-mt-10 -mt-9">
+        <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Fila de Documentos</label>
+    </div>
 
     <!-- ================================================== -->
 

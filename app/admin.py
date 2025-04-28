@@ -271,6 +271,17 @@ class TiposAdminDeposito(admin.ModelAdmin):
 
 # ================================================== #
 
+# ~~ Filtros das tabelas de tipos.
+class TiposAdminGarantia(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("chave", "descricao", "valor")
+
+    # ~~ Campo de busca.
+    search_fields = ("chave", "descricao", "valor")
+
+# ================================================== #
+
 # ~~ Descrição que consta no admin.
 admin.site.index_title = "Banco de dados:"
 
@@ -300,5 +311,6 @@ admin.site.register(TiposExpedicao, TiposAdminExpedicao)
 admin.site.register(TiposTabela, TiposAdminTabela)
 admin.site.register(TiposCentro, TiposAdminCentro)
 admin.site.register(TiposDeposito, TiposAdminDeposito)
+admin.site.register(TiposGarantia, TiposAdminGarantia)
 
 # ================================================== #

@@ -333,3 +333,17 @@ class TiposDeposito(models.Model):
         return self.chave
 
 # ================================================== #
+
+# ~~ Modelo contendo tipos de depósitos.
+class TiposGarantia(models.Model):
+
+    # ~~ Atributos.
+    chave = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+    valor = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return self.chave
+
+# ================================================== #

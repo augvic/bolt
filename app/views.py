@@ -70,6 +70,7 @@ class DocVendas:
         tabelas_preco = database.coletar_datalist("tabela")
         centros = database.coletar_datalist("centro")
         depositos = database.coletar_datalist("deposito")
+        garantias = database.coletar_datalist("garantia")
 
         # ~~ Monta contexto.
         contexto = {
@@ -85,7 +86,8 @@ class DocVendas:
             "tipos_expedicao": tipos_expedicao,
             "tabelas_preco": tabelas_preco,
             "centros": centros,
-            "depositos": depositos
+            "depositos": depositos,
+            "garantias": garantias
         }
 
         # ~~ Renderiza página.

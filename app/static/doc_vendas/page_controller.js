@@ -26,7 +26,7 @@ class DocVendasPageController {
 
             // ~~ Cria linha de parceiros.
             const parceiroLinha = document.createElement("div");
-            parceiroLinha.className = "md:col-span-2 flex justify-center gap-4 w-full my-3";
+            parceiroLinha.className = "md:col-span-2 flex justify-center gap-4 w-full mt-4";
             parceiroLinha.id = `parceiro_linha_${this.parceirosIndex}`;
 
             // ~~ Cria colunas para label, input e botão.
@@ -40,20 +40,44 @@ class DocVendasPageController {
             // ~~ Cria labels.
             const labelChave = document.createElement("label");
             labelChave.innerText = "Chave";
+            labelChave.className = "block font-small text-center relative group"
             const labelCodigo = document.createElement("label");
             labelCodigo.innerText = "Código";
+            labelCodigo.className = "block font-small text-center relative group"
+
+            // ~~ Cria strong e faz append nos labels.
+            const strong1 = document.createElement("strong");
+            const strong2 = document.createElement("strong");
+            strong1.innerText = " *";
+            strong1.className = "text-red-600"
+            strong2.innerText = " *";
+            strong2.className = "text-red-600"
+            labelChave.appendChild(strong1);
+            labelCodigo.appendChild(strong2);
+
+            // ~~ Cria spans de obrigatório e faz append nos labels.
+            const span1 = document.createElement("span");
+            const span2 = document.createElement("span");
+            span1.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap";
+            span2.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap";
+            span1.innerText = "Obrigatório";
+            span2.innerText = "Obrigatório";
+            labelChave.appendChild(span1);
+            labelCodigo.appendChild(span2);
 
             // ~~ Cria input de chave.
             const parceiroInputChave = document.createElement("input");
             parceiroInputChave.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             parceiroInputChave.type = "text";
             parceiroInputChave.name = `parceiro_chave_${this.parceirosIndex}`;
+            parceiroInputChave.required = true;
 
             // ~~ Cria input de código.
             const parceiroInputCodigo = document.createElement("input");
             parceiroInputCodigo.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             parceiroInputCodigo.type = "text";
             parceiroInputCodigo.name = `parceiro_codigo_${this.parceirosIndex}`;
+            parceiroInputCodigo.required = true;
 
             // ~~ Cria botão de remover.
             const parceiroRemove = document.createElement("input");
@@ -97,7 +121,7 @@ class DocVendasPageController {
 
             // ~~ Cria linha de comissão.
             const comissaoLinha = document.createElement("div");
-            comissaoLinha.className = "md:col-span-2 flex justify-center gap-4 w-full my-3";
+            comissaoLinha.className = "md:col-span-2 flex justify-center gap-4 w-full mt-4";
             comissaoLinha.id = `comissao_linha_${this.comissaoIndex}`;
 
             // ~~ Cria colunas para label, input e botão.
@@ -181,7 +205,7 @@ class DocVendasPageController {
 
             // ~~ Cria a linha do item.
             const itemLinha = document.createElement("div");
-            itemLinha.className = "md:col-span-5 flex justify-center gap-4 w-full my-3";
+            itemLinha.className = "md:col-span-5 flex justify-center gap-4 w-full mt-4";
             itemLinha.id = `item_linha_${this.itemsIndex}`;
 
             // ~~ Lista com cada campo para ser inserido na linha.
@@ -190,11 +214,19 @@ class DocVendasPageController {
                 { label: "Quantidade", type: "number", name: "quantidade" },
                 { label: "Valor", type: "number", name: "valor" },
                 { label: "Centro", type: "text", name: "centro", datalist: "centros" },
-                { label: "Depósito", type: "number", name: "deposito", datalist: "depositos" },
+                { label: "Depósito", type: "text", name: "deposito", datalist: "depositos" },
                 { label: "Over", type: "number", name: "over" },
-                { label: "Garantia", type: "number", name: "garantia" },
+                { label: "Garantia", type: "texto", name: "garantia", datalist: "garantias" },
                 { label: "TCL/MOU", type: "checkbox", name: "tlc_mou" }
             ];
+
+            // ~~ Lista com campos não obrigatórios de preenchimento.
+            const camposNaoObrigatorios = [
+                "Depósito",
+                "Over",
+                "Garantia",
+                "TCL/MOU"
+            ]
 
             // ~~ Para cada campo na lista, cria o elemento e adiciona na linha.
             camposItem.forEach((campo) => {
@@ -205,7 +237,7 @@ class DocVendasPageController {
 
                 // ~~ Cria label.
                 const campoLabel = document.createElement("label");
-                campoLabel.className = "block font-small text-center";
+                campoLabel.className = "block font-small text-center relative group";
                 campoLabel.innerText = campo.label;
 
                 // ~~ Cria input.
@@ -214,9 +246,42 @@ class DocVendasPageController {
                 campoInput.type = campo.type;
                 campoInput.name = `${campo.name}_${this.itemsIndex}`;
 
+                // ~~ Se input for "valor".
+                if (campoInput.name == `valor_${this.itemsIndex}`) {
+
+                    // ~~ Salva momentaneamente o input para posterior uso.
+                    this.inputValor = campoInput;
+
+                    // ~~ Adiciona event listener.
+                    campoInput.addEventListener("input", () => {
+
+                        // ~~ Coleta o último valor digitado e salva como atributo.
+                        campoInput.setAttribute("ultimo_valor", campoInput.value || "0");
+                    });
+                }
+            
                 // ~~ Caso input tenha datalist.
                 if (campo.datalist) {
                     campoInput.setAttribute("list", campo.datalist);
+                }
+
+                // ~~ Verifica se campo é obrigatório para criar o indicador de obrigatoriedade.
+                if (!camposNaoObrigatorios.includes(campo.label)) {
+
+                    // ~~ Cria strong.
+                    const strong = document.createElement("strong");
+                    strong.innerText = " *";
+                    strong.className = "text-red-600";
+                    campoLabel.appendChild(strong);
+
+                    // ~~ Cria o span.
+                    const span = document.createElement("span");
+                    span.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap";
+                    span.innerText = "Obrigatório";
+                    campoLabel.appendChild(span);
+
+                    // ~~ Define input como required.
+                    campoInput.required = true;
                 }
 
                 // ~~ Adiciona label e input na div de coluna.
@@ -236,16 +301,16 @@ class DocVendasPageController {
 
                     // ~~ Campo teclado.
                     const teclado = document.createElement("input");
-                    teclado.type = "text";
+                    teclado.type = "number";
                     teclado.name = `teclado_${this.itemsIndex}`;
-                    teclado.placeholder = "Valor";
+                    teclado.placeholder = "R$";
                     teclado.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
 
                     // ~~ Campo mouse.
                     const mouse = document.createElement("input");
-                    mouse.type = "text";
+                    mouse.type = "number";
                     mouse.name = `mouse_${this.itemsIndex}`;
-                    mouse.placeholder = "Valor";
+                    mouse.placeholder = "R$";
                     mouse.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
 
                     // ~~ Adiciona campos extras à div.
@@ -255,14 +320,23 @@ class DocVendasPageController {
                     // ~~ Mostra ou esconde os campos com base no checkbox.
                     campoInput.addEventListener("change", () => {
                         extrasDiv.style.display = campoInput.checked ? "flex" : "none";
+                        teclado.required = campoInput.checked ? true : false;
+                        mouse.required = campoInput.checked ? true : false;
                         mouse.value = "";
                         teclado.value = "";
+                    });
+
+                    // ~~ Armazena o input de valor como constante.
+                    const inputValor = this.inputValor;
+
+                    // ~~ Event listener para recalcular o valor total.
+                    teclado.addEventListener("input", () => {
+                        console.log(inputValor.name);
                     });
 
                     // ~~ Adiciona o grupo extra na coluna.
                     colunaItem.appendChild(extrasDiv);
                 }
-
             });
 
             // ~~ Cria botão de remover item.

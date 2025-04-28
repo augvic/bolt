@@ -286,87 +286,87 @@ class DocVendas:
 
 dados = {
     "tipo_doc": "ZCOT",
-    "organizacao": 3100,
-    "canal": 15,
-    "escritorio": 1105,
+    "organizacao": "3100",
+    "canal": "15",
+    "escritorio": "1105",
     "equipe": "058",
     "pedido_nome": "TESTE SAMOC",
-    "emissor": 1000784725,
-    "recebedor": 1000784725,
+    "emissor": "1000784725",
+    "recebedor": "1000784725",
     "condicao_pagamento": "Z134",
     "incoterm": "CIF",
-    "motivo": 900,
+    "motivo": "900",
     "itens": [
         {
-            "sku": 1307015,
-            "quantidade": 4,
-            "centro": 3010,
+            "sku": "1307015",
+            "quantidade": "4",
+            "centro": "3010",
             "deposito": "0175",
-            "garantia": None,
-            "over": None,
-            "valor": 2815.00,
+            "garantia": "",
+            "over": "",
+            "valor": "2815.00",
             "tipo": "PAI"
         },
         {
-            "sku": 11117918,
-            "quantidade": 4,
-            "centro": 3010,
+            "sku": "11117918",
+            "quantidade": "4",
+            "centro": "3010",
             "deposito": "0175",
-            "garantia": None,
-            "over": None,
-            "valor": 42.00,
-            "tipo": "FILHO"
+            "garantia": "",
+            "over": "",
+            "valor": "42.00",
+            "tipo": "TCL/MOU"
         },
         {
-            "sku": 11086967,
-            "quantidade": 4,
-            "centro": 3010,
+            "sku": "11086967",
+            "quantidade": "4",
+            "centro": "3010",
             "deposito": "0175",
-            "garantia": None,
-            "over": None,
-            "valor": 21.00,
-            "tipo": "FILHO"
+            "garantia": "",
+            "over": "",
+            "valor": "21.00",
+            "tipo": "TCL/MOU"
         },
         {
-            "sku": 1702794,
-            "quantidade": 1,
-            "centro": 3010,
+            "sku": "1702794",
+            "quantidade": "1",
+            "centro": "3010",
             "deposito": "0175",
-            "garantia": None,
-            "over": None,
-            "valor": 3428.00,
+            "garantia": "",
+            "over": "",
+            "valor": "3428.00",
             "tipo": "PAI"
         },
         {
-            "sku": 1702837,
-            "quantidade": 1,
-            "centro": 3010,
+            "sku": "1702837",
+            "quantidade": "1",
+            "centro": "3010",
             "deposito": "0175",
-            "garantia": None,
-            "over": None,
-            "valor": 3428.00,
+            "garantia": "",
+            "over": "",
+            "valor": "3428.00",
             "tipo": "PAI"
         }
     ],
-    "tabela": 21,
+    "tabela": "21",
     "expedicao": "01",
     "forma_pagamento": "V",
     "parceiros": [
         {
             "chave": "ZW",
-            "codigo": 1001380210
+            "codigo": "1001380210"
         }
     ],
     "dados_adicionais": "TESTE",
     "comissao": [
         {
             "chave": "Z2",
-            "codigo": 2000006653,
+            "codigo": "2000006653",
             "porcentagem": "0,32"
         },
         {
             "chave": "Z5",
-            "codigo": 2000005674,
+            "codigo": "2000005674",
             "porcentagem": "0,32"
         },
         {

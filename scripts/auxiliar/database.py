@@ -348,6 +348,7 @@ class Database:
             - (tabela: str)
             - (centro: str)
             - (deposito: str)
+            - (garantia: str)
 
         Retorna:
         - (datalist: list):
@@ -368,17 +369,24 @@ class Database:
             "expedicao": TiposExpedicao,
             "tabela": TiposTabela,
             "centro": TiposCentro,
-            "deposito": TiposDeposito
+            "deposito": TiposDeposito,
+            "garantia": TiposGarantia
         }
 
         # ~~ Encontra a tabela na lista de tabelas correspondente.
         tabela = tabelas[datalist_name]
 
-        # ~~ Verifica qual datalist é para ser coletado.
-        registros = tabela.objects.values_list("chave", "descricao")
+        # ~~ Coleta as colunas.
+        try:
+            registros = tabela.objects.values_list("chave", "descricao", "valor")
+        except:
+            registros = tabela.objects.values_list("chave", "descricao")
 
         # ~~ Cria lista para armazenar dados.
-        datalist = [{"chave": chave, "descricao": descricao} for chave, descricao in registros]
+        try:
+            datalist = [{"chave": chave, "descricao": descricao, "valor": valor} for chave, descricao, valor in registros]
+        except:
+            datalist = [{"chave": chave, "descricao": descricao} for chave, descricao in registros]
 
         # ~~ Retorna datalist.
         return datalist
