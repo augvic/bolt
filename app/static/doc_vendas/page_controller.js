@@ -288,18 +288,35 @@ class DocVendasPageController {
                 // ~~ Se o campo for de garantia.
                 if (campoInput.name == `garantia_${this.itemsIndex}`) {
 
-                    // ~~ Cria input escondido para armazenar código da garantia.
-                    const codigoGarantia = document.createElement("input");
-                    codigoGarantia.style.display = "none";
-                    codigoGarantia.value = "";
-                    colunaItem.appendChild(codigoGarantia);
+                    // ~~ Cria input escondido para armazenar valor da garantia.
+                    const valorGarantia = document.createElement("input");
+                    valorGarantia.name = `garantia_valor_${this.itemsIndex}`;
+                    valorGarantia.style.display = "none";
+                    valorGarantia.value = "";
+                    colunaItem.appendChild(valorGarantia);
 
                     // ~~ Adiciona event listener.
                     campoInput.addEventListener("change", () => {
                         
-                        // ~~ Pega o valor da garantia que está no input.
-                        const valorGarantia = campoInput.value;
-                        console.log(valorGarantia);
+                        // ~~ Pega a descrição da garantia que está no input.
+                        const descricaoGarantia = campoInput.value;
+                        
+                        // ~~ Pega o datalist das garantias.
+                        const datalistGarantias = document.getElementById("garantias");
+
+                        // ~~ Coleta as opções do datalist.
+                        const opcoes = datalistGarantias.querySelectorAll("option");
+                        
+                        // ~~ Faz loop nas opções.
+                        for (let opcao of opcoes) {
+
+                            // ~~ Se a descrição da opção bater com a opção selecionada.
+                            if (opcao.value == descricaoGarantia) {
+
+                                // ~~ Armazena valor no input.
+                                valorGarantia.value = opcao.getAttribute("valor");
+                            }
+                        }
                     });
                 }
 
