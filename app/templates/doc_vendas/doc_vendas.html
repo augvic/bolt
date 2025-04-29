@@ -354,7 +354,7 @@
             </datalist>
             <datalist id="garantias">
                 {% for garantia in garantias %}
-                    <option value="{{ garantia.chave }}" custo="{{ garantia.valor }}">{{ garantia.descricao }}</option>
+                    <option value="{{ garantia.descricao }}">{{ garantia.chave }}</option>
                 {% endfor %}
             </datalist>
 

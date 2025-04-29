@@ -1,5 +1,10 @@
 // ================================================== \\
 
+/**
+ * Resumo:
+ *  - Classe que controla a lógica da página.
+ */
+
 // ~~ Classe que controla a página.
 class DocVendasPageController {
 
@@ -17,6 +22,11 @@ class DocVendasPageController {
     comissaoIndex = 0;
 
     // ================================================== \\
+
+    /**
+     * Resumo:
+     * - Método que adiciona e remove parceiros.
+     */
 
     // ~~ Método de adicionar e remover parceiro.
     parceirosControllerInit() {
@@ -113,6 +123,11 @@ class DocVendasPageController {
 
     // ================================================== \\
 
+    /**
+     * Resumo:
+     * - Método que adiciona e remove comissão.
+     */
+
     // ~~ Método de adicionar e remover comissão.
     comissaoControllerInit() {
 
@@ -197,6 +212,11 @@ class DocVendasPageController {
 
     // ================================================== \\
 
+    /**
+     * Resumo:
+     * - Método que adiciona e remove itens.
+     */
+
     // ~~ Método de adicionar e remover itens.
     itemsControllerInit() {
 
@@ -265,6 +285,24 @@ class DocVendasPageController {
                     campoInput.setAttribute("list", campo.datalist);
                 }
 
+                // ~~ Se o campo for de garantia.
+                if (campoInput.name == `garantia_${this.itemsIndex}`) {
+
+                    // ~~ Cria input escondido para armazenar código da garantia.
+                    const codigoGarantia = document.createElement("input");
+                    codigoGarantia.style.display = "none";
+                    codigoGarantia.value = "";
+                    colunaItem.appendChild(codigoGarantia);
+
+                    // ~~ Adiciona event listener.
+                    campoInput.addEventListener("change", () => {
+                        
+                        // ~~ Pega o valor da garantia que está no input.
+                        const valorGarantia = campoInput.value;
+                        console.log(valorGarantia);
+                    });
+                }
+
                 // ~~ Verifica se campo é obrigatório para criar o indicador de obrigatoriedade.
                 if (!camposNaoObrigatorios.includes(campo.label)) {
 
@@ -298,6 +336,7 @@ class DocVendasPageController {
                     const extrasDiv = document.createElement("div");
                     extrasDiv.className = "flex gap-2 mt-2";
                     extrasDiv.style.display = "none";
+                    extrasDiv.id = `id_tcl_mou_${this.itemsIndex}`;
 
                     // ~~ Campo teclado.
                     const teclado = document.createElement("input");
@@ -317,22 +356,62 @@ class DocVendasPageController {
                     extrasDiv.appendChild(teclado);
                     extrasDiv.appendChild(mouse);
 
-                    // ~~ Mostra ou esconde os campos com base no checkbox.
+                    // ~~ Armazena o input de valor como constante.
+                    const inputValor = this.inputValor;
+
+                    // ~~ Event listener no checkbox.
                     campoInput.addEventListener("change", () => {
+
+                        // ~~ Exibe e esconde os inputs de valores.
                         extrasDiv.style.display = campoInput.checked ? "flex" : "none";
+
+                        // ~~ Define o required dos inputs.
                         teclado.required = campoInput.checked ? true : false;
                         mouse.required = campoInput.checked ? true : false;
+
+                        // ~~ Coleta o último valor digitado.
+                        const ultimoValor = inputValor.getAttribute("ultimo_valor");
+
+                        // ~~ Verifica se havia valor.
+                        if (ultimoValor == 0) {
+                            inputValor.value = "";
+                        } else {
+                            inputValor.value = ultimoValor;
+                        }
+
+                        // ~~ Limpa os inputs.
                         mouse.value = "";
                         teclado.value = "";
                     });
 
-                    // ~~ Armazena o input de valor como constante.
-                    const inputValor = this.inputValor;
+                    // ~~ Função para recalcular o valor total.
+                    const recalcularValor = () => {
 
-                    // ~~ Event listener para recalcular o valor total.
-                    teclado.addEventListener("input", () => {
-                        console.log(inputValor.name);
-                    });
+                        // ~~ Pega valor total do item da linha que foi salvo por último.
+                        const valor = inputValor.getAttribute("ultimo_valor");
+                        console.log(valor);
+
+                        // ~~ Verifica se há algum valor no campo.
+                        if (valor && valor != 0) {
+
+                            // ~~ Pega o valor do mouse.
+                            const valorMouse = parseFloat(mouse.value) || 0;
+
+                            // ~~ Pega o valor do teclado.
+                            const valorTeclado = parseFloat(teclado.value) || 0;
+
+                            // ~~ Calcula novo valor.
+                            const novoValor = (valor - valorMouse - valorTeclado);
+
+                            // ~~ Exibe valor atualizado no input.
+                            inputValor.value = novoValor.toFixed(2);
+                        }
+                    }
+
+                    // ~~ Adiciona event listener nos inputs de teclado e mouse para a cada mudança
+                    // ~~ recalcular o valor do item na linha.
+                    teclado.addEventListener("input", recalcularValor);
+                    mouse.addEventListener("input", recalcularValor);
 
                     // ~~ Adiciona o grupo extra na coluna.
                     colunaItem.appendChild(extrasDiv);
@@ -368,13 +447,39 @@ class DocVendasPageController {
 
     // ================================================== \\
 
+    /**
+     * Resumo:
+     * - Método que limpa formulário.
+     */
+
     // ~~ Método de limpar formulário.
     limpar_form() {
 
-        // ~~ Event listener.
+        // ~~ Event listener ao clicar no botão.
         this.clear_button.addEventListener("click", () => {
+
+            // ~~ Reseta o formulário.
             this.form.reset()
+
+            // ~~ Coleta as divs de teclado e mouse.
+            const divsExtras = document.querySelectorAll("[id^='id_tcl_mou_']");
+
+            // ~~ Para cada div de teclado e mouse, muda o display para none.
+            divsExtras.forEach(div => {
+                div.style.display = "none";
+            });
         });
+    }
+
+    // ================================================== \\
+
+    /**
+     * Resumo:
+     * - Método que coleta codigo da garantia.
+     */
+
+    coletarCodigoGarantia() {
+
     }
 
     // ================================================== \\
