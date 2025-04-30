@@ -440,3 +440,8 @@ class Financeiro:
     # ================================================== #
 
 # ================================================== #
+
+sap = Sap()
+utilitarios = Utilitarios()
+financeiro = Financeiro(sap, utilitarios)
+financeiro.coletar_dados_financeiros_cliente(raiz_cnpj="18995457", printar_dados=True)

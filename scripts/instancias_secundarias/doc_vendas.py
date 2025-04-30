@@ -174,7 +174,7 @@ class DocVendas:
                 self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[3,11]").text = item["over"]
             
             # ~~ Loop para inserir valor.
-            self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[3,2]").text = str(item["valor"]).replace(".", ",")
+            self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[3,2]").text = str(item["valor_unitario"]).replace(".", ",")
             self.sap.session.findById(r"wnd[0]").sendVKey(0)
             while True:
 
@@ -184,10 +184,10 @@ class DocVendas:
                 soma_liquido_imposto = round((valor_liquido + valor_imposto) / item["quantidade"], 2)
 
                 # ~~ Se valor estiver diferente do valor do item.
-                if soma_liquido_imposto != item["valor"]:
+                if soma_liquido_imposto != item["valor_unitario"]:
 
                     # ~~ Calcula a diferença.
-                    diferenca = round(soma_liquido_imposto - item["valor"], 2)
+                    diferenca = round(soma_liquido_imposto - item["valor_unitario"], 2)
 
                     # ~~ Se a diferença estiver 15 centavos pra cima ou baixo, insere no ZD15.
                     if 0 < diferenca <= 0.15 or -0.15 < diferenca <= 0:
@@ -304,7 +304,7 @@ dados = {
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor": "2815.00",
+            "valor_unitario": "2815.00",
             "tipo": "PAI"
         },
         {
@@ -314,7 +314,7 @@ dados = {
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor": "42.00",
+            "valor_unitario": "42.00",
             "tipo": "TCL/MOU"
         },
         {
@@ -324,7 +324,7 @@ dados = {
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor": "21.00",
+            "valor_unitario": "21.00",
             "tipo": "TCL/MOU"
         },
         {
@@ -334,7 +334,7 @@ dados = {
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor": "3428.00",
+            "valor_unitario": "3428.00",
             "tipo": "PAI"
         },
         {
@@ -344,7 +344,7 @@ dados = {
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor": "3428.00",
+            "valor_unitario": "3428.00",
             "tipo": "PAI"
         }
     ],

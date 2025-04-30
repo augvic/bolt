@@ -95,7 +95,32 @@ export class Item {
 
             // ~~ Se input for "quantidade".
             if (campoInput.name == "quantidade") {
+
+                // ~~ Armazena input como atributo.
                 this.quantidade = campoInput;
+
+                // ~~ Event listener de input.
+                this.quantidade.addEventListener("input", () => {
+
+                    // ~~ Verifica se o campo de valor unitário está preenchido.
+                    if (this.valorUnitario.value != "") {
+
+                        // ~~ Multiplica o valor unitário pela quantidade.
+                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
+
+                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                        // ~~ Insere o valor total no seu campo.
+                        this.valorTotal.value = valorFormatado;
+                    }
+
+                    // ~~ Verifica se o campo está em branco.
+                    if (this.quantidade.value == "") {
+
+                        // ~~ Reseta o campo de valor total.
+                        this.valorTotal.value = "";
+                    }
+                });
             }
 
             // ~~ Se input for "valor_unitario".
@@ -110,18 +135,38 @@ export class Item {
                 // ~~ Adiciona event listener.
                 this.valorUnitario.addEventListener("input", () => {
 
-                    // ~~ Verifica se valor está em branco.
-                    if (this.valorUnitario.value == "") {
+                    // ~~ Coleta o valor digitado e armazena como atributo no mesmo elemento.
+                    this.valorUnitario.setAttribute("ultimo_valor", this.valorUnitario.value || "0");
+
+                    // ~~ Verifica se o campo de quantidade está preenchido.
+                    if (this.quantidade.value != "") {
+
+                        // ~~ Multiplica o valor unitário pela quantidade.
+                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
+
+                        // ~~ Converte para formato brasileiro.
+                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                         
-                        // ~~ Reseta inputs de garantia, teclado e mouse.
+                        // ~~ Insere o valor total no seu campo.
+                        this.valorTotal.value = valorFormatado;
+                    }
+
+                    // ~~ Verifica se inputs de teclado, mouse e garantia estão preenchidos.
+                    if (this.garantia.value != "" || this.teclado.value != "" || this.mouse.value != "" ) {
+
+                        // ~~ Reseta inputs.
                         this.garantia.value = "";
                         this.garantiaValor.value = "";
                         this.teclado.value = "";
                         this.mouse.value = "";
                     }
 
-                    // ~~ Coleta o valor digitado e armazena como atributo no mesmo elemento.
-                    this.valorUnitario.setAttribute("ultimo_valor", this.valorUnitario.value || "0");
+                    // ~~ Se o input estiver em branco.
+                    if (this.valorUnitario.value == "") {
+
+                        // ~~ Reseta o campo de valor total.
+                        this.valorTotal.value = "";
+                    }
                 });
             }
 
@@ -152,7 +197,18 @@ export class Item {
                 this.garantiaValor.value = 0;
                 colunaItem.appendChild(this.garantiaValor);
 
-                // ~~ Adiciona event listener.
+                // ~~ Event listener de click.
+                this.garantia.addEventListener("click", () => {
+                    
+                    // ~~ Verifica se campo de valor unitário está preenchido.
+                    if (this.valorUnitario.value == "") {
+
+                        // ~~ Exibe alerta.
+                        alert("Insira primeiro o valor unitário.");
+                    }
+                });
+
+                // ~~ Event listener de input.
                 this.garantia.addEventListener("input", () => {
 
                     // ~~ Verifica primeiro se o campo está em branco.
@@ -160,6 +216,16 @@ export class Item {
 
                         // ~~ Reseta valor da garantia para "0".
                         this.garantiaValor.value = 0;
+                    }
+
+                    // ~~ Verifica se campo de valor unitário está preenchido.
+                    if (this.valorUnitario.value == "") {
+
+                        // ~~ Exibe alerta.
+                        alert("Insira primeiro o valor unitário.");
+
+                        // ~~ Limpa campo.
+                        this.garantia.value = "";
                     }
 
                     // ~~ Pega a descrição da garantia que está no input.
@@ -184,12 +250,50 @@ export class Item {
                     
                     // ~~ Executa método de recalcular o valor.
                     this.recalcularValor();
+
+                    // ~~ Verifica se o campo de quantidade está preenchido.
+                    if (this.quantidade.value != "") {
+
+                        // ~~ Multiplica o valor unitário pela quantidade.
+                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
+
+                        // ~~ Converte para formato brasileiro.
+                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        
+                        // ~~ Insere o valor total no seu campo.
+                        this.valorTotal.value = valorFormatado;
+                    }
                 });
             }
 
             // ~~ Se input for "valor_total".
             if (campoInput.name == "valor_total") {
+
+                // ~~ Armazena input como atributo.
                 this.valorTotal = campoInput;
+
+                // ~~ Event listener de input.
+                this.valorTotal.addEventListener("input", () => {
+
+                    // ~~ Verifica se o campo de quantidade e valor unitário estão preenchidos.
+                    if (this.quantidade.value != "" && this.valorUnitario.value != "") {
+
+                        // ~~ Multiplica o valor unitário pela quantidade.
+                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
+
+                        // ~~ Converte para formato brasileiro.
+                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        
+                        // ~~ Insere o valor total no seu campo.
+                        this.valorTotal.value = valorFormatado;
+
+                    // ~~ Se não estiverem.
+                    } else {
+                        
+                        // ~~ Limpa o que o usuário inputar no campo.
+                        this.valorTotal.value = "";
+                    }
+                });
             }
 
             // ~~ Se input for "tcl_mou".
@@ -219,6 +323,94 @@ export class Item {
                 extrasDiv.appendChild(this.teclado);
                 extrasDiv.appendChild(this.mouse);
 
+                // ~~ Event listener de click no mouse.
+                this.mouse.addEventListener("click", () => {
+
+                    // ~~ Verifica se o input de valor unitário está em branco.
+                    if (this.valorUnitario.value == "") {
+                        
+                        // ~~ Exibe alerta.
+                        alert("Insira primeiro o valor unitário.")
+
+                        // ~~ Limpa campo.
+                        this.mouse.value = "";
+                    }
+                });
+
+                // ~~ Event listener de click no teclado.
+                this.teclado.addEventListener("click", () => {
+
+                    // ~~ Verifica se o input de valor unitário está em branco.
+                    if (this.valorUnitario.value == "") {
+                        
+                        // ~~ Exibe alerta.
+                        alert("Insira primeiro o valor unitário.")
+
+                        // ~~ Limpa o campo.
+                        this.teclado.value = "";
+                    }
+                });
+
+                // ~~ Event listener de input no teclado.
+                this.teclado.addEventListener("input", () => {
+
+                    // ~~ Verifica se o input de valor unitário está em branco.
+                    if (this.valorUnitario.value == "") {
+                        
+                        // ~~ Exibe alerta.
+                        alert("Insira primeiro o valor unitário.")
+
+                        // ~~ Limpa o campo.
+                        this.teclado.value = "";
+                    }
+
+                    // ~~ Recalcula valor.
+                    this.recalcularValor();
+
+                    // ~~ Verifica se o campo de quantidade está preenchido.
+                    if (this.quantidade.value != "") {
+
+                        // ~~ Multiplica o valor unitário pela quantidade.
+                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
+
+                        // ~~ Converte para formato brasileiro.
+                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        
+                        // ~~ Insere o valor total no seu campo.
+                        this.valorTotal.value = valorFormatado;
+                    }
+                });
+
+                // ~~ Event listener de input no mouse.
+                this.mouse.addEventListener("input", () => {
+
+                    // ~~ Verifica se o input de valor unitário está em branco.
+                    if (this.valorUnitario.value == "") {
+                        
+                        // ~~ Exibe alerta.
+                        alert("Insira primeiro o valor unitário.")
+
+                        // ~~ Limpa o campo.
+                        this.mouse.value = "";
+                    }
+
+                    // ~~ Recalcula valor.
+                    this.recalcularValor();
+
+                    // ~~ Verifica se o campo de quantidade está preenchido.
+                    if (this.quantidade.value != "") {
+
+                        // ~~ Multiplica o valor unitário pela quantidade.
+                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
+
+                        // ~~ Converte para formato brasileiro.
+                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        
+                        // ~~ Insere o valor total no seu campo.
+                        this.valorTotal.value = valorFormatado;
+                    }
+                });
+
                 // ~~ Event listener no checkbox.
                 campoInput.addEventListener("change", () => {
 
@@ -247,10 +439,6 @@ export class Item {
                         this.recalcularValor();
                     }
                 });
-
-                // ~~ Adiciona event listener nos inputs de teclado e mouse, para a cada mudança, recalcular o valor unitário do item.
-                this.teclado.addEventListener("input", () => this.recalcularValor());
-                this.mouse.addEventListener("input", () => this.recalcularValor());
 
                 // ~~ Adiciona o grupo extra na coluna.
                 colunaItem.appendChild(extrasDiv);

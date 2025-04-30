@@ -113,7 +113,7 @@ class DocVendas:
                 item = {
                     "sku": str(dados.get(f"sku_{i}")).strip(),
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
-                    "valor": str(dados.get(f"valor_{i}")).strip(),
+                    "valor_unitario": str(dados.get(f"valor_unitario_{i}")).strip(),
                     "centro": str(dados.get(f"centro_{i}")).strip(),
                     "deposito": str(dados.get(f"deposito_{i}")).strip(),
                     "over": str(dados.get(f"over_{i}")).strip(),
@@ -125,24 +125,24 @@ class DocVendas:
                 if acessorio == None or acessorio == "":
                     continue
                 item_teclado = {
-                    "sku": None,
+                    "sku": "",
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
-                    "valor": str(dados.get(f"teclado_{i}")).strip(),
-                    "centro": None,
-                    "deposito": None,
-                    "over": None,
-                    "garantia": None,
+                    "valor_unitario": str(dados.get(f"teclado_{i}")).strip(),
+                    "centro": "",
+                    "deposito": "",
+                    "over": "",
+                    "garantia": "",
                     "tipo": "TCL/MOU" 
                 }
                 itens.append(item_teclado)
                 item_mouse = {
-                    "sku": None,
+                    "sku": "",
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
-                    "valor": str(dados.get(f"mouse_{i}")).strip(),
-                    "centro": None,
-                    "deposito": None,
-                    "over": None,
-                    "garantia": None,
+                    "valor_unitario": str(dados.get(f"mouse_{i}")).strip(),
+                    "centro": "",
+                    "deposito": "",
+                    "over": "",
+                    "garantia": "",
                     "tipo": "TCL/MOU" 
                 }
                 itens.append(item_mouse)
