@@ -330,7 +330,7 @@ export class Item {
                 strong.className = "text-red-600";
                 extrasDiv.appendChild(strong);
                 const span = document.createElement("span");
-                span.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 top-full left-1/2 transform -translate-x-1/2 whitespace-nowrap mt-1";
+                span.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 top-full left-1/2 transform -translate-x-1/2 whitespace-nowrap mt-2";
                 span.innerText = "Obrigatório";
                 extrasDiv.appendChild(span);
 
