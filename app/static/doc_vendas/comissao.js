@@ -29,11 +29,44 @@ export class Comissao {
 
         // ~~ Cria labels.
         const labelChave = document.createElement("label");
+        labelChave.className = "relative group";
         labelChave.innerText = "Chave";
         const labelCodigo = document.createElement("label");
+        labelCodigo.className = "relative group";
         labelCodigo.innerText = "Código";
         const labelPorcentagem = document.createElement("label");
+        labelPorcentagem.className = "relative group";
         labelPorcentagem.innerText = "Porcentagem";
+
+        // ~~ Cria indicador de obrigatoriedade para o label de chave.
+        const strong1 = document.createElement("strong");
+        strong1.innerText = " *";
+        strong1.className = "text-red-600";
+        labelChave.appendChild(strong1);
+        const span1 = document.createElement("span");
+        span1.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap";
+        span1.innerText = "Obrigatório";
+        labelChave.appendChild(span1);
+
+        // ~~ Cria indicador de obrigatoriedade para o label de código.
+        const strong2 = document.createElement("strong");
+        strong2.innerText = " *";
+        strong2.className = "text-red-600";
+        labelCodigo.appendChild(strong2);
+        const span2 = document.createElement("span");
+        span2.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap";
+        span2.innerText = "Obrigatório";
+        labelCodigo.appendChild(span2);
+
+        // ~~ Cria indicador de obrigatoriedade para o label de porcentagem.
+        const strong3 = document.createElement("strong");
+        strong3.innerText = " *";
+        strong3.className = "text-red-600";
+        labelPorcentagem.appendChild(strong3);
+        const span3 = document.createElement("span");
+        span3.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 bottom-full left-1/2 transform -translate-x-1/2 whitespace-nowrap";
+        span3.innerText = "Obrigatório";
+        labelPorcentagem.appendChild(span3);
 
         // ~~ Cria input de chave.
         this.comissaoInputChave = document.createElement("input");

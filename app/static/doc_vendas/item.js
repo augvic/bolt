@@ -13,20 +13,32 @@ export class Item {
     // ~~ Construtor.
     constructor() {
 
+        // ~~ IMask - Inclui automaticamente separadores de milhar e decimais.
+        this.maskOptions = {
+            mask: Number,
+            scale: 2,
+            signed: false,
+            thousandsSeparator: '.',
+            padFractionalZeros: true,
+            normalizeZeros: true,
+            radix: ',',
+            mapToRadix: ['.']
+        };
+
         // ~~ Cria a linha do item.
         this.itemLinha = document.createElement("div");
         this.itemLinha.className = "md:col-span-5 flex justify-center gap-4 w-full mt-4";
 
         // ~~ Lista com cada campo para ser inserido na linha.
         const camposItem = [
-            { label: "SKU", type: "number", name: "sku" },
-            { label: "Quantidade", type: "number", name: "quantidade" },
-            { label: "Valor Unitário", type: "number", name: "valor_unitario" },
+            { label: "SKU", type: "text", name: "sku" },
+            { label: "Quantidade", type: "text", name: "quantidade" },
+            { label: "Valor Unitário", type: "text", name: "valor_unitario" },
             { label: "Centro", type: "text", name: "centro", datalist: "centros" },
             { label: "Depósito", type: "text", name: "deposito", datalist: "depositos" },
-            { label: "Over", type: "number", name: "over" },
-            { label: "Garantia", type: "texto", name: "garantia", datalist: "garantias" },
-            { label: "Valor Total", type: "texto", name: "valor_total" },
+            { label: "Over", type: "text", name: "over" },
+            { label: "Garantia", type: "text", name: "garantia", datalist: "garantias" },
+            { label: "Valor Total", type: "text", name: "valor_total" },
             { label: "TCL/MOU", type: "checkbox", name: "tcl_mou" }
         ];
 
@@ -102,17 +114,8 @@ export class Item {
                 // ~~ Event listener de input.
                 this.quantidade.addEventListener("input", () => {
 
-                    // ~~ Verifica se o campo de valor unitário está preenchido.
-                    if (this.valorUnitario.value != "") {
-
-                        // ~~ Multiplica o valor unitário pela quantidade.
-                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
-
-                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-                        // ~~ Insere o valor total no seu campo.
-                        this.valorTotal.value = valorFormatado;
-                    }
+                    // ~~ Recalcula valor total.
+                    this.recalcularValorTotal();
 
                     // ~~ Verifica se o campo está em branco.
                     if (this.quantidade.value == "") {
@@ -132,24 +135,20 @@ export class Item {
                 // ~~ Define valor inicial do atributo.
                 this.valorUnitario.setAttribute("ultimo_valor", 0);
 
+                // ~~ Cria a mask do input de valor unitário.
+                this.valorUnitarioMask = IMask(this.valorUnitario, this.maskOptions);
+
                 // ~~ Adiciona event listener.
                 this.valorUnitario.addEventListener("input", () => {
 
+                    // ~~ Coleta o valor digitado e converte para float.
+                    const valorDigitado = this.valorUnitarioMask.unmaskedValue;
+
                     // ~~ Coleta o valor digitado e armazena como atributo no mesmo elemento.
-                    this.valorUnitario.setAttribute("ultimo_valor", this.valorUnitario.value || "0");
+                    this.valorUnitario.setAttribute("ultimo_valor", valorDigitado || "0");
 
-                    // ~~ Verifica se o campo de quantidade está preenchido.
-                    if (this.quantidade.value != "") {
-
-                        // ~~ Multiplica o valor unitário pela quantidade.
-                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
-
-                        // ~~ Converte para formato brasileiro.
-                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                        
-                        // ~~ Insere o valor total no seu campo.
-                        this.valorTotal.value = valorFormatado;
-                    }
+                    // ~~ Recalcula valor total.
+                    this.recalcularValorTotal();
 
                     // ~~ Verifica se inputs de teclado, mouse e garantia estão preenchidos.
                     if (this.garantia.value != "" || this.teclado.value != "" || this.mouse.value != "" ) {
@@ -172,17 +171,26 @@ export class Item {
 
             // ~~ Se input for "centro".
             if (campoInput.name == "centro") {
+
+                // ~~ Armazena input como atributo.
                 this.centro = campoInput;
             }
 
             // ~~ Se input for "depósito".
             if (campoInput.name == "deposito") {
+
+                // ~~ Armazena input como atributo.
                 this.deposito = campoInput;
             }
         
             // ~~ Se input for "over".
             if (campoInput.name == "over") {
+
+                // ~~ Armazena input como atributo.
                 this.over = campoInput;
+
+                // ~~ Cria a mask do input de valor over.
+                this.overMask = IMask(this.over, this.maskOptions);
             }
 
             // ~~ Se input for "garantia".
@@ -243,26 +251,19 @@ export class Item {
                         // ~~ Se a descrição da opção bater com a opção selecionada.
                         if (opcao.value == descricaoGarantia) {
 
-                            // ~~ Armazena valor no input.
+                            // ~~ Armazena valor no input de valor.
                             this.garantiaValor.value = opcao.getAttribute("valor");
+
+                            // ~~ Atualiza o input de garantia com o código.
+                            this.garantia.value = opcao.getAttribute("codigo");
                         }
                     }
                     
-                    // ~~ Executa método de recalcular o valor.
-                    this.recalcularValor();
+                    // ~~ Recalcula valor unitário.
+                    this.recalcularValorUnitario();
 
-                    // ~~ Verifica se o campo de quantidade está preenchido.
-                    if (this.quantidade.value != "") {
-
-                        // ~~ Multiplica o valor unitário pela quantidade.
-                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
-
-                        // ~~ Converte para formato brasileiro.
-                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                        
-                        // ~~ Insere o valor total no seu campo.
-                        this.valorTotal.value = valorFormatado;
-                    }
+                    // ~~ Recalcula valor total.
+                    this.recalcularValorTotal();
                 });
             }
 
@@ -301,20 +302,20 @@ export class Item {
 
                 // ~~ Cria div com os campos extras (teclado e mouse).
                 const extrasDiv = document.createElement("div");
-                extrasDiv.className = "flex gap-2 mt-2";
+                extrasDiv.className = "relative group flex gap-2 mt-2";
                 extrasDiv.style.display = "none";
                 extrasDiv.id = `id_tcl_mou_${this.itemsIndex}`;
 
                 // ~~ Campo teclado.
                 this.teclado = document.createElement("input");
-                this.teclado.type = "number";
+                this.teclado.type = "text";
                 this.teclado.name = `teclado_${this.itemsIndex}`;
                 this.teclado.placeholder = "R$";
                 this.teclado.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
 
                 // ~~ Campo mouse.
                 this.mouse = document.createElement("input");
-                this.mouse.type = "number";
+                this.mouse.type = "text";
                 this.mouse.name = `mouse_${this.itemsIndex}`;
                 this.mouse.placeholder = "R$";
                 this.mouse.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
@@ -322,6 +323,20 @@ export class Item {
                 // ~~ Adiciona campos extras à div.
                 extrasDiv.appendChild(this.teclado);
                 extrasDiv.appendChild(this.mouse);
+
+                // ~~ Cria indicador de obrigatoriedade.
+                const strong = document.createElement("strong");
+                strong.innerText = " *";
+                strong.className = "text-red-600";
+                extrasDiv.appendChild(strong);
+                const span = document.createElement("span");
+                span.className = "absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 top-full left-1/2 transform -translate-x-1/2 whitespace-nowrap mt-1";
+                span.innerText = "Obrigatório";
+                extrasDiv.appendChild(span);
+
+                // ~~ Cria mask do teclado e mouse.
+                this.tecladoMask = IMask(this.teclado, this.maskOptions);
+                this.mouseMask = IMask(this.mouse, this.maskOptions);
 
                 // ~~ Event listener de click no mouse.
                 this.mouse.addEventListener("click", () => {
@@ -364,21 +379,11 @@ export class Item {
                         this.teclado.value = "";
                     }
 
-                    // ~~ Recalcula valor.
-                    this.recalcularValor();
+                    // ~~ Recalcula valor unitário.
+                    this.recalcularValorUnitario();
 
-                    // ~~ Verifica se o campo de quantidade está preenchido.
-                    if (this.quantidade.value != "") {
-
-                        // ~~ Multiplica o valor unitário pela quantidade.
-                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
-
-                        // ~~ Converte para formato brasileiro.
-                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                        
-                        // ~~ Insere o valor total no seu campo.
-                        this.valorTotal.value = valorFormatado;
-                    }
+                    // ~~ Recalcula valor total.
+                    this.recalcularValorTotal();
                 });
 
                 // ~~ Event listener de input no mouse.
@@ -394,21 +399,11 @@ export class Item {
                         this.mouse.value = "";
                     }
 
-                    // ~~ Recalcula valor.
-                    this.recalcularValor();
+                    // ~~ Recalcula valor unitário.
+                    this.recalcularValorUnitario();
 
-                    // ~~ Verifica se o campo de quantidade está preenchido.
-                    if (this.quantidade.value != "") {
-
-                        // ~~ Multiplica o valor unitário pela quantidade.
-                        const valorTotal = this.valorUnitario.value * this.quantidade.value;
-
-                        // ~~ Converte para formato brasileiro.
-                        const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                        
-                        // ~~ Insere o valor total no seu campo.
-                        this.valorTotal.value = valorFormatado;
-                    }
+                    // ~~ Recalcula valor total.
+                    this.recalcularValorTotal();
                 });
 
                 // ~~ Event listener no checkbox.
@@ -418,8 +413,8 @@ export class Item {
                     extrasDiv.style.display = campoInput.checked ? "flex" : "none";
 
                     // ~~ Limpa os inputs.
-                    this.mouse.value = "";
-                    this.teclado.value = "";
+                    this.mouseMask.value = "";
+                    this.tecladoMask.value = "";
 
                     // ~~ Define o required dos inputs.
                     this.teclado.required = campoInput.checked ? true : false;
@@ -436,7 +431,10 @@ export class Item {
                     } else {
 
                         // ~~ Se havia valor, restaura o valor que está armazenado no atributo.
-                        this.recalcularValor();
+                        this.recalcularValorUnitario();
+
+                        // ~~ Recalcula valor total.
+                        this.recalcularValorTotal();
                     }
                 });
 
@@ -466,7 +464,29 @@ export class Item {
     // ================================================== \\
 
     // ~~ Função para recalcular o valor total.
-    recalcularValor() {
+    recalcularValorTotal() {
+
+        // ~~ Verifica se o campo de quantidade está preenchido.
+        if (this.quantidade.value != "" && this.valorUnitario.value != "") {
+
+            // ~~ Coleta o valor digitado e converte para float.
+            const valorDigitado = this.valorUnitarioMask.unmaskedValue;
+
+            // ~~ Multiplica o valor unitário pela quantidade.
+            const valorTotal = valorDigitado * this.quantidade.value;
+
+            // ~~ Converte para formato brasileiro.
+            const valorFormatado = valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            // ~~ Insere o valor total no seu campo.
+            this.valorTotal.value = valorFormatado;
+        }  
+    }
+
+    // ================================================== \\
+
+    // ~~ Função para recalcular o valor unitário.
+    recalcularValorUnitario() {
 
         // ~~ Pega valor unitário do item.
         const valor = this.valorUnitario.getAttribute("ultimo_valor");
@@ -478,16 +498,16 @@ export class Item {
             const valorGarantia = parseFloat(this.garantiaValor.value) || 0;
     
             // ~~ Pega o valor do mouse.
-            const valorMouse = parseFloat(this.mouse.value) || 0;
+            const valorMouse = this.mouseMask.unmaskedValue || 0;
     
             // ~~ Pega o valor do teclado.
-            const valorTeclado = parseFloat(this.teclado.value) || 0;
+            const valorTeclado = this.tecladoMask.unmaskedValue || 0;
     
             // ~~ Calcula novo valor.
             const novoValor = (valor - valorMouse - valorTeclado - valorGarantia);
     
             // ~~ Exibe valor atualizado no input.
-            this.valorUnitario.value = novoValor.toFixed(2);
+            this.valorUnitarioMask.unmaskedValue = novoValor.toFixed(2);
         }
     }
 

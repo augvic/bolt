@@ -12,6 +12,7 @@
     <meta charset="UTF-8">
     <title>Criar Documento de Venda</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/imask"></script>
 </head>
 
 <!-- ================================================== -->
@@ -50,20 +51,8 @@
             <!-- Botão de limpar formulário. -->
             <input id="clear_form" style="cursor: pointer;" type="button" value="Limpar Formulário" class="bg-[#0097bd] text-white px-4 py-2 rounded hover:bg-[#205067]">
 
-            <!-- Separador. -->
-            <p style="cursor: default;">|</p>
-        
-            <!-- Link para o formulário. -->
-            <a class="text-[#0097bd] hover:text-[#8ae8ff]" href="#form">Criação de Documento</a>
-
-            <!-- Separador. -->
-            <p style="cursor: default;">|</p>
-
-            <!-- Link para a fila. -->
-            <a class="text-[#0097bd] hover:text-[#8ae8ff]" href="#fila_docs">Fila de Documentos</a>
-
-            <!-- Separador. -->
-            <p style="cursor: default;">|</p>
+            <!-- Botão de visualizar fila de documentos. -->
+            <input style="cursor: pointer;" type="button" value="Visualizar Fila" class="bg-[#bd7100] text-white px-4 py-2 rounded hover:bg-[#6d470f]">
 
         <!-- Fecha header. -->
         </header>
@@ -354,7 +343,7 @@
             </datalist>
             <datalist id="garantias">
                 {% for garantia in garantias %}
-                    <option value="{{ garantia.descricao }}" valor="{{ garantia.valor }}">{{ garantia.chave }}</option>
+                    <option value="{{ garantia.descricao }}" valor="{{ garantia.valor }}" codigo="{{ garantia.chave }}"">{{ garantia.chave }} - R$ {{ garantia.valor }}</option>
                 {% endfor %}
             </datalist>
 
@@ -378,12 +367,8 @@
                 
                 <!-- ================================================== -->
 
+            <!-- Fecha div de comissão. -->
             </div>
-
-            <!-- ================================================== -->
-
-            <!-- Separador. -->
-            <div class="border-t border-[#0097bd] my-6"></div>
 
             <!-- ================================================== -->
 
@@ -394,13 +379,6 @@
 
     <!-- Fecha formulário. -->
     </form>
-
-    <!-- ================================================== -->
-
-    <!-- Fila de documentos. -->
-    <div id="fila_docs" class="w-full pl-6 pr-6 bg-white scroll-mt-10 -mt-9">
-        <label class="flex text-xl font-bold my-3 bg-[#0097bd] text-white h-10 rounded-lg items-center justify-center">Fila de Documentos</label>
-    </div>
 
     <!-- ================================================== -->
 

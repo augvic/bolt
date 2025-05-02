@@ -113,10 +113,10 @@ class DocVendas:
                 item = {
                     "sku": str(dados.get(f"sku_{i}")).strip(),
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
-                    "valor_unitario": str(dados.get(f"valor_unitario_{i}")).strip(),
+                    "valor_unitario": str(dados.get(f"valor_unitario_{i}")).replace(".", "").replace(",", ".").strip(),
                     "centro": str(dados.get(f"centro_{i}")).strip(),
                     "deposito": str(dados.get(f"deposito_{i}")).strip(),
-                    "over": str(dados.get(f"over_{i}")).strip(),
+                    "over": str(dados.get(f"over_{i}")).replace(".", "").replace(",", ".").strip(),
                     "garantia": str(dados.get(f"garantia_{i}")).strip(),
                     "tipo": "PAI"
                 }
@@ -127,7 +127,7 @@ class DocVendas:
                 item_teclado = {
                     "sku": "",
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
-                    "valor_unitario": str(dados.get(f"teclado_{i}")).strip(),
+                    "valor_unitario": str(dados.get(f"teclado_{i}")).replace(".", "").replace(",", ".").strip(),
                     "centro": "",
                     "deposito": "",
                     "over": "",
@@ -138,7 +138,7 @@ class DocVendas:
                 item_mouse = {
                     "sku": "",
                     "quantidade": str(dados.get(f"quantidade_{i}")).strip(),
-                    "valor_unitario": str(dados.get(f"mouse_{i}")).strip(),
+                    "valor_unitario": str(dados.get(f"mouse_{i}")).replace(".", "").replace(",", ".").strip(),
                     "centro": "",
                     "deposito": "",
                     "over": "",
