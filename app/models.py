@@ -347,3 +347,78 @@ class TiposGarantia(models.Model):
         return self.chave
 
 # ================================================== #
+
+# ~~ Modelo contendo os documentos de venda.
+class DocsVenda(models.Model):
+
+    # ~~ Atributos.
+    tipo_doc = models.CharField(max_length=200)
+    organizacao = models.CharField(max_length=200)
+    canal = models.CharField(max_length=200)
+    escritorio = models.CharField(max_length=200)
+    equipe = models.CharField(max_length=200)
+    pedido_nome = models.CharField(max_length=200)
+    emissor = models.CharField(max_length=200)
+    recebedor = models.CharField(max_length=200)
+    forma_pagamento = models.CharField(max_length=200)
+    condicao_pagamento = models.CharField(max_length=200)
+    incoterm = models.CharField(max_length=200)
+    motivo = models.CharField(max_length=200)
+    expedicao = models.CharField(max_length=200)
+    dados_adicionais = models.CharField(max_length=200)
+    tabela = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return str(self.id)
+
+# ================================================== #
+
+# ~~ Modelo contendo os itens dos documentos de venda.
+class DocsVendaItens(models.Model):
+
+    # ~~ Atributos.
+    id_referencia = models.CharField(max_length=200)
+    sku = models.CharField(max_length=200)
+    quantidade = models.CharField(max_length=200)
+    valor_unitario = models.CharField(max_length=200)
+    centro = models.CharField(max_length=200)
+    deposito = models.CharField(max_length=200)
+    over = models.CharField(max_length=200)
+    garantia = models.CharField(max_length=200)
+    tipo = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return str(self.id_referencia)
+
+# ================================================== #
+
+# ~~ Modelo contendo os parceiros dos documentos de venda.
+class DocsVendaParceiros(models.Model):
+
+    # ~~ Atributos.
+    id_referencia = models.CharField(max_length=200)
+    chave = models.CharField(max_length=200)
+    codigo = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return str(self.id_referencia)
+
+# ================================================== #
+
+# ~~ Modelo contendo os comissionados dos documentos de venda.
+class DocsVendaComissionados(models.Model):
+
+    # ~~ Atributos.
+    id_referencia = models.CharField(max_length=200)
+    chave = models.CharField(max_length=200)
+    codigo = models.CharField(max_length=200)
+    porcentagem = models.CharField(max_length=200)
+
+    # ~~ Retorno no admin.
+    def __str__(self):
+        return str(self.id_referencia)
+
+# ================================================== #

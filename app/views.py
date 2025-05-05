@@ -4,6 +4,7 @@
 from django.shortcuts import render, redirect
 from app.models import *
 from scripts.auxiliar.database import Database
+from django.http import JsonResponse
 
 # ================================================== #
 
@@ -181,7 +182,7 @@ class DocVendas:
                 "equipe": str(dados.get("equipe")).strip(),
                 "pedido_nome": str(dados.get("pedido")).strip(),
                 "emissor": str(dados.get("emissor")).strip(),
-                "recebor": str(dados.get("recebedor")).strip(),
+                "recebedor": str(dados.get("recebedor")).strip(),
                 "forma_pagamento": str(dados.get("forma_pagamento")).strip(),
                 "condicao_pagamento": str(dados.get("condicao_pagamento")).strip(),
                 "incoterm": str(dados.get("incoterm")).strip(),
@@ -195,9 +196,11 @@ class DocVendas:
             }
 
             # ~~ Envia dados para o banco de dados.
-            print(dados_dict)
+            database = Database()
+            database.salvar_doc_venda(dados_dict)
 
-            return redirect("doc_vendas_main")
+            # ~~ Retorna mensagem de sucesso pro front-end.
+            return JsonResponse({"sucesso": True})
 
         # ~~ Se não for post, redireciona para main view.
         else:

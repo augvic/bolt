@@ -28,12 +28,12 @@
 <!-- ================================================== -->
 
 <!-- Body. -->
-<body>
+<body id="body">
 
     <!-- ================================================== -->
 
     <!-- Formulário para adicionar documento de venda. -->
-    <form id="add_doc" action="{% url 'doc_vendas_add_fila' %}" method="POST">
+    <form id="add_doc">
 
         <!-- Token. -->
         {% csrf_token %}
@@ -41,18 +41,16 @@
         <!-- ================================================== -->
 
         <!-- Navbar. -->
-        <header class="fixed top-0 w-full bg-white shadow z-50 h-14 flex items-center gap-2 pl-6">
+        <header class="fixed top-0 w-full bg-white shadow z-40 h-14 flex items-center gap-2 pl-6">
 
             <!-- Botão de adicionar na fila. -->
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                Adicionar na Fila
-            </button>
+            <input id="add_fila" style="cursor: pointer;" type="button" value="Adicionar na Fila" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
 
             <!-- Botão de limpar formulário. -->
             <input id="clear_form" style="cursor: pointer;" type="button" value="Limpar Formulário" class="bg-[#0097bd] text-white px-4 py-2 rounded hover:bg-[#205067]">
 
             <!-- Botão de visualizar fila de documentos. -->
-            <input style="cursor: pointer;" type="button" value="Visualizar Fila" class="bg-[#bd7100] text-white px-4 py-2 rounded hover:bg-[#6d470f]">
+            <input id="visualizar_fila" style="cursor: pointer;" type="button" value="Visualizar Fila" class="bg-[#bd7100] text-white px-4 py-2 rounded hover:bg-[#6d470f]">
 
         <!-- Fecha header. -->
         </header>
@@ -379,6 +377,20 @@
 
     <!-- Fecha formulário. -->
     </form>
+
+    <!-- ================================================== -->
+
+    <!-- Modal de fila. -->
+    <div id="modal_fila" class="fixed inset-0 z-50 bg-black/50 items-center justify-center w-full h-full hidden">
+        <div class="bg-white rounded-xl w-[80%] h-[90vh] p-3">
+            <div class="w-full h-[12%] p-3 bg-[#0097bd] rounded-lg flex gap-4 items-center relative">
+                <h1 class="text-white font-bold">Fila de Documentos</h1>
+                <input id="clear_form" style="cursor: pointer;" type="button" value="Iniciar Criações" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                <input id="clear_form" style="cursor: pointer;" type="button" value="Parar Criações" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                <button onclick="document.getElementById('modal_fila').classList.add('hidden'); document.getElementById('modal_fila').classList.remove('flex'); document.getElementById('body').classList.remove('overflow-hidden');" class="bg-white rounded-full w-[25px] h-[25px] flex items-center justify-center text-xl hover:bg-gray-300 absolute right-3">&times;</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ================================================== -->
 

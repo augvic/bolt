@@ -190,16 +190,118 @@ class FormController {
 
 // ================================================== \\
 
+// ~~ Classe que gerencia o CRUD dos documentos.
+class DocsController {
+
+    // ================================================== \\
+
+    // ~~ Atributos.
+    visualizarFilaButton = document.getElementById("visualizar_fila");
+    modalFila = document.getElementById("modal_fila");
+    addFilaButton = document.getElementById("add_fila");
+
+    // ================================================== \\
+
+    // ~~ Função que abre o modal de fila.
+    visualizarFila() {
+
+        // ~~ Event listener no botão.
+        this.visualizarFilaButton.addEventListener("click", () => {
+
+            // ~~ Remove classe hidden.
+            this.modalFila.classList.remove("hidden");
+
+            // ~~ Adiciona classe flex.
+            this.modalFila.classList.add("flex");
+
+            // ~~ Remove scroll do body da página no fundo.
+            const scrollBody = document.getElementById("body");
+            scrollBody.classList.add("overflow-hidden");
+        });
+    }
+
+    // ================================================== \\
+
+    // ~~ Função que faz fetch no endpoint de adicionar documento na fila.
+    adicionarNaFila() {
+
+        // ~~ Event listener no botão.
+        this.addFilaButton.addEventListener("click", () => {
+
+            // ~~ Localiza form.
+            const formElement = document.querySelector("#add_doc");
+
+            // ~~ Verifica se os campos estão preenchidos.
+            if (!formElement.checkValidity()) {
+                formElement.reportValidity();
+                return;
+            }
+
+            // ~~ Cria instância com dados do form.
+            const formData = new FormData(formElement);
+
+            // ~~ Faz fetch para o endpoint.
+            fetch("./adicionar-na-fila", {
+                method: "POST",
+                body: formData
+            })
+
+            // ~~ Pega resposta e converte pra JSON.
+            .then(response => response.json())
+
+            // ~~ Pega resposta.
+            .then(data => {
+
+                // ~~ Se houve sucesso.
+                if (data.sucesso) {
+                    this.mostrarPopup("Adicionado na fila.", true);
+
+                // ~~ Se não houve sucesso.
+                } else {
+                    this.mostrarPopup("Erro ao adicionar na fila.", false);
+                }
+            });
+        });
+    }
+
+    // ================================================== \\
+
+    // ~~ Função que exibe um popup no retorno da resposta do backend.
+    mostrarPopup(mensagem, sucesso) {
+        const popup = document.createElement("div");
+        popup.className = `
+            fixed top-4 left-1/2 transform -translate-x-1/2 
+            px-6 py-3 rounded-lg shadow-lg text-white z-50
+            transition-opacity duration-300
+            ${sucesso ? 'bg-green-600' : 'bg-red-600'}
+        `;
+        popup.innerText = mensagem;
+        document.body.appendChild(popup);
+        setTimeout(() => {
+            popup.style.opacity = '0';
+            setTimeout(() => popup.remove(), 300);
+        }, 3000);
+    }
+
+    // ================================================== \\
+
+}
+
+// ================================================== \\
+
 // ~~ Cria instâncias.
 const itensController = new ItensController();
 const parceirosController = new ParceirosController();
 const comissoesController = new ComissoesController();
 const formController = new FormController();
+const docsocsController = new DocsController();
 
 // ~~ Executa métodos.
 itensController.adicionarItem();
 parceirosController.adicionarParceiro();
 comissoesController.adicionarComissao();
 formController.limpar_form();
+docsocsController.visualizarFila();
+docsocsController.adicionarNaFila();
 
 // ================================================== \\

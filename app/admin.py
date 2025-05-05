@@ -282,6 +282,62 @@ class TiposAdminGarantia(admin.ModelAdmin):
 
 # ================================================== #
 
+# ~~ Filtros das tabelas de documento de vendas.
+class DocsVendaAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("id", "tipo_doc", "organizacao", "canal", "escritorio", "equipe", "pedido_nome", "emissor", "recebedor", "forma_pagamento", "condicao_pagamento", "incoterm", "motivo", "expedicao", "dados_adicionais", "tabela")
+
+    # ~~ Campo de busca.
+    search_fields = ("id", "pedido_nome")
+
+    # ~~ Filtros laterais.
+    list_filter = ("pedido_nome", "tipo_doc", "organizacao", "canal", "escritorio", "emissor", "recebedor", "forma_pagamento", "condicao_pagamento")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de itens dos documentos de vendas.
+class DocsVendaItensAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("id_referencia", "sku", "quantidade", "valor_unitario", "centro", "deposito", "over", "garantia", "tipo")
+
+    # ~~ Campo de busca.
+    search_fields = ("id_referencia", "sku")
+
+    # ~~ Filtros laterais.
+    list_filter = ("sku", "centro", "deposito", "garantia", "tipo")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de parceiros dos documentos de vendas.
+class DocsVendaParceirosAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("id_referencia", "chave", "codigo")
+
+    # ~~ Campo de busca.
+    search_fields = ("id_referencia", "chave", "codigo")
+
+    # ~~ Filtros laterais.
+    list_filter = ("chave", "codigo")
+
+# ================================================== #
+
+# ~~ Filtros das tabelas de comissionados dos documentos de vendas.
+class DocsVendaComissionadosAdmin(admin.ModelAdmin):
+
+    # ~~ Colunas que irão aparecer no admin.
+    list_display = ("id_referencia", "chave", "codigo", "porcentagem")
+
+    # ~~ Campo de busca.
+    search_fields = ("id_referencia", "chave", "codigo")
+
+    # ~~ Filtros laterais.
+    list_filter = ("chave", "codigo")
+
+# ================================================== #
+
 # ~~ Descrição que consta no admin.
 admin.site.index_title = "Banco de dados:"
 
@@ -312,5 +368,9 @@ admin.site.register(TiposTabela, TiposAdminTabela)
 admin.site.register(TiposCentro, TiposAdminCentro)
 admin.site.register(TiposDeposito, TiposAdminDeposito)
 admin.site.register(TiposGarantia, TiposAdminGarantia)
+admin.site.register(DocsVenda, DocsVendaAdmin)
+admin.site.register(DocsVendaItens, DocsVendaItensAdmin)
+admin.site.register(DocsVendaParceiros, DocsVendaParceirosAdmin)
+admin.site.register(DocsVendaComissionados, DocsVendaComissionadosAdmin)
 
 # ================================================== #

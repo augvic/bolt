@@ -393,4 +393,77 @@ class Database:
 
     # ================================================== #
 
+    # ~~ Função que salva documento de venda no banco.
+    def salvar_doc_venda(self, dados: dict) -> None:
+
+        # ~~ Cria instância do DocsVenda para salvar.
+        doc_venda = DocsVenda(
+            tipo_doc=dados["tipo_doc"],
+            organizacao=dados["organizacao"],
+            canal=dados["canal"],
+            escritorio=dados["escritorio"],
+            equipe=dados["equipe"],
+            pedido_nome=dados["pedido_nome"],
+            emissor=dados["tipo_doc"],
+            recebedor=dados["recebedor"],
+            forma_pagamento=dados["forma_pagamento"],
+            condicao_pagamento=dados["condicao_pagamento"],
+            incoterm=dados["incoterm"],
+            motivo=dados["motivo"],
+            expedicao=dados["expedicao"],
+            dados_adicionais=dados["dados_adicionais"],
+            tabela=dados["tabela"]
+        )
+        
+        # ~~ Salva.
+        doc_venda.save()
+
+        # ~~ Loop para cada item.
+        for item in dados["itens"]:
+
+            # ~~ Cria instância do item para salvar.
+            item_para_salvar = DocsVendaItens(
+                id_referencia=doc_venda.id,
+                sku=item["sku"],
+                quantidade=item["quantidade"],
+                valor_unitario=item["valor_unitario"],
+                centro=item["centro"],
+                deposito=item["deposito"],
+                over=item["over"],
+                garantia=item["garantia"],
+                tipo=item["tipo"]
+            )
+
+            # ~~ Salva.
+            item_para_salvar.save()
+
+        # ~~ Loop para cada parceiro.
+        for parceiro in dados["parceiros"]:
+
+            # ~~ Cria instância do parceiro para salvar.
+            parceiro_para_salvar = DocsVendaParceiros(
+                id_referencia=doc_venda.id,
+                chave=parceiro["chave"],
+                codigo=parceiro["codigo"]
+            )
+
+            # ~~ Salva.
+            parceiro_para_salvar.save()
+
+        # ~~ Loop para cada comissionado.
+        for comissionado in dados["comissao"]:
+
+            # ~~ Cria instância do parceiro para salvar.
+            comissionado_para_salvar = DocsVendaComissionados(
+                id_referencia=doc_venda.id,
+                chave=comissionado["chave"],
+                codigo=comissionado["codigo"],
+                porcentagem=comissionado["porcentagem"]
+            )
+
+            # ~~ Salva.
+            comissionado_para_salvar.save()
+
+    # ================================================== #
+
 # ================================================== #
