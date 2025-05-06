@@ -56,13 +56,13 @@ export class Parceiro {
 
         // ~~ Cria input de chave.
         this.parceiroInputChave = document.createElement("input");
-        this.parceiroInputChave.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+        this.parceiroInputChave.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
         this.parceiroInputChave.type = "text";
         this.parceiroInputChave.required = true;
 
         // ~~ Cria input de código.
         this.parceiroInputCodigo = document.createElement("input");
-        this.parceiroInputCodigo.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+        this.parceiroInputCodigo.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
         this.parceiroInputCodigo.type = "text";
         this.parceiroInputCodigo.required = true;
 

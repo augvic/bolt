@@ -23,6 +23,9 @@
         background-color: #00d9ff;
         color: black;
     }
+    .input {
+        height: 30px;
+    }
 </style>
 
 <!-- ================================================== -->
@@ -73,7 +76,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" list="docs" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="documento" required>
+                    <input type="text" list="docs" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="documento" required>
                         <datalist id="docs">
                             {% for doc in tipo_docs %}
                                 <option value="{{ doc.chave }}">{{ doc.descricao }}</option>
@@ -88,7 +91,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" list="organizacoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="organizacao" required>
+                    <input type="text" list="organizacoes" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="organizacao" required>
                     <datalist id="organizacoes">
                         {% for organizacao in organizacoes %}
                             <option value="{{ organizacao.chave }}">{{ organizacao.descricao }}</option>
@@ -103,7 +106,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" list="canais" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="canal" required>
+                    <input type="text" list="canais" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="canal" required>
                     <datalist id="canais">
                         {% for canal in canais %}
                             <option value="{{ canal.chave }}">{{ canal.descricao }}</option>
@@ -118,7 +121,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" list="escritorios" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="escritorio" required>
+                    <input type="text" list="escritorios" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="escritorio" required>
                     <datalist id="escritorios">
                         {% for escritorio in escritorios %}
                             <option value="{{ escritorio.chave }}">{{ escritorio.descricao }}</option>
@@ -133,7 +136,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" list="equipes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="equipe" required>
+                    <input type="text" list="equipes" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="equipe" required>
                     <datalist id="equipes">
                         {% for equipe in equipes %}
                             <option value="{{ equipe.chave }}">{{ equipe.descricao }}</option>
@@ -160,7 +163,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="pedido" required>
+                    <input type="text" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="pedido" required>
                 </div>
                 <div>
                     <label class="block font-small text-center relative group">
@@ -170,7 +173,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="emissor" required>
+                    <input type="text" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="emissor" required>
                 </div>
                 <div>
                     <label class="block font-small text-center relative group">
@@ -180,7 +183,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="recebedor" required>
+                    <input type="text" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="recebedor" required>
                 </div>
                 <div>
                     <label class="block font-small text-center relative group">
@@ -190,7 +193,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" list="formas_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="forma_pagamento" required>
+                    <input type="text" list="formas_pgto" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="forma_pagamento" required>
                     <datalist id="formas_pgto">
                         {% for forma_pagamento in formas_pagamento %}
                             <option value="{{ forma_pagamento.chave }}">{{ forma_pagamento.descricao }}</option>
@@ -205,7 +208,7 @@
                             Obrigatório
                         </span>
                     </label>
-                    <input type="text" list="conds_pgto" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="condicao_pagamento" required>
+                    <input type="text" list="conds_pgto" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="condicao_pagamento" required>
                     <datalist id="conds_pgto">
                         {% for condicao_pagamento in condicoes_pagamento %}
                             <option value="{{ condicao_pagamento.chave }}">{{ condicao_pagamento.descricao }}</option>
@@ -221,7 +224,7 @@
                                 Obrigatório
                             </span>
                         </label>
-                        <input type="text" list="incorterms" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="incoterm" required>
+                        <input type="text" list="incorterms" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="incoterm" required>
                         <datalist id="incorterms">
                             {% for incoterm in incoterms %}
                                 <option value="{{ incoterm.chave }}">{{ incoterm.descricao }}</option>
@@ -236,7 +239,7 @@
                                 Obrigatório
                             </span>
                         </label>
-                        <input type="text" list="motivos" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="motivo" required>
+                        <input type="text" list="motivos" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="motivo" required>
                         <datalist id="motivos">
                             {% for motivo in motivos %}
                                 <option value="{{ motivo.chave }}">{{ motivo.descricao }}</option>
@@ -251,7 +254,7 @@
                                 Obrigatório
                             </span>
                         </label>
-                        <input type="text" list="expedicoes" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="expedicao" required>
+                        <input type="text" list="expedicoes" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="expedicao" required>
                         <datalist id="expedicoes">
                             {% for expedicao in tipos_expedicao %}
                                 <option value="{{ expedicao.chave }}">{{ expedicao.descricao }}</option>
@@ -277,7 +280,7 @@
                 </div>
                 <div class="w-full">
                     <label class="block font-small text-center">Tabela de Preço</label>
-                    <input type="text" list="tabelas_preco" class="p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="tabela_preco">
+                    <input type="text" list="tabelas_preco" class="input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center" name="tabela_preco">
                     <datalist id="tabelas_preco">
                         {% for tabela in tabelas_preco %}
                             <option value="{{ tabela.chave }}">{{ tabela.descricao }}</option>
@@ -389,6 +392,8 @@
                 <input id="clear_form" style="cursor: pointer;" type="button" value="Parar Criações" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
                 <button onclick="document.getElementById('modal_fila').classList.add('hidden'); document.getElementById('modal_fila').classList.remove('flex'); document.getElementById('body').classList.remove('overflow-hidden');" class="bg-white rounded-full w-[25px] h-[25px] flex items-center justify-center text-xl hover:bg-gray-300 absolute right-3">&times;</button>
             </div>
+            <br>
+            <div id="modal_fila_container" class="h-[83%] overflow-y-auto"></div>
         </div>
     </div>
 

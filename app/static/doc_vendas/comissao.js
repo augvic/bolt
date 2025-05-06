@@ -70,19 +70,19 @@ export class Comissao {
 
         // ~~ Cria input de chave.
         this.comissaoInputChave = document.createElement("input");
-        this.comissaoInputChave.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+        this.comissaoInputChave.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
         this.comissaoInputChave.type = "text";
         this.comissaoInputChave.required = true;
 
         // ~~ Cria input de código.
         this.comissaoInputCodigo = document.createElement("input");
-        this.comissaoInputCodigo.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+        this.comissaoInputCodigo.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
         this.comissaoInputCodigo.type = "text";
         this.comissaoInputCodigo.required = true;
 
         // ~~ Cria input de porcentagem.
         this.comissaoInputPorcentagem = document.createElement("input");
-        this.comissaoInputPorcentagem.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+        this.comissaoInputPorcentagem.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
         this.comissaoInputPorcentagem.type = "text";
         this.comissaoInputPorcentagem.name = `comissao_porcentagem_${this.comissaoIndex}`;
         this.comissaoInputPorcentagem.required = true;

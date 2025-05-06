@@ -65,7 +65,7 @@ export class Item {
 
             // ~~ Cria input.
             const campoInput = document.createElement("input");
-            campoInput.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+            campoInput.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
             campoInput.type = campo.type;
             campoInput.name = campo.name;
 
@@ -318,6 +318,9 @@ export class Item {
             // ~~ Se input for "tcl_mou".
             if (campoInput.name == "tcl_mou") {
 
+                // ~~ Remove classe que define o height.
+                campoInput.classList.remove("input");
+
                 // ~~ Cria div com os campos extras (teclado e mouse).
                 const extrasDiv = document.createElement("div");
                 extrasDiv.className = "relative group flex gap-2 mt-2";
@@ -329,14 +332,14 @@ export class Item {
                 this.teclado.type = "text";
                 this.teclado.name = `teclado_${this.itemsIndex}`;
                 this.teclado.placeholder = "R$";
-                this.teclado.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+                this.teclado.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-[70px] text-center";
 
                 // ~~ Campo mouse.
                 this.mouse = document.createElement("input");
                 this.mouse.type = "text";
                 this.mouse.name = `mouse_${this.itemsIndex}`;
                 this.mouse.placeholder = "R$";
-                this.mouse.className = "p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-full text-center";
+                this.mouse.className = "input p-2 border-[#0097bd] border-2 focus:border-[#8ae8ff] outline-none rounded w-[70px] text-center";
 
                 // ~~ Adiciona campos extras à div.
                 extrasDiv.appendChild(this.teclado);

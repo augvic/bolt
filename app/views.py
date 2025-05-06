@@ -88,11 +88,25 @@ class DocVendas:
             "tabelas_preco": tabelas_preco,
             "centros": centros,
             "depositos": depositos,
-            "garantias": garantias
+            "garantias": garantias,
         }
 
         # ~~ Renderiza página.
         return render(request, "doc_vendas/doc_vendas.html", contexto)
+
+    # ================================================== #
+
+    # ~~ Rota que retorna os registros do banco de dados.
+    def coletar_registros(self, request) -> JsonResponse:
+
+        # ~~ Somente se for GET.
+        if request.method == "GET":
+
+            # ~~ Coleta dados do database.
+            registros = database.coletar_docs_venda()
+
+            # ~~ Envia pro front como JSON.
+            return JsonResponse({"registros": registros})
 
     # ================================================== #
 

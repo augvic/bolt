@@ -81,25 +81,6 @@ class DocVendas:
         # ~~ Marca fornecimento completo.
         self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/chkVBAK-AUTLF").Selected = True
 
-        # ~~ Acessa síntese e insere itens.
-        self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02").select()
-        i = 0
-        for item in dados["itens"]:
-            if item["tipo"] != "TCL/MOU":
-                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,{i}]").text = item["sku"]
-                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtRV45A-KWMENG[2,{i}]").text = item["quantidade"]
-                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-WERKS[13,{i}]").text = item["centro"]
-                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-LGORT[3,{i}]").text = item["deposito"]
-                i += 1
-        self.sap.session.findById(r"wnd[0]").sendVKey(0)
-        
-        # ~~ Lista técnica. Se pop up não aparecer, ignora.
-        try:
-            self.sap.session.findById(r"wnd[1]/usr/tblSAPMC29ACNTL/txtRC29K-STKTX[1,0]").setFocus()
-            self.sap.session.findById(r"wnd[1]").sendVKey(2)
-        except:
-            pass
-
         # ~~ Acessa cabeçalho.
         self.sap.session.findById(r"wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/btnBT_HEAD").press()
 
@@ -141,8 +122,27 @@ class DocVendas:
             self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\09/ssubSUBSCREEN_BODY:SAPMV45A:4152/subSUBSCREEN_TEXT:SAPLV70T:2100/cntlSPLITTER_CONTAINER/shellcont/shellcont/shell/shellcont[1]/shell").setSelectionIndexes(0, 0)
             self.sap.session.findById(r"wnd[0]").sendVKey(0)
 
-        # ~~ Volta à síntese.
+        # ~~ Volta à tela inicial.
         self.sap.session.findById(r"wnd[0]/tbar[0]/btn[3]").press()
+
+        # ~~ Acessa síntese e insere itens.
+        self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02").select()
+        i = 0
+        for item in dados["itens"]:
+            if item["tipo"] != "TCL/MOU":
+                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,{i}]").text = item["sku"]
+                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtRV45A-KWMENG[2,{i}]").text = item["quantidade"]
+                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-WERKS[13,{i}]").text = item["centro"]
+                self.sap.session.findById(rf"wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\02/ssubSUBSCREEN_BODY:SAPMV45A:4401/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtVBAP-LGORT[3,{i}]").text = item["deposito"]
+                i += 1
+        self.sap.session.findById(r"wnd[0]").sendVKey(0)
+        
+        # ~~ Lista técnica. Se pop up não aparecer, ignora.
+        try:
+            self.sap.session.findById(r"wnd[1]/usr/tblSAPMC29ACNTL/txtRC29K-STKTX[1,0]").setFocus()
+            self.sap.session.findById(r"wnd[1]").sendVKey(2)
+        except:
+            pass
 
         # ~~ Insere valores e garantias para cada item.
         i = 0
@@ -181,16 +181,16 @@ class DocVendas:
                 # ~~ Pega os valores do SAP e soma.
                 valor_liquido = float(str(self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/txtKOMP-NETWR").text).replace(".", "").replace(",", ".").strip())
                 valor_imposto = float(str(self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/txtKOMP-MWSBP").text).replace(".", "").replace(",", ".").strip())
-                soma_liquido_imposto = round((valor_liquido + valor_imposto) / item["quantidade"], 2)
+                soma_liquido_imposto = round((valor_liquido + valor_imposto) / float(item["quantidade"]), 2)
 
                 # ~~ Se valor estiver diferente do valor do item.
-                if soma_liquido_imposto != item["valor_unitario"]:
+                if soma_liquido_imposto != float(item["valor_unitario"]):
 
                     # ~~ Calcula a diferença.
-                    diferenca = round(soma_liquido_imposto - item["valor_unitario"], 2)
+                    diferenca = round(soma_liquido_imposto - float(item["valor_unitario"]), 2)
 
                     # ~~ Se a diferença estiver 15 centavos pra cima ou baixo, insere no ZD15.
-                    if 0 < diferenca <= 0.15 or -0.15 < diferenca <= 0:
+                    if 0 < diferenca <= 0.01 or -0.01 < diferenca <= 0:
                         for linha in range(70, 90):
                             self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN").verticalScrollbar.position = linha
                             zd15 = self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/ctxtKOMV-KSCHL[1,0]").text
@@ -241,7 +241,7 @@ class DocVendas:
             self.sap.abrir_transacao("VA22")
         else:
             self.sap.abrir_transacao("VA02")
-        documento = self.sap.session.findById(r"wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-VBELN").text
+        documento = self.sap.session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text
 
         # ~~ Retorna.
         return documento
@@ -290,74 +290,68 @@ dados = {
     "canal": "15",
     "escritorio": "1105",
     "equipe": "058",
-    "pedido_nome": "TESTE SAMOC",
-    "emissor": "1000784725",
-    "recebedor": "1000784725",
-    "condicao_pagamento": "Z134",
+    "pedido_nome": "TESTE",
+    "emissor": "1000412273",
+    "recebedor": "1000412273",
+    "condicao_pagamento": "Z018",
     "incoterm": "CIF",
     "motivo": "900",
     "itens": [
         {
-            "sku": "1307015",
-            "quantidade": "4",
+            "sku": "1702638",
+            "quantidade": "23",
             "centro": "3010",
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor_unitario": "2815.00",
+            "valor_unitario": "4442.28",
             "tipo": "PAI"
         },
         {
-            "sku": "11117918",
-            "quantidade": "4",
+            "sku": "1702614",
+            "quantidade": "160",
             "centro": "3010",
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor_unitario": "42.00",
-            "tipo": "TCL/MOU"
-        },
-        {
-            "sku": "11086967",
-            "quantidade": "4",
-            "centro": "3010",
-            "deposito": "0175",
-            "garantia": "",
-            "over": "",
-            "valor_unitario": "21.00",
-            "tipo": "TCL/MOU"
-        },
-        {
-            "sku": "1702794",
-            "quantidade": "1",
-            "centro": "3010",
-            "deposito": "0175",
-            "garantia": "",
-            "over": "",
-            "valor_unitario": "3428.00",
+            "valor_unitario": "4561.48",
             "tipo": "PAI"
         },
         {
-            "sku": "1702837",
-            "quantidade": "1",
+            "sku": "1702792",
+            "quantidade": "11",
             "centro": "3010",
             "deposito": "0175",
             "garantia": "",
             "over": "",
-            "valor_unitario": "3428.00",
+            "valor_unitario": "3491.10",
+            "tipo": "PAI"
+        },
+        {
+            "sku": "1702613",
+            "quantidade": "25",
+            "centro": "3010",
+            "deposito": "0175",
+            "garantia": "",
+            "over": "",
+            "valor_unitario": "4287.27",
             "tipo": "PAI"
         }
     ],
-    "tabela": "21",
+    "tabela": "11",
     "expedicao": "01",
-    "forma_pagamento": "V",
+    "forma_pagamento": "E",
     "parceiros": [
         {
             "chave": "ZW",
             "codigo": "1001380210"
+        },
+        {
+            "chave": "ZA",
+            "codigo": "1000412273"
         }
     ],
-    "dados_adicionais": "TESTE",
+    "dados_adicionais": "",
     "comissao": [
         {
             "chave": "Z2",
@@ -368,6 +362,11 @@ dados = {
             "chave": "Z5",
             "codigo": "2000005674",
             "porcentagem": "0,32"
+        },
+        {
+            "chave": "Z6",
+            "codigo": "5000002687",
+            "porcentagem": "0,50"
         },
         {
             "chave": "Z7",

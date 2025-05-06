@@ -199,6 +199,7 @@ class DocsController {
     visualizarFilaButton = document.getElementById("visualizar_fila");
     modalFila = document.getElementById("modal_fila");
     addFilaButton = document.getElementById("add_fila");
+    modalContainer = document.getElementById("modal_fila_container");
 
     // ================================================== \\
 
@@ -217,7 +218,34 @@ class DocsController {
             // ~~ Remove scroll do body da página no fundo.
             const scrollBody = document.getElementById("body");
             scrollBody.classList.add("overflow-hidden");
+
+            // ~~ Carrega os registros.
+            this.carregarFila();
         });
+    }
+
+    // ================================================== \\
+
+    // ~~ Função que carrega os registros.
+    async carregarFila() {
+
+        // ~~ Faz fetch para coletar dados do banco.
+        const resposta = await fetch("./coletar-registros");
+        const data = await resposta.json();
+
+        // ~~ Limpa conteúdo que estava no container.
+        this.modalContainer.innerHTML = "";
+
+        // ~~ Cria tabela.
+        const tabela = document.createElement("table");
+
+        // ~~ Cabeçalho da tabela.
+        const thead = document.createElement("thead");
+        thead.innerHTML = `
+            <tr> class="bg-gray-200">
+                <th class="border px-4 py-2">
+            </tr>
+        `;
     }
 
     // ================================================== \\

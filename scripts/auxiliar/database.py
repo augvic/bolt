@@ -466,4 +466,40 @@ class Database:
 
     # ================================================== #
 
+    # ~~ Coleta do documentos de vendas.
+    def coletar_docs_venda(self) -> list:
+
+        # ~~ Cria lista para armazenar os registros.
+        registros = []
+
+        # ~~ Coleta todos os registros do banco.
+        registros_database = list(DocsVenda.objects.all().values())
+
+        # ~~ Loop para cada registro.
+        for registro in registros_database:
+
+            # ~~ Cria dicionário para armazenar todos os dados do registro atual.
+            registro_atual = {
+
+                # ~~ Dados do registro.
+                "dados": registro,
+
+                # ~~ Coleta os itens do registro.
+                "itens": list(DocsVendaItens.objects.filter(id_referencia=registro["id"]).values()),
+
+                # ~~ Coleta os parceiros do registro.
+                "parceiros": list(DocsVendaParceiros.objects.filter(id_referencia=registro["id"]).values()),
+
+                # ~~ Coleta os comissionados do registro.
+                "comissionados": list(DocsVendaComissionados.objects.filter(id_referencia=registro["id"]).values())
+            }
+
+            # ~~ Adiciona registro na lista.
+            registros.append(registro_atual)
+
+        # ~~ Retorna.
+        return registros
+
+    # ================================================== #
+
 # ================================================== #
