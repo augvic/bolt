@@ -173,7 +173,7 @@ class DocVendas:
             if item["over"]:
                 self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[3,11]").text = item["over"]
             
-            # ~~ Loop para inserir valor.
+            # ~~ Loop para inserir valor e corrigir o unitário.
             self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[3,2]").text = str(item["valor_unitario"]).replace(".", ",")
             self.sap.session.findById(r"wnd[0]").sendVKey(0)
             while True:
@@ -183,7 +183,7 @@ class DocVendas:
                 valor_imposto = float(str(self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/txtKOMP-MWSBP").text).replace(".", "").replace(",", ".").strip())
                 soma_liquido_imposto = round((valor_liquido + valor_imposto) / float(item["quantidade"]), 2)
 
-                # ~~ Se valor estiver diferente do valor do item.
+                # ~~ Se valor estiver diferente do valor total do item.
                 if soma_liquido_imposto != float(item["valor_unitario"]):
 
                     # ~~ Calcula a diferença.
@@ -206,7 +206,34 @@ class DocVendas:
                     
                     # ~~ Confirma novo valor.
                     self.sap.session.findById(r"wnd[0]").sendVKey(0)
-                
+
+                # ~~ Quando valor estiver correto, sai do loop.
+                else:
+                    break
+            
+            # ~~ Loop para arredondar o total.
+            while True:
+
+                # ~~ Verifica se o valor total está batendo também.
+                valor_liquido = float(str(self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/txtKOMP-NETWR").text).replace(".", "").replace(",", ".").strip())
+                valor_imposto = float(str(self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/txtKOMP-MWSBP").text).replace(".", "").replace(",", ".").strip())
+                soma_liquido_imposto = round(valor_liquido + valor_imposto, 2)
+                if soma_liquido_imposto != float(item["valor_total"]):
+
+                    # ~~ Calcula a diferença.
+                    diferenca = round(soma_liquido_imposto - float(item["valor_total"]), 2)
+
+                    # ~~ Insere diferença no ZD15.
+                    for linha in range(70, 90):
+                        self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN").verticalScrollbar.position = linha
+                        zd15 = self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/ctxtKOMV-KSCHL[1,0]").text
+                        if zd15 == "ZD15":
+                            self.sap.session.findById(r"wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\06/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[3,0]").text = str(abs(diferenca)).replace(".", ",") if diferenca < 0 else str(-abs(diferenca)).replace(".", ",")
+                            break
+                    
+                    # ~~ Confirma novo valor.
+                    self.sap.session.findById(r"wnd[0]").sendVKey(0)
+
                 # ~~ Quando valor estiver correto, sai do loop.
                 else:
                     break
@@ -291,8 +318,8 @@ dados = {
     "escritorio": "1105",
     "equipe": "058",
     "pedido_nome": "TESTE",
-    "emissor": "1000412273",
-    "recebedor": "1000412273",
+    "emissor": "1000341253",
+    "recebedor": "1000341253",
     "condicao_pagamento": "Z018",
     "incoterm": "CIF",
     "motivo": "900",
@@ -305,6 +332,7 @@ dados = {
             "garantia": "",
             "over": "",
             "valor_unitario": "4442.28",
+            "valor_total": "102172.44",
             "tipo": "PAI"
         },
         {
@@ -315,6 +343,7 @@ dados = {
             "garantia": "",
             "over": "",
             "valor_unitario": "4561.48",
+            "valor_total": "729836.80",
             "tipo": "PAI"
         },
         {
@@ -325,6 +354,7 @@ dados = {
             "garantia": "",
             "over": "",
             "valor_unitario": "3491.10",
+            "valor_total": "38402.10",
             "tipo": "PAI"
         },
         {
@@ -335,10 +365,11 @@ dados = {
             "garantia": "",
             "over": "",
             "valor_unitario": "4287.27",
+            "valor_total": "107181.75",
             "tipo": "PAI"
         }
     ],
-    "tabela": "11",
+    "tabela": "21",
     "expedicao": "01",
     "forma_pagamento": "E",
     "parceiros": [
@@ -348,7 +379,7 @@ dados = {
         },
         {
             "chave": "ZA",
-            "codigo": "1000412273"
+            "codigo": "1000341253"
         }
     ],
     "dados_adicionais": "",

@@ -300,7 +300,7 @@ class DocsVendaAdmin(admin.ModelAdmin):
 class DocsVendaItensAdmin(admin.ModelAdmin):
 
     # ~~ Colunas que irão aparecer no admin.
-    list_display = ("id_referencia", "sku", "quantidade", "valor_unitario", "centro", "deposito", "over", "garantia", "tipo")
+    list_display = ("id_referencia", "sku", "quantidade", "valor_unitario", "valor_total", "centro", "deposito", "over", "garantia", "tipo")
 
     # ~~ Campo de busca.
     search_fields = ("id_referencia", "sku")

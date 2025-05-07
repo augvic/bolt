@@ -164,7 +164,7 @@ class Utilitarios:
             dados["logradouro"] = self.formatar_texto(resposta_json["estabelecimento"]["logradouro"])
 
             # ~~ Coleta número.
-            dados["numero"] = resposta_json["estabelecimento"]["numero"]
+            dados["numero"] = resposta_json["estabelecimento"]["numero"] if resposta_json["estabelecimento"]["numero"] else "-"
 
             # ~~ Coleta complemento.
             dados["complemento"] = re.sub(r"\s+", " ", self.formatar_texto(resposta_json["estabelecimento"]["complemento"])) if resposta_json["estabelecimento"]["complemento"] else "-"
@@ -600,3 +600,6 @@ class Utilitarios:
     # ================================================== #
 
 # ================================================== #
+
+utilitarios = Utilitarios()
+utilitarios.consultar_receita_federal(cnpj="02343359000197", printar_dados=True)

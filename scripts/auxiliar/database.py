@@ -427,6 +427,7 @@ class Database:
                 sku=item["sku"],
                 quantidade=item["quantidade"],
                 valor_unitario=item["valor_unitario"],
+                valor_total=item["valor_total"],
                 centro=item["centro"],
                 deposito=item["deposito"],
                 over=item["over"],

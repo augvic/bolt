@@ -382,6 +382,7 @@ class DocsVendaItens(models.Model):
     sku = models.CharField(max_length=200)
     quantidade = models.CharField(max_length=200)
     valor_unitario = models.CharField(max_length=200)
+    valor_total = models.CharField(max_length=200)
     centro = models.CharField(max_length=200)
     deposito = models.CharField(max_length=200)
     over = models.CharField(max_length=200)

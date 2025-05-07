@@ -32,11 +32,11 @@ class ItensController {
             item.sku.name = `sku_${this.itensIndex}`;
             item.quantidade.name = `quantidade_${this.itensIndex}`;
             item.valorUnitario.name = `valor_unitario_${this.itensIndex}`;
+            item.valorTotal.name = `valor_total_${this.itensIndex}`;
             item.centro.name = `centro_${this.itensIndex}`;
             item.deposito.name = `deposito_${this.itensIndex}`;
             item.over.name = `over_${this.itensIndex}`;
             item.garantia.name = `garantia_${this.itensIndex}`;
-            item.valorTotal.name = `valot_total_${this.itensIndex}`;
             item.teclado.name = `teclado_${this.itensIndex}`;
             item.mouse.name = `mouse_${this.itensIndex}`;
 
@@ -197,9 +197,29 @@ class DocsController {
 
     // ~~ Atributos.
     visualizarFilaButton = document.getElementById("visualizar_fila");
+    fecharFilaButton = document.getElementById("fechar_fila");
     modalFila = document.getElementById("modal_fila");
     addFilaButton = document.getElementById("add_fila");
     modalContainer = document.getElementById("modal_fila_container");
+
+    // ================================================== \\
+
+    // ~~ Função que fecha o modal de fila.
+    fecharFila() {
+
+        // ~~ Event listener.
+        this.fecharFilaButton.addEventListener("click", () => {
+
+            // ~~ Adiciona class hidden no modal.
+            this.modalFila.classList.add('hidden');
+
+            // ~~ Remove class flex no modal.
+            this.modalFila.classList.remove('flex');
+
+            // ~~ Adiciona o overflow no body novamente.
+            document.getElementById('body').classList.remove('overflow-hidden');
+        });
+    }
 
     // ================================================== \\
 
@@ -220,7 +240,7 @@ class DocsController {
             scrollBody.classList.add("overflow-hidden");
 
             // ~~ Carrega os registros.
-            this.carregarFila();
+            // this.carregarFila();
         });
     }
 
@@ -322,14 +342,15 @@ const itensController = new ItensController();
 const parceirosController = new ParceirosController();
 const comissoesController = new ComissoesController();
 const formController = new FormController();
-const docsocsController = new DocsController();
+const docsController = new DocsController();
 
 // ~~ Executa métodos.
 itensController.adicionarItem();
 parceirosController.adicionarParceiro();
 comissoesController.adicionarComissao();
 formController.limpar_form();
-docsocsController.visualizarFila();
-docsocsController.adicionarNaFila();
+docsController.visualizarFila();
+docsController.adicionarNaFila();
+docsController.fecharFila();
 
 // ================================================== \\
