@@ -1,5 +1,24 @@
 # ================================================== #
 
-# ~~ To ignore.
+# ~~ Global.
+__pycache__
+__init__.py
+.env
+
+# ~~ "/".
+/db.sqlite3
+/init.bat
+/install.bat
+/notes.txt
+/tailwind.config.js
+/logs
+
+# ~~ "/app".
+/app/migrations
+
+# ~~ "/server".
+/server/asgi.py
+/server/settings.py
+/server/wsgi.py
 
 # ================================================== #
