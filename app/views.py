@@ -99,6 +99,55 @@ class DocVendas:
     # ~~ Rota que retorna os registros do banco de dados.
     def coletar_registros(self, request) -> JsonResponse:
 
+        """
+        Resumo:
+        - Coleta os registros da table DocsVenda.
+
+        Retorna:
+        - dict:
+            - "registros" => list:
+                - dict:
+                    - "dados" => dict:
+                        - "tipo_doc" => str
+                        - "organizacao" => str
+                        - "canal" => str
+                        - "escritorio" => str
+                        - "equipe" => str
+                        - "pedido_nome" => str
+                        - "emissor" => str
+                        - "recebedor" => str
+                        - "forma_pagamento" => str
+                        - "condicao_pagamento" => str
+                        - "incoterm" => str
+                        - "motivo" => str
+                        - "expedicao" => str
+                        - "dados_adicionais" => str
+                        - "tabela" => str
+                    - "itens" => list:
+                        - dict:
+                            - "id_referencia" => str
+                            - "sku" => str
+                            - "quantidade" => str
+                            - "valor_unitario" => str
+                            - "valor_total" => str
+                            - "centro" => str
+                            - "deposito" => str
+                            - "over" => str
+                            - "garantia" => str
+                            - "tipo" => str
+                    - "parceiros" => list:
+                        - dict:
+                            - "id_referencia" => str
+                            - "chave" => str
+                            - "codigo" => str
+                    - "comissionados" => list:
+                        - dict:
+                            - "id_referencia" => str
+                            - "chave" => str
+                            - "codigo" => str
+                            - "porcentagem" => str
+        """
+
         # ~~ Somente se for GET.
         if request.method == "GET":
 

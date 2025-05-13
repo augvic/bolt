@@ -470,6 +470,54 @@ class Database:
     # ~~ Coleta do documentos de vendas.
     def coletar_docs_venda(self) -> list:
 
+        """
+        Resumo:
+        - Coleta os registros de pedidos da table DocsVenda.
+
+        Retorna:
+        - list:
+            - dict:
+                - "dados" => dict:
+                    - "tipo_doc" => str
+                    - "organizacao" => str
+                    - "canal" => str
+                    - "escritorio" => str
+                    - "equipe" => str
+                    - "pedido_nome" => str
+                    - "emissor" => str
+                    - "recebedor" => str
+                    - "forma_pagamento" => str
+                    - "condicao_pagamento" => str
+                    - "incoterm" => str
+                    - "motivo" => str
+                    - "expedicao" => str
+                    - "dados_adicionais" => str
+                    - "tabela" => str
+                - "itens" => list:
+                    - dict:
+                        - "id_referencia" => str
+                        - "sku" => str
+                        - "quantidade" => str
+                        - "valor_unitario" => str
+                        - "valor_total" => str
+                        - "centro" => str
+                        - "deposito" => str
+                        - "over" => str
+                        - "garantia" => str
+                        - "tipo" => str
+                - "parceiros" => list:
+                    - dict:
+                        - "id_referencia" => str
+                        - "chave" => str
+                        - "codigo" => str
+                - "comissionados" => list:
+                    - dict:
+                        - "id_referencia" => str
+                        - "chave" => str
+                        - "codigo" => str
+                        - "porcentagem" => str
+        """
+
         # ~~ Cria lista para armazenar os registros.
         registros = []
 

@@ -256,16 +256,12 @@ class DocsController {
         // ~~ Limpa conteúdo que estava no container.
         this.modalContainer.innerHTML = "";
 
-        // ~~ Cria tabela.
-        const tabela = document.createElement("table");
+        // ~~ Cria linha.
+        const linha = document.createElement("div");
+        linha.className = "flex w-full gap-4";
 
-        // ~~ Cabeçalho da tabela.
-        const thead = document.createElement("thead");
-        thead.innerHTML = `
-            <tr> class="bg-gray-200">
-                <th class="border px-4 py-2">
-            </tr>
-        `;
+        // ~~ Cria colunas que ficarão na linha.
+
     }
 
     // ================================================== \\

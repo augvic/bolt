@@ -602,4 +602,4 @@ class Utilitarios:
 # ================================================== #
 
 utilitarios = Utilitarios()
-utilitarios.consultar_receita_federal(cnpj="02343359000197", printar_dados=True)
+utilitarios.consultar_receita_federal(cnpj="37207553000120", printar_dados=True)
