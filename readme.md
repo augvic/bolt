@@ -1,4 +1,4 @@
-## botl (Back-Office Tools Library)
+## botl (Back Office Tools Library)
 
 Esta aplicação inclui módulos que automatizam processos operacionais.
 
