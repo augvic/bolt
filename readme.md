@@ -7,4 +7,4 @@ Há integrações com:
 - Navegador (com Selenium)
 - Excel (xlwings)
 
-Obs: Uso interno da empresa.
+**Obs: Uso interno da empresa.**
