@@ -1,6 +1,6 @@
-## bolt (Projeto de automação e ferramentas operacionais.)
+## botl (Back-Office Tools Library)
 
-Este projeto inclui módulos que automatizam processos operacionais.
+Esta aplicação inclui módulos que automatizam processos operacionais.
 
 Há integrações com:
 - SAP (win32 lib)
